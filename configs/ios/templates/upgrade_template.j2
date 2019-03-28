@@ -1,0 +1,30 @@
+username {{username}} privilege 15 secret {{password}}
+
+hostname Upgrading
+ip domain-name stage.it
+
+interface {{l3_interface}}
+  {% if netmask is defined and netmask|length %}
+    ip address {{ip}} {{netmask}}
+  {% else %}
+    ip address {{ip}}
+  {% endif %}
+    no shutdown
+
+{% if l2_interface is defined and l2_interface|length %}
+  interface {{l2_interface}}
+    switchport mode access
+    switchport access {{vlan}}
+    spanning-tree portfast
+    no shutdown
+{% endif %}
+
+crypto key generate rsa modulus 2048
+
+line vty 0 15
+  login local
+  transport input ssh
+
+ip ssh version 2
+ip scp server enable
+end

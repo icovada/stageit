@@ -1,0 +1,11 @@
+terminal_server:
+  - terminal:
+    host: 127.0.0.1
+    protocol: telnet
+    username: cisco
+    password: cisco
+    console_protocol: telnet
+
+    vty_begin: 1
+    vty_port: 5001
+    vty_number: 8
