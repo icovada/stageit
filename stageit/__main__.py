@@ -35,7 +35,7 @@ class device():
         # Check if we have info from outside, otherwise default to dhcp
         if 'ip' not in kwargs or 'netmask' not in kwargs:
             kwargs['ip'] = 'dhcp'
-        
+
         assert kwargs['username']
         assert kwargs['password']
 
@@ -69,23 +69,35 @@ class device():
         with self.driver(**sessiondata) as session:
             upgradefacts = session.get_facts()
             if upgradefacts['serial_number'] != self.facts['serial_number']:
-                raise WrongDeviceError
+                raise "WrongDeviceError"
             scpresult = session._scp_file(software, software, session.dest_file_system)
             if scpresult[0] is not True:
-                raise FileNotCopiedError
-            
-            bootvar = session.device.send_command("show bootvar")
-            if "Invalid input" in bootvar:
-                upgradepath = "boot system " + session.dest_file_system + "/"
+                raise "FileNotCopiedError"
+
+            showbootvar = session.device.send_command("show bootvar")
+            if "Invalid input" in showbootvar:
+                upgradepath = "boot system " + session.dest_file_system + "/" + software
                 session.load_merge_candidate(config=upgradepath)
             else:
-                # TODO erase bootvar
-                pass
+                import re
+                bootvar = re.match("BOOT variable = (.*)", showbootvar).groups()[0].split(",12;")
+                configset = []
+                for firmware in bootvar:
+                    configset.append("no boot system " + firmware)
 
+                configset.append("boot system bootflash:" + software)                    
+            
+            session.device.send_config_set(configset)
+            
             session.commit_config()
+
+    def reload(self):
+        with self.driver(**self.sessiondata) as session:
+            session.device.send_command("reload")
+            session.device.send_command("Y")
 
 
 if __name__ == '__main__':
     config = yaml.load('term_config.yaml')
 
-    d = device("127.0.0.1", 5007, 'telnet', 'ios', 'cisco', 'cisco')
+    d = device("192.168.0.1", 2033, 'telnet', 'ios', 'cisco', 'cisco')
