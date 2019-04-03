@@ -2,7 +2,6 @@ from device import device
 import yaml
 
 
-
 if __name__ == '__main__':
     config = yaml.load('term_config.yaml')
 

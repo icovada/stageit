@@ -1,5 +1,6 @@
 import napalm
 import os
+from io import BytesIO
 
 class device():
     def __init__(self, hostname, port, transport, vendor, username, password):
@@ -11,11 +12,13 @@ class device():
             password = ''
 
         self.driver = napalm.get_network_driver(vendor)
+        self.logbuffer = BytesIO()
         self.sessiondata = {'hostname': hostname,
                             'username': username,
                             'password': password,
                             'optional_args': {'port': port,
-                                              'transport': transport}}
+                                              'transport': transport,
+                                              'session_log': self.logbuffer}}
 
         with self.driver(**self.sessiondata) as session:
             self.facts = session.get_facts()
@@ -60,7 +63,9 @@ class device():
 
         return tempsessiondata
 
-    def upgrade_software(self, software, sessiondata):
+    def upgrade_software(self, software, sessiondata=None):
+        if sessiondata is None:
+            sessiondata = self.sessiondata
         with self.driver(**sessiondata) as session:
             upgradefacts = session.get_facts()
             if upgradefacts['serial_number'] != self.facts['serial_number']:
@@ -86,7 +91,17 @@ class device():
             
             session.commit_config()
 
+    def getbuffer(self):
+       return self.logbuffer.getvalue()
+
     def reload(self):
         with self.driver(**self.sessiondata) as session:
             session.device.send_command("reload")
             session.device.send_command("Y")
+
+    def close(self, logname=None):
+        if logname is not None:
+            with open(logname, "wb") as outlog:
+                outlog.write(self.logbuffer.getvalue())
+        else:
+            return self.logbuffer.getvalue()
