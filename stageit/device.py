@@ -1,5 +1,6 @@
 import napalm
 import os
+import netmiko
 from io import BytesIO
 
 class device():
