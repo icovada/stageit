@@ -20,8 +20,19 @@ class device():
                                               'transport': transport,
                                               'session_log': self.logbuffer}}
 
-        with self.driver(**self.sessiondata) as session:
-            self.facts = session.get_facts()
+        self.facts = None
+        maxfailure = 60
+        while self.facts is None:
+            if maxfailure >= 0:
+                maxfailure = maxfailure -1
+                try:
+                    with self.driver(**self.sessiondata) as session:
+                        self.facts = session.get_facts()
+                except netmiko.ssh_exception.NetMikoAuthenticationException:
+                    pass
+            else:
+                raise "SerialAuthenticationException"
+        
 
     def firmware_ok(self, version):
         with self.driver(**self.sessiondata) as session:
@@ -38,11 +49,6 @@ class device():
         assert kwargs['password']
 
         with self.driver(**self.sessiondata) as session:
-            intlist = session.get_interfaces()
-            if 'l3_interface' in kwargs:
-                assert kwargs['l3_interface'] in intlist or "lan" in kwargs['l3_interface']
-            if 'l2_interface' in kwargs:
-                assert kwargs['l2_interface'] in intlist
             session.load_template(template_name="upgrade_template",
                                   template_path=os.path.abspath(os.path.curdir) + "/configs",
                                   **kwargs)
@@ -63,7 +69,13 @@ class device():
 
         return tempsessiondata
 
-    def upgrade_software(self, software, sessiondata=None):
+    def load_final_config(self, template, **kwargs):
+        with self.driver(**self.sessiondata) as session:
+            session.load_template(template_name=template,
+                                  template_path=os.path.abspath(os.path.curdir) + "/configs",
+                                  **kwargs)
+
+    def upgrade_software(self, software, sessiondata=None, pkgexpand=False):
         if sessiondata is None:
             sessiondata = self.sessiondata
         with self.driver(**sessiondata) as session:
@@ -74,9 +86,22 @@ class device():
             if scpresult[0] is not True:
                 raise "FileNotCopiedError"
 
+
+            if pkgexpand is True:
+                session.device.timeout = 600
+                installcommand = "request platform software package expand file" + \
+                          session.dest_file_system + \
+                          software + " to " + \
+                          session.dest_file_system + software[:-4]
+                session.device.send_command(installcommand)
+                softwarepath = software[:-4] + "/packages.conf"
+            else:
+                softwarepath = software
+
+
             showbootvar = session.device.send_command("show bootvar")
             if "Invalid input" in showbootvar:
-                upgradepath = "boot system " + session.dest_file_system + "/" + software
+                upgradepath = "boot system " + session.dest_file_system + software
                 session.load_merge_candidate(config=upgradepath)
             else:
                 import re
@@ -85,7 +110,7 @@ class device():
                 for firmware in bootvar:
                     configset.append("no boot system " + firmware)
 
-                configset.append("boot system bootflash:" + software)                    
+                configset.append("boot system bootflash:" + softwarepath)
             
             session.device.send_config_set(configset)
             
