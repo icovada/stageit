@@ -14,7 +14,7 @@ interface {{l3_interface}}
 {% if l2_interface is defined and l2_interface|length %}
   interface {{l2_interface}}
     switchport mode access
-    switchport access {{vlan}}
+    switchport access vlan {{vlan}}
     spanning-tree portfast
     no shutdown
 {% endif %}
