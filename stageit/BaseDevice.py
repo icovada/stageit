@@ -3,7 +3,7 @@ import os
 import netmiko
 from io import BytesIO
 
-class device():
+class BaseDevice():
     def __init__(self, hostname, port, transport, vendor, username, password):
         try:
             assert username
