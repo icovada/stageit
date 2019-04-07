@@ -26,7 +26,6 @@ class BaseWorker(threading.Thread):
         self.status = "Discovering model"
         driver = self.find_model(**self.work)
 
-        
         self.q.task_done()
 
     def find_model(self, **kwargs):
@@ -38,8 +37,8 @@ class BaseWorker(threading.Thread):
         device = BaseDevice(**kwargs)
         self.status = "Connecting to " + device.facts["model"]
         if "C3650" in device.facts["model"]:
-            from stageit.cisco.switch.iosxe import C3650
-            specific_device = C3650(**kwargs)
+            from stageit.cisco.switch.iosxe import IOSXESwitch
+            specific_device = IOSXESwitch(**kwargs)
 
         else:
             raise ValueError("Unrecognised model")
