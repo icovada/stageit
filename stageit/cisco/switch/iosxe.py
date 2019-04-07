@@ -1,5 +1,5 @@
 from stageit.BaseDevice import BaseDevice
-
+import re
 
 class IOSXESwitch(BaseDevice):
     def firmware_ok(self, firmware):
@@ -14,5 +14,4 @@ class IOSXESwitch(BaseDevice):
 
     def upgrade_switch(self):
         import re
-        # regex to find switch stack 
-        
+        # regex to find switch stack
