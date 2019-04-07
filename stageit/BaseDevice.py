@@ -33,13 +33,9 @@ class BaseDevice():
                     pass
             else:
                 raise "SerialAuthenticationException"
-        
 
     def firmware_ok(self, version):
-        with self.driver(**self.sessiondata) as session:
-            shver = session.device.send_command("show ver")
-            if version in shver:
-                return True
+        raise NotImplementedError
 
     def load_temp_config(self, **kwargs):
         # Check if we have info from outside, otherwise default to dhcp
@@ -77,45 +73,7 @@ class BaseDevice():
                                   **kwargs)
 
     def upgrade_software(self, software, sessiondata=None, pkgexpand=False):
-        if sessiondata is None:
-            sessiondata = self.sessiondata
-        with self.driver(**sessiondata) as session:
-            upgradefacts = session.get_facts()
-            if upgradefacts['serial_number'] != self.facts['serial_number']:
-                raise "WrongDeviceError"
-            scpresult = session._scp_file(software, software, session.dest_file_system)
-            if scpresult[0] is not True:
-                raise "FileNotCopiedError"
-
-
-            if pkgexpand is True:
-                session.device.timeout = 600
-                installcommand = "request platform software package expand file" + \
-                          session.dest_file_system + \
-                          software + " to " + \
-                          session.dest_file_system + software[:-4]
-                session.device.send_command(installcommand)
-                softwarepath = software[:-4] + "/packages.conf"
-            else:
-                softwarepath = software
-
-
-            showbootvar = session.device.send_command("show bootvar")
-            if "Invalid input" in showbootvar:
-                upgradepath = "boot system " + session.dest_file_system + software
-                session.load_merge_candidate(config=upgradepath)
-            else:
-                import re
-                bootvar = re.match("BOOT variable = (.*)", showbootvar).groups()[0].split(",12;")
-                configset = []
-                for firmware in bootvar:
-                    configset.append("no boot system " + firmware)
-
-                configset.append("boot system bootflash:" + softwarepath)
-            
-            session.device.send_config_set(configset)
-            
-            session.commit_config()
+        raise NotImplementedError
 
     def getbuffer(self):
        return self.logbuffer.getvalue()
