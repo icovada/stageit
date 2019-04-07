@@ -38,8 +38,8 @@ class BaseWorker(threading.Thread):
         device = BaseDevice(**kwargs)
         self.status = "Connecting to " + device.facts["model"]
         if "C3650" in device.facts["model"]:
-            from stageit.cisco.switch.iosxe import IOSXESwitch
-            specific_device = IOSXESwitch(**kwargs)
+            from stageit.cisco.switch.iosxe import C3650
+            specific_device = C3650(**kwargs)
 
         else:
             raise ValueError("Unrecognised model")
