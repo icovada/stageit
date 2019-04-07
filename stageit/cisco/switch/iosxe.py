@@ -1,14 +1,11 @@
 import stageit.BaseDevice
 import re
 
-class IOSXESwitch(stageit.BaseDevice.BaseDevice):
-    def upgrade_switch(self):
-        raise NotImplementedError
 
-class C3650(IOSXESwitch):
+class IOSXESwitch(stageit.BaseDevice.BaseDevice):
     def firmware_ok(self, firmware):
         with self.driver(**self.sessiondata) as session:
-            showver = session.device.send_command("show ver")
+            showver = session.device.send_command("show version")
 
             # This regex parses the following output
             # Taken from https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst3650/software/release/3se/system_management/configuration_guide/b_sm_3se_3650_cg/b_sm_3se_3650_cg_chapter_010101.html
@@ -38,18 +35,41 @@ class C3650(IOSXESwitch):
             # Built: Wed Jan 09 22:03:05 PST 2013, by: gereddy
 
             verregex = r'cat3k_caa-([a-z0-9\-]*)\.(.*)\.pkg, on: (.*)'
-            switches = re.findall(verregex,showver,re.MULTILINE)
+            switches = re.findall(verregex, showver, re.MULTILINE)
 
             verdict = {}
             for i in switches:
                 verdict[i[2]] = {}
-            
+
             for i in switches:
                 verdict[i[2]][i[0]] = i[1]
 
             for member in switches:
                 if firmware not in member['base']:
-                    return False
-            
-            return True
-            
+                    return (False, member['base'])
+
+            return (True,)
+
+    def upgrade_software(self, uri, mode="install"):
+        with self.driver(**self.sessiondata) as session:
+            if mode == "install":
+                self._upgrade_to_install(session, uri)
+            else:
+                self._upgrade_to_bundle(session, uri)
+
+    def _upgrade_to_install(self, session, uri):
+        command = "request platform software package install switch all file " + \
+            uri + " new force auto-copy"
+        session.device.timeout = 1800
+        session.device.write_channel(command)
+        output = session.device.read_until_prompt_or_pattern(
+            r'\[y(es)?\/no?\]')
+        if re.search(output, r'\[y(es)?\/no?\]', re.MULTILINE) is not None:
+            # Answer yes to a prompt
+            session.device.write_channel("y\n")
+        session.device.read_until_prompt()
+
+    def _upgrade_to_bundle(self, session, uri):
+        confset = ["no boot system", "boot system "+uri]
+        session.device.send_config_set(confset)
+        session.device.send_command("wr")
