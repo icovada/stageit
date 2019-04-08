@@ -25,17 +25,16 @@ class IOSXESwitch(stageit.BaseDevice.BaseDevice):
 
     def upgrade_software(self, uri, mode="install"):
         with self.driver(**self.sessiondata) as session:
-            if session.facts['hostname'] == "Switch":
+            if self.facts['hostname'] == "Switch":
                 # hostname "Switch" breaks read_until_prompt with log:
                 # %IOSXE-5-PLATFORM: Switch 1 R0/0: Apr  8 12:28:31 packtool.sh: %INSTALL-5-OPERATION_COMPLETED_INFO: Completed expand package flash:cat3k_caa-universalk9.16.03.07.SPA.bin
-                session.device.send_config_set(["hostname Upgrading"])
+                session.load_merge_candidate(config='hostname Upgrading')
             
             if mode == "install":
                 upgradestatus = self._upgrade_to_install(session, uri)
             else:
                 upgradestatus = self._upgrade_to_bundle(session, uri)
             
-            session.device.send_config_set(["hostname "+session.facts['hostname']])
             return upgradestatus
 
     def _upgrade_to_install(self, session, uri):
@@ -43,11 +42,6 @@ class IOSXESwitch(stageit.BaseDevice.BaseDevice):
             uri + " force new auto-copy\n"
         session.device.timeout = 1800
         session.device.write_channel(command)
-        output = session.device.read_until_prompt_or_pattern(
-            r'\[y(es)?\/no?\]')
-        if re.search(output, r'\[y(es)?\/no?\]', re.MULTILINE) is not None:
-            # Answer yes to a prompt
-            session.device.write_channel("y\n")
         output = session.device.read_until_prompt_or_pattern("SUCCESS: Finished install:")
         if " install failed in switch" in output:
             return False
