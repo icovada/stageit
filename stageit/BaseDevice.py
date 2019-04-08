@@ -97,8 +97,11 @@ class BaseDevice():
 
     def reload(self):
         with self.driver(**self.sessiondata) as session:
+            session.device.send_command("wr\n")
+            session.device.send_command("\n\n\n")
+            session.device.read_until_prompt()
             session.device.send_command("reload")
-            session.device.send_command("y\n")
+            session.device.send_command("\n\n\n")
             
 
     def close(self, logname=None):
