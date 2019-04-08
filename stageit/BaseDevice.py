@@ -26,8 +26,9 @@ class BaseDevice():
         while self.facts is None:
             if retries >= 0:
                 retries = retries
-                with self.driver(**self.sessiondata) as session:
-                    self.facts = session.get_facts()
+                try:
+                    with self.driver(**self.sessiondata) as session:
+                        self.facts = session.get_facts()
                 except netmiko.ssh_exception.NetMikoAuthenticationException:
                     pass
             else:
@@ -74,14 +75,14 @@ class BaseDevice():
         with self.driver(**self.sessiondata) as session:
             command = "copy " + uri + "flash:"
             session.device.write_channel(command)
-            session.device.read_until_pattern("\?")
+            session.device.read_until_pattern(r"\?")
             # Destination filename [foo.bar]?
             session.device.write_channel("\n")
             session.device.timeout = 1800  # Could take ages...
-            out = session.device.read_until_prompt_or_pattern("Error"
+            out = session.device.read_until_prompt_or_pattern("Error")
             if "Error" in out:
                 raise ValueError("File transfer failed")
-            else if "OK" in out:
+            elif "OK" in out:
                 return
 
     def upgrade_software(self, software, sessiondata=None, pkgexpand=False):

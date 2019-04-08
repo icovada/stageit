@@ -9,7 +9,6 @@ class BaseWorker():
     """
 
     def __init__(self, hostname, port, transport, vendor, username, password):
-        self.q = q
         self.hostname = hostname
         self.port = port
         self.transport = transport
