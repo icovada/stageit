@@ -5,7 +5,7 @@ from io import BytesIO
 
 
 class BaseDevice():
-    def __init__(self, hostname, port, transport, vendor, username, password, retries=5):
+    def __init__(self, hostname, port, transport, vendor, username, password):
         try:
             assert username
             assert password
@@ -22,17 +22,21 @@ class BaseDevice():
                                               'transport': transport,
                                               'session_log': self.logbuffer}}
 
+    def checkavailable(self, retries):
         self.facts = None
         while self.facts is None:
             if retries >= 0:
                 retries = retries
                 try:
-                    with self.driver(**self.sessiondata) as session:
-                        self.facts = session.get_facts()
+                    self.getfacts()
                 except netmiko.ssh_exception.NetMikoAuthenticationException:
                     pass
             else:
-                raise "SerialAuthenticationException"
+                raise IOError("Device unavailable")
+
+    def getfacts(self):
+        with self.driver(**self.sessiondata) as session:
+            self.facts = session.get_facts()
 
     def load_temp_config(self, **kwargs):
         # Check if we have info from outside, otherwise default to dhcp
@@ -95,6 +99,7 @@ class BaseDevice():
         with self.driver(**self.sessiondata) as session:
             session.device.send_command("reload")
             session.device.send_command("y\n")
+            
 
     def close(self, logname=None):
         if logname is not None:

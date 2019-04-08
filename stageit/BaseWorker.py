@@ -34,6 +34,8 @@ class BaseWorker():
                             self.username,
                             self.password, retries=60)
 
+        device.checkavailable()
+
         self.status = "Connected to " + device.facts["model"]
         if "C3650" in device.facts["model"]:
             device.close()
@@ -44,6 +46,8 @@ class BaseWorker():
                                           self.vendor,
                                           self.username,
                                           self.password)
+
+            specific_device.getfacts()
 
         else:
             raise ValueError("Unrecognised model")
