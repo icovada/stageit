@@ -73,7 +73,7 @@ class BaseDevice():
 
     def copy_from_ftp(self, uri):
         with self.driver(**self.sessiondata) as session:
-            command = "copy " + uri + "flash:"
+            command = "copy " + uri + " flash:\n"
             session.device.write_channel(command)
             session.device.read_until_pattern(r"\?")
             # Destination filename [foo.bar]?

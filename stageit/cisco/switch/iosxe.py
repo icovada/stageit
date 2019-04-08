@@ -5,7 +5,7 @@ import re
 class IOSXESwitch(stageit.BaseDevice.BaseDevice):
     def firmware_ok(self, firmware):
         with self.driver(**self.sessiondata) as session:
-            showver = session.device.send_command("show version running")
+            showver = session.device.send_command("show version")
 
             # This regex parses the following output
             # Switch Ports Model              SW Version        SW Image              Mode   
@@ -26,13 +26,13 @@ class IOSXESwitch(stageit.BaseDevice.BaseDevice):
     def upgrade_software(self, uri, mode="install"):
         with self.driver(**self.sessiondata) as session:
             if mode == "install":
-                self._upgrade_to_install(session, uri)
+                return self._upgrade_to_install(session, uri)
             else:
-                self._upgrade_to_bundle(session, uri)
+                return self._upgrade_to_bundle(session, uri)
 
     def _upgrade_to_install(self, session, uri):
         command = "request platform software package install switch all file " + \
-            uri + " force new auto-copy"
+            uri + " force new auto-copy\n"
         session.device.timeout = 1800
         session.device.write_channel(command)
         output = session.device.read_until_prompt_or_pattern(
@@ -40,7 +40,12 @@ class IOSXESwitch(stageit.BaseDevice.BaseDevice):
         if re.search(output, r'\[y(es)?\/no?\]', re.MULTILINE) is not None:
             # Answer yes to a prompt
             session.device.write_channel("y\n")
-        session.device.read_until_prompt()
+        output = session.device.read_until_prompt_or_pattern("SUCCESS: Finished install:")
+        if "SUCCESS: Finished install:" in output:
+            return True
+        else:
+            return False
+
 
     def _upgrade_to_bundle(self, session, uri):
         confset = ["no boot system", "boot system "+ uri]
