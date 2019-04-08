@@ -5,7 +5,7 @@ from io import BytesIO
 
 
 class BaseDevice():
-    def __init__(self, hostname, port, transport, vendor, username, password):
+    def __init__(self, hostname, port, transport, vendor, username, password, retries=5):
         try:
             assert username
             assert password
@@ -23,11 +23,9 @@ class BaseDevice():
                                               'session_log': self.logbuffer}}
 
         self.facts = None
-        maxfailure = 60
         while self.facts is None:
-            if maxfailure >= 0:
-                maxfailure = maxfailure - 1
-                try:
+            if retries >= 0:
+                retries = retries
                     with self.driver(**self.sessiondata) as session:
                         self.facts = session.get_facts()
                 except netmiko.ssh_exception.NetMikoAuthenticationException:
@@ -70,6 +68,20 @@ class BaseDevice():
                                   template_path=os.path.abspath(
                                       os.path.curdir) + "/configs",
                                   **kwargs)
+
+    def copy_from_ftp(self, uri):
+        with self.driver(**self.sessiondata) as session:
+            command = "copy " + uri + "flash:"
+            session.device.write_channel(command)
+            session.device.read_until_pattern("\?")
+            # Destination filename [foo.bar]?
+            session.device.write_channel("\n")
+            session.device.timeout = 1800 # Could take ages...
+            out = session.device.read_until_prompt_or_pattern("Error"
+            if "Error" in out:
+                raise ValueError("File transfer failed")
+            else if "OK" in out:
+                return
 
     def upgrade_software(self, software, sessiondata=None, pkgexpand=False):
         raise NotImplementedError
