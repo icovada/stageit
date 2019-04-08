@@ -32,9 +32,9 @@ class BaseWorker():
                             self.transport,
                             self.vendor,
                             self.username,
-                            self.password, retries=60)
+                            self.password)
 
-        device.checkavailable()
+        device.checkavailable(300)
 
         self.status = "Connected to " + device.facts["model"]
         if "C3650" in device.facts["model"]:
