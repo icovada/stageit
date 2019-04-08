@@ -26,8 +26,8 @@ class BaseDevice():
         while self.facts is None:
             if retries >= 0:
                 retries = retries
-                    with self.driver(**self.sessiondata) as session:
-                        self.facts = session.get_facts()
+                with self.driver(**self.sessiondata) as session:
+                    self.facts = session.get_facts()
                 except netmiko.ssh_exception.NetMikoAuthenticationException:
                     pass
             else:
@@ -56,7 +56,8 @@ class BaseDevice():
                 # Wait for device to grab ip.
                 session.device.read_until_pattern("DHCP")
                 showint = session.get_interfaces_ip()
-                tempsessiondata['hostname'] = showint[kwargs['l3_interface']]['ipv4'].popitem()[0]
+                tempsessiondata['hostname'] = showint[kwargs['l3_interface']]['ipv4'].popitem()[
+                                                                                              0]
             else:
                 tempsessiondata['hostname'] = kwargs['ip']
 
@@ -76,7 +77,7 @@ class BaseDevice():
             session.device.read_until_pattern("\?")
             # Destination filename [foo.bar]?
             session.device.write_channel("\n")
-            session.device.timeout = 1800 # Could take ages...
+            session.device.timeout = 1800  # Could take ages...
             out = session.device.read_until_prompt_or_pattern("Error"
             if "Error" in out:
                 raise ValueError("File transfer failed")

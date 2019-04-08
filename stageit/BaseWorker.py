@@ -18,11 +18,9 @@ class BaseWorker():
         self.password = password
 
         self.status = "Initializing"
-        
+
         self.driver = self.find_model()
         self.status = "Model found"
-
-
 
     def find_model(self):
         """
@@ -35,7 +33,7 @@ class BaseWorker():
                             self.transport,
                             self.vendor,
                             self.username,
-                            self.password, retries= 60)
+                            self.password, retries=60)
 
         self.status = "Connected to " + device.facts["model"]
         if "C3650" in device.facts["model"]:
