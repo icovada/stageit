@@ -59,7 +59,7 @@ class IOSXESwitch(stageit.BaseDevice.BaseDevice):
 
     def _upgrade_to_install(self, session, uri):
         command = "request platform software package install switch all file " + \
-            uri + " new force auto-copy"
+            uri + " force new auto-copy"
         session.device.timeout = 1800
         session.device.write_channel(command)
         output = session.device.read_until_prompt_or_pattern(
