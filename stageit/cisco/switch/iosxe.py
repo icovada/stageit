@@ -49,10 +49,10 @@ class IOSXESwitch(stageit.BaseDevice.BaseDevice):
             # Answer yes to a prompt
             session.device.write_channel("y\n")
         output = session.device.read_until_prompt_or_pattern("SUCCESS: Finished install:")
-        if "SUCCESS: Finished install:" in output:
-            return True
-        else:
+        if " install failed in switch" in output:
             return False
+        else:
+            return True
 
 
     def _upgrade_to_bundle(self, session, uri):
