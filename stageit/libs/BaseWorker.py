@@ -3,42 +3,51 @@ import queue
 from stageit.BaseDevice import BaseDevice
 
 
-class BaseWorker(threading.Thread):
+class BaseWorker():
     """
     Base class to connect to network device
     """
 
-    def __init__(self, q, hostname, port, transport):
-        self.q = q
+    def __init__(self, hostname, port, transport, vendor, username, password):
         self.hostname = hostname
         self.port = port
         self.transport = transport
+        self.vendor = vendor
+        self.username = username
+        self.password = password
+
         self.status = "Initializing"
 
-    def run(self):
-        while True:
-            try:
-                self.work = self.q.get(timeout=60)
+        self.driver = self.find_model()
+        self.status = "Model found"
 
-            except queue.Empty():
-                return
-
-        self.status = "Discovering model"
-        driver = self.find_model(**self.work)
-
-        self.q.task_done()
-
-    def find_model(self, **kwargs):
+    def find_model(self):
         """
         Find device type and return appropriate class to deal with upgrading,
         version checking and else
         """
 
-        device = BaseDevice(**kwargs)
-        self.status = "Connecting to " + device.facts["model"]
+        device = BaseDevice(self.hostname,
+                            self.port,
+                            self.transport,
+                            self.vendor,
+                            self.username,
+                            self.password)
+
+        device.checkavailable(300)
+
+        self.status = "Connected to " + device.facts["model"]
         if "C3650" in device.facts["model"]:
+            device.close()
             from stageit.cisco.switch.iosxe import IOSXESwitch
-            specific_device = IOSXESwitch(**kwargs)
+            specific_device = IOSXESwitch(self.hostname,
+                                          self.port,
+                                          self.transport,
+                                          self.vendor,
+                                          self.username,
+                                          self.password)
+
+            specific_device.getfacts()
 
         else:
             raise ValueError("Unrecognised model")

@@ -22,18 +22,21 @@ class BaseDevice():
                                               'transport': transport,
                                               'session_log': self.logbuffer}}
 
+    def checkavailable(self, retries):
         self.facts = None
-        maxfailure = 60
         while self.facts is None:
-            if maxfailure >= 0:
-                maxfailure = maxfailure - 1
+            if retries >= 0:
+                retries = retries
                 try:
-                    with self.driver(**self.sessiondata) as session:
-                        self.facts = session.get_facts()
+                    self.getfacts()
                 except netmiko.ssh_exception.NetMikoAuthenticationException:
                     pass
             else:
-                raise "SerialAuthenticationException"
+                raise IOError("Device unavailable")
+
+    def getfacts(self):
+        with self.driver(**self.sessiondata) as session:
+            self.facts = session.get_facts()
 
     def load_temp_config(self, **kwargs):
         # Check if we have info from outside, otherwise default to dhcp
@@ -58,7 +61,8 @@ class BaseDevice():
                 # Wait for device to grab ip.
                 session.device.read_until_pattern("DHCP")
                 showint = session.get_interfaces_ip()
-                tempsessiondata['hostname'] = showint[kwargs['l3_interface']]['ipv4'].popitem()[0]
+                tempsessiondata['hostname'] = showint[kwargs['l3_interface']]['ipv4'].popitem()[
+                                                                                              0]
             else:
                 tempsessiondata['hostname'] = kwargs['ip']
 
@@ -71,6 +75,20 @@ class BaseDevice():
                                       os.path.curdir) + "/configs",
                                   **kwargs)
 
+    def copy_from_ftp(self, uri):
+        with self.driver(**self.sessiondata) as session:
+            command = "copy " + uri + " flash:\n"
+            session.device.write_channel(command)
+            session.device.read_until_pattern(r"\?")
+            # Destination filename [foo.bar]?
+            session.device.write_channel("\n")
+            session.device.timeout = 1800  # Could take ages...
+            out = session.device.read_until_prompt_or_pattern("Error")
+            if "Error" in out:
+                raise ValueError("File transfer failed")
+            elif "OK" in out:
+                return
+
     def upgrade_software(self, software, sessiondata=None, pkgexpand=False):
         raise NotImplementedError
 
@@ -79,8 +97,12 @@ class BaseDevice():
 
     def reload(self):
         with self.driver(**self.sessiondata) as session:
+            session.device.send_command("wr\n")
+            session.device.send_command("\n\n\n")
+            session.device.read_until_prompt()
             session.device.send_command("reload")
-            session.device.send_command("y\n")
+            session.device.send_command("\n\n\n")
+            
 
     def close(self, logname=None):
         if logname is not None:

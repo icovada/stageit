@@ -8,68 +8,49 @@ class IOSXESwitch(stageit.BaseDevice.BaseDevice):
             showver = session.device.send_command("show version")
 
             # This regex parses the following output
-            # Taken from https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst3650/software/release/3se/system_management/configuration_guide/b_sm_3se_3650_cg/b_sm_3se_3650_cg_chapter_010101.html
+            # Switch Ports Model              SW Version        SW Image              Mode   
+            # ------ ----- -----              ----------        ----------            ----   
+            # *    1 28    WS-C3650-24PD      16.6.4            CAT3K_CAA-UNIVERSALK9 INSTALL
+            #      2 52    WS-C3650-48PD      16.6.4            CAT3K_CAA-UNIVERSALK9 INSTALL
 
-            # Package: Base, version: 03.02.00SE, status: active
-            # File: cat3k_caa-base.SPA.03.02.00SE.pkg, on: Switch1
-            # Built: Wed Jan 09 21:59:52 PST 2013, by: gereddy
-
-            # Package: Drivers, version: 03.02.00.SE, status: active
-            # File: cat3k_caa-drivers.SPA.03.02.00.SE.pkg, on: Switch1
-            # Built: Wed Jan 09 22:03:41 PST 2013, by: gereddy
-
-            # Package: Infra, version: 03.02.00SE, status: active
-            # File: cat3k_caa-infra.SPA.03.02.00SE.pkg, on: Switch1
-            # Built: Wed Jan 09 22:00:56 PST 2013, by: gereddy
-
-            # Package: IOS, version: 150-1.EX, status: active
-            # File: cat3k_caa-iosd-universalk9.SPA.150-1.EX.pkg, on: Switch1
-            # Built: Wed Jan 09 22:02:23 PST 2013, by: gereddy
-
-            # Package: Platform, version: 03.02.00.SE, status: active
-            # File: cat3k_caa-platform.SPA.03.02.00.SE.pkg, on: Switch1
-            # Built: Wed Jan 09 22:01:46 PST 2013, by: gereddy
-
-            # Package: WCM, version: 10.0.100.0, status: active
-            # File: cat3k_caa-wcm.SPA.10.0.100.0.pkg, on: Switch1
-            # Built: Wed Jan 09 22:03:05 PST 2013, by: gereddy
-
-            verregex = r'cat3k_caa-([a-z0-9\-]*)\.(.*)\.pkg, on: (.*)'
+            verregex = r'^\* *(\d) (\d{1,2}) *([A-Za-z0-9\-]*) *([0-9\.]*) *([A-Za-z0-9\-_]*) (\w*)$'
             switches = re.findall(verregex, showver, re.MULTILINE)
 
             verdict = {}
-            for i in switches:
-                verdict[i[2]] = {}
-
-            for i in switches:
-                verdict[i[2]][i[0]] = i[1]
-
             for member in switches:
-                if firmware not in member['base']:
-                    return (False, member['base'])
+                if firmware not in member:
+                    return (False, member[3], member[5])
 
-            return (True,)
+            return (True, member[3], member[5])
 
     def upgrade_software(self, uri, mode="install"):
         with self.driver(**self.sessiondata) as session:
+            if self.facts['hostname'] == "Switch":
+                # hostname "Switch" breaks read_until_prompt with log:
+                # %IOSXE-5-PLATFORM: Switch 1 R0/0: Apr  8 12:28:31 packtool.sh: %INSTALL-5-OPERATION_COMPLETED_INFO: Completed expand package flash:cat3k_caa-universalk9.16.03.07.SPA.bin
+                session.load_merge_candidate(config='hostname Upgrading')
+            
             if mode == "install":
-                self._upgrade_to_install(session, uri)
+                upgradestatus = self._upgrade_to_install(session, uri)
             else:
-                self._upgrade_to_bundle(session, uri)
+                upgradestatus = self._upgrade_to_bundle(session, uri)
+            
+            return upgradestatus
 
     def _upgrade_to_install(self, session, uri):
         command = "request platform software package install switch all file " + \
-            uri + " new force auto-copy"
+            uri + " force new auto-copy\n"
         session.device.timeout = 1800
         session.device.write_channel(command)
-        output = session.device.read_until_prompt_or_pattern(
-            r'\[y(es)?\/no?\]')
-        if re.search(output, r'\[y(es)?\/no?\]', re.MULTILINE) is not None:
-            # Answer yes to a prompt
-            session.device.write_channel("y\n")
-        session.device.read_until_prompt()
+        output = session.device.read_until_prompt_or_pattern("SUCCESS: Finished install:")
+        if " install failed in switch" in output:
+            return False
+        else:
+            return True
+
 
     def _upgrade_to_bundle(self, session, uri):
-        confset = ["no boot system", "boot system "+uri]
+        confset = ["no boot system", "boot system "+ uri]
         session.device.send_config_set(confset)
         session.device.send_command("wr")
+        return True
