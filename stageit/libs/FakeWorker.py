@@ -37,23 +37,13 @@ class FakeWorker(Thread):
         """
         Return dummy data
         """
-        self.status = ("{} Status 1/5".format(self.work))
-        self.log.write(b'1')
-        sleep(5)
-        self.status = ("{} Status 2/5".format(self.work))
-        self.log.write(b'2')
-        sleep(5)
-        self.status = ("{} Status 3/5".format(self.work))
-        self.log.write(b'3')
-        sleep(5)
-        self.status = ("{} Status 4/5".format(self.work))
-        self.log.write(b'4')
-        sleep(5)
-        self.status = ("{} Status 5/5".format(self.work))
-        self.log.write(b'5')
-        sleep(5)
+        for i in range(60):
+            text = "{} Status {}/60\n".format(self.work, i)
+            self.status = (text)
+            self.log.write(text.encode('utf-8'))
+            sleep(0.5)
 
         return True
 
     def getlog(self):
-        return self.log.getvalue()
+        return self.log.getvalue().decode('utf-8')
