@@ -1,8 +1,17 @@
-from device import device
 import yaml
-
+from libs.FakeWorker import FakeWorker
+import queue
 
 if __name__ == '__main__':
-    config = yaml.load('term_config.yaml')
+    with open('term_config.yaml', 'r') as y:
+        config = yaml.load(y)
 
-    d = device("192.168.0.1", 2033, 'telnet', 'ios', 'cisco', 'cisco')
+    worker_array = {}
+
+    for entry in config['terminal_server']:
+        server_name = "{}:{}".format(entry['hostname'], entry['port'])
+        thisqueue = queue.Queue()
+        server_thread = FakeWorker(thisqueue, **entry)
+        server_thread.start()
+        worker_array[server_name] = {
+            'queue': thisqueue, 'thread': server_thread}
