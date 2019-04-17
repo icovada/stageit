@@ -1,7 +1,6 @@
 from threading import Thread
 import queue
 from stageit.libs.BaseDevice import BaseDevice
-from io import BytesIO
 
 
 class BaseWorker(Thread):
@@ -21,7 +20,6 @@ class BaseWorker(Thread):
     def run(self):
         while True:
             try:
-                self.log = BytesIO()
                 self.status = "Waiting for work"
                 self.work = self.q.get(timeout=60)
 
