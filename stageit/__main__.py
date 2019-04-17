@@ -1,9 +1,14 @@
 import yaml
-from libs.FakeWorker import FakeWorker
-from libs.BaseWorker import BaseWorker
 import queue
 from flask import Flask, request, stream_with_context, Response
 from time import sleep
+import sys
+import os
+
+sys.path.append( os.path.join( os.path.dirname(__file__), os.path.pardir ) ) 
+
+from libs.FakeWorker import FakeWorker
+from libs.BaseWorker import BaseWorker
 app = Flask(__name__)
 
 
@@ -28,7 +33,7 @@ def enqueue(worker):
     return "OK"
 
 if __name__ == '__main__':
-    with open('term_config.yaml', 'r') as y:
+    with open('stageit/term_config.yaml', 'r') as y:
         config = yaml.load(y)
 
 

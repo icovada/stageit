@@ -1,8 +1,8 @@
-import stageit.BaseDevice
+from stageit.libs.BaseDevice import BaseDevice
 import re
 
 
-class IOSXESwitch(stageit.BaseDevice.BaseDevice):
+class IOSXESwitch(BaseDevice):
     def firmware_ok(self, firmware):
         with self.driver(**self.sessiondata) as session:
             showver = session.device.send_command("show version")
@@ -23,14 +23,14 @@ class IOSXESwitch(stageit.BaseDevice.BaseDevice):
 
             return (True, member[3], member[5])
 
-    def upgrade_software(self, uri, mode="install"):
+    def upgrade_software(self, version, uri, mode="INSTALL"):
         with self.driver(**self.sessiondata) as session:
             if self.facts['hostname'] == "Switch":
                 # hostname "Switch" breaks read_until_prompt with log:
                 # %IOSXE-5-PLATFORM: Switch 1 R0/0: Apr  8 12:28:31 packtool.sh: %INSTALL-5-OPERATION_COMPLETED_INFO: Completed expand package flash:cat3k_caa-universalk9.16.03.07.SPA.bin
                 session.load_merge_candidate(config='hostname Upgrading')
             
-            if mode == "install":
+            if mode == "INSTALL":
                 upgradestatus = self._upgrade_to_install(session, uri)
             else:
                 upgradestatus = self._upgrade_to_bundle(session, uri)
@@ -46,11 +46,13 @@ class IOSXESwitch(stageit.BaseDevice.BaseDevice):
         if " install failed in switch" in output:
             return False
         else:
+            self.reload()
             return True
 
 
     def _upgrade_to_bundle(self, session, uri):
         confset = ["no boot system", "boot system "+ uri]
         session.device.send_config_set(confset)
-        session.device.send_command("wr")
+        session.device.send_command("wr\n\n\n\n")
+        self.reload()
         return True
