@@ -1,6 +1,6 @@
 import threading
 import queue
-from stageit.BaseDevice import BaseDevice
+from stageit.libs.BaseDevice import BaseDevice
 
 
 class BaseWorker():
@@ -39,7 +39,7 @@ class BaseWorker():
         self.status = "Connected to " + device.facts["model"]
         if "C3650" in device.facts["model"]:
             device.close()
-            from stageit.cisco.switch.iosxe import IOSXESwitch
+            from stageit.libs.cisco.switch.iosxe import IOSXESwitch
             specific_device = IOSXESwitch(self.hostname,
                                           self.port,
                                           self.transport,

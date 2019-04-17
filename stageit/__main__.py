@@ -1,5 +1,6 @@
 import yaml
 from libs.FakeWorker import FakeWorker
+from libs.BaseWorker import BaseWorker
 import queue
 from flask import Flask, request, stream_with_context, Response
 from time import sleep
@@ -34,7 +35,10 @@ if __name__ == '__main__':
     for entry in config['terminal_server']:
         server_name = "{}:{}".format(entry['hostname'], entry['port'])
         thisqueue = queue.Queue()
-        server_thread = FakeWorker(thisqueue, **entry)
+        if 'fake' in entry:
+            server_thread = FakeWorker(thisqueue, **entry)
+        else:
+            server_thread = BaseWorker(thisqueue, **entry)
         server_thread.start()
         worker_array[server_name] = {
             'queue': thisqueue, 'thread': server_thread}
