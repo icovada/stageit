@@ -1,4 +1,5 @@
 import yaml
+import json
 import queue
 from flask import Flask, request, stream_with_context, Response
 from time import sleep
@@ -29,7 +30,11 @@ def getlog(worker):
 
 @app.route('/enqueue/<worker>', methods = ['POST'])
 def enqueue(worker):
-    worker_array[worker]['queue'].put(request.form['data'])
+    queueme = request.form.copy()
+    queueme['tempconfig'] = json.loads(request.form['tempconfig'])
+    queueme['finalconfig'] = json.loads(request.form['finalconfig'])
+
+    worker_array[worker]['queue'].put(queueme)
     return "OK"
 
 if __name__ == '__main__':

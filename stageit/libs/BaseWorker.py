@@ -29,6 +29,9 @@ class BaseWorker(Thread):
                 self.status = "Dead"
                 return
 
+            self.work['hostname'] = self.hostname
+            self.work['port'] = self.port
+            self.work['transport'] = self.transport
             self.status = "Discovering platform"
             self.driver = self.find_model()
             self.status = "Working"
@@ -49,7 +52,7 @@ class BaseWorker(Thread):
             device.close()
             from stageit.libs.cisco.switch.iosxe import IOSXESwitch
             specific_device = IOSXESwitch(**self.work)
-        if ["4331", "4321"] in device.facts['model']:
+        if "4331" in device.facts['model']:
             device.close()
             from stageit.libs.cisco.router.iosxe import IOSXERouter
             specific_device = IOSXERouter(**self.work)

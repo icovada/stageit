@@ -1,5 +1,5 @@
 terminal_server:
   - terminal:
-    hostname: 127.0.0.1
+    hostname: 10.82.135.2
     port: 2033
     transport: telnet

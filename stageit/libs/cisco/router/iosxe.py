@@ -7,7 +7,7 @@ class IOSXERouter(BaseDevice):
         self.status = "Checking firmware versions"
         if not self._check_rommon():
             self.copy_file(
-                "http://10.82.135.11/ios-xe/isr4200_4300_rommon_169_1r_SPA.pkg")
+                "http://10.82.135.9/ios-xe/isr4200_4300_rommon_169_1r_SPA.pkg")
             self.reload()
 
         firmware = (False, None, None)
@@ -48,7 +48,7 @@ class IOSXERouter(BaseDevice):
             modemapping = {'bin': 'BUNDLE',
                            'conf': 'INSTALL'}
 
-            installmode = modemapping[mode]
+            installmode = modemapping[mode[0]]
 
             # This regex parses the following output
             # Cisco IOS XE Software, Version 03.13.04.S - $(release_mode)
@@ -69,7 +69,7 @@ class IOSXERouter(BaseDevice):
         with self.driver(**self.sessiondata) as session:
             self.status = "Checking ROMMON version"
             command = "show rom-monitor RP active\n"
-            showrommon = session.device.write_channel(command)
+            showrommon = session.device.send_command(command)
 
             # This regex parses this output:
             # System Bootstrap, Version 16.7(3r), RELEASE SOFTWARE
@@ -77,7 +77,7 @@ class IOSXERouter(BaseDevice):
             romregex = r'Version (\d*\.\d)'
             currommon = re.findall(romregex, showrommon, re.MULTILINE)[0]
 
-            return currommon > 16
+            return float(currommon) > 16
 
     def _upgrade_to_install(self, uri):
         with self.driver(**self.sessiondata) as session:

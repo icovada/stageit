@@ -1,0 +1,12 @@
+hostname Done
+ip domain-name stage.it
+
+crypto key generate rsa modulus 2048
+
+line vty 0 15
+  login local
+  transport input ssh
+
+ip ssh version 2
+ip scp server enable
+end

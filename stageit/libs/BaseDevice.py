@@ -5,7 +5,7 @@ from io import BytesIO
 
 
 class BaseDevice():
-    def __init__(self, hostname, port, transport, vendor, username, password):
+    def __init__(self, hostname, port, transport, vendor, username, password, **kwargs):
         self.status = 'Init'
         self._has_connectivity = False
         try:
@@ -54,10 +54,12 @@ class BaseDevice():
         assert kwargs['password']
 
         with self.driver(**self.sessiondata) as session:
+            templateargs = kwargs.copy()
+            del templateargs['template_name']
             session.load_template(template_name="upgrade_template",
                                   template_path=os.path.abspath(
-                                      os.path.curdir) + "/configs",
-                                  **kwargs)
+                                  os.path.curdir) + "/configs",
+                                  **templateargs)
             session.commit_config()
 
             tempsessiondata = {'username': 'cisco',
