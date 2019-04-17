@@ -105,7 +105,7 @@ class BaseDevice():
     def upgrade_software(self, version, uri, mode_install):
         raise NotImplementedError
 
-    def getbuffer(self):
+    def getlog(self):
         return self.logbuffer.getvalue()
 
     def reload(self):
