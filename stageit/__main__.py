@@ -55,7 +55,7 @@ if __name__ == '__main__':
     for entry in config['terminal_server']:
         server_name = "{}:{}".format(entry['hostname'], entry['port'])
         thisqueue = queue.Queue()
-        if 'fake' in entry:
+        if entry['hostname'] == 'fake':
             server_thread = FakeWorker(thisqueue, **entry)
         else:
             server_thread = BaseWorker(thisqueue, **entry)

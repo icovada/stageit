@@ -45,5 +45,5 @@ class FakeWorker(Thread):
 
         return True
 
-    def getlog(self):
+    def getstatus(self):
         return self.log.getvalue().decode('utf-8')
