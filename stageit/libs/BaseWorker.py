@@ -47,11 +47,11 @@ class BaseWorker(Thread):
 
         device.checkavailable(300)
 
-        if "C3650" in device.facts["model"]:
+        if any(model in device.facts["model"] for model in ("C3650", "C3850")):
             device.close()
             from stageit.libs.cisco.switch.iosxe import IOSXESwitch
             specific_device = IOSXESwitch(**self.work)
-        if "4331" in device.facts['model']:
+        elif any(model in device.facts["model"] for model in ("4221", "4321", "4331", "4351", "4431", "4451", "4461")):
             device.close()
             from stageit.libs.cisco.router.iosxe import IOSXERouter
             specific_device = IOSXERouter(**self.work)
@@ -70,7 +70,6 @@ class BaseWorker(Thread):
     def stageit(self):
         self.status = 'Working'
         self.driver.checkavailable(1000)
-        self.driver.getfacts()
         try: 
             self.driver.upgrade_software(version=self.work['version'],
                                          uri=self.work['uri'],
