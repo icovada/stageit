@@ -1,6 +1,7 @@
 from threading import Thread
 import queue
 from stageit.libs.BaseDevice import BaseDevice
+from time import sleep
 
 
 class BaseWorker(Thread):
@@ -21,7 +22,7 @@ class BaseWorker(Thread):
         while True:
             try:
                 self.status = "Waiting for work"
-                self.work = self.q.get(timeout=60)
+                self.work = self.q.get(timeout=600)
 
             except queue.Empty:
                 self.status = "Dead"
@@ -76,6 +77,7 @@ class BaseWorker(Thread):
                                          mode=self.work['mode'])
         except ConnectionError:
             self.driver.load_temp_config(**self.work['tempconfig'])
+            sleep(3)
             self.driver.upgrade_software(version=self.work['version'],
                                          uri=self.work['uri'],
                                          mode=self.work['mode'])

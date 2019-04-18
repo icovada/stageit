@@ -15,18 +15,28 @@ app = Flask(__name__)
 
 worker_array = {}
 
-@app.route("/<worker>")
-def getlog(worker):
+@app.route("/log/<worker>")
+def log(worker):
     def streambytes():
         oldposition = 0
         while worker_array[worker]['thread'].status != "Waiting for work":
             sleep(0.1)
-            newbuffer = worker_array[worker]['thread'].getlog()
+            newbuffer = worker_array[worker]['thread'].driver.getlog()
             yield newbuffer[oldposition:].replace("\n","<br/>")
             oldbuffer = newbuffer
             oldposition = len(oldbuffer)
 
-    return Response(stream_with_context(streambytes()))
+    try:
+        if worker_array[worker]['thread'].status != "Waiting for work":
+            return Response(stream_with_context(streambytes()))
+        else:
+            return "No work queued, come back later"
+    except AttributeError:
+        return "Discovering platform, please refresh later"
+
+@app.route("/jobstatus/<worker>")
+def jobstatus(worker):
+    return worker_array[worker]['thread'].getstatus()
 
 @app.route('/enqueue/<worker>', methods = ['POST'])
 def enqueue(worker):

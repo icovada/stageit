@@ -33,8 +33,7 @@ class BaseDevice():
                 self.status = 'Waiting for device {}'.format(retries)
                 try:
                     self.getfacts()
-                except netmiko.ssh_exception.NetMikoAuthenticationException:
-                    self.status = 'Failed to connect'
+                except (netmiko.ssh_exception.NetMikoAuthenticationException, ValueError) as e:
                     pass
             else:
                 raise IOError("Device unavailable")
@@ -55,68 +54,69 @@ class BaseDevice():
 
         with self.driver(**self.sessiondata) as session:
             templateargs = kwargs.copy()
-            del templateargs['template_name']
+            # Ignore warnings and worry later
+            session.auto_rollback_on_error = False
             session.load_template(template_name="upgrade_template",
                                   template_path=os.path.abspath(
-                                  os.path.curdir) + "/configs",
+                                      os.path.curdir) + "/configs",
                                   **templateargs)
             session.commit_config()
 
-            tempsessiondata = {'username': 'cisco',
-                               'password': 'cisco'
-                               }
+            # tempsessiondata = {'username': 'cisco',
+            #                    'password': 'cisco'
+            #                    }
 
             if kwargs['ip'] == 'dhcp':
+                self.status = "Waiting for DHCP"
                 # Wait for device to grab ip.
-                session.device.timeout = 60
-                session.device.read_until_pattern("DHCP")
-                showint = session.get_interfaces_ip()
-                tempsessiondata['hostname'] = showint[kwargs['l3_interface']]['ipv4'].popitem()[
-                    0]
-            else:
-                tempsessiondata['hostname'] = kwargs['ip']
+                int_ip = {}
+                while len(int_ip) == 0:
+                    int_ip = session.get_interfaces_ip()
+
+                # tempsessiondata['hostname'] = list(int_ip.keys())
+            # else:
+                # Value of 'ipv4' of the first interface in the dict. We should only have one for now anyway
+            #     tempsessiondata['hostname'] = list(list(b.values())[0]['ipv4'].keys())[0]
+
         self._has_connectivity = True
 
-    def load_final_config(self, template, **kwargs):
+    def load_final_config(self, **kwargs):
         self.status = 'Loading final config'
         with self.driver(**self.sessiondata) as session:
-            session.load_template(template_name=template,
-                                  template_path=os.path.abspath(
-                                      os.path.curdir) + "/configs",
+            session.load_template(template_path=os.path.abspath(
+                                  os.path.curdir) + "/configs",
                                   **kwargs)
 
-    def copy_file(self, uri):
+    def copy_file(self, session, uri):
         self.status = 'Copying from {}'.format(uri)
-        with self.driver(**self.sessiondata) as session:
-            session.device.send_config_set(["file prompt quiet"])
-            command = "copy " + uri + " flash:\n"
-            session.device.write_channel(command)
-            session.device.read_until_pattern(r"\?")
-            # Destination filename [foo.bar]?
-            session.device.write_channel("\n")
-            session.device.timeout = 1800  # Could take ages...
-            out = session.device.read_until_prompt_or_pattern("Error")
-            session.device.send_config_set(["no file prompt quiet"])
-            if "Error" in out:
-                raise ValueError("File transfer failed")
-            elif "OK" in out:
-                return
+        session.device.send_config_set(["file prompt quiet"])
+        command = "copy " + uri + " flash:\n"
+        # Destination filename [foo.bar]?
+        session.device.write_channel(command)
+        session.device.write_channel("\n")
+        session.device.timeout = 1800  # Could take ages...
+        out = session.device.read_until_prompt_or_pattern("Error")
+        session.device.send_config_set(["no file prompt quiet"])
+        if "Error" in out:
+            raise ValueError("File transfer failed")
+        elif "bytes copied" in out:
+            return
 
     def upgrade_software(self, version, uri, mode_install):
         raise NotImplementedError
 
     def getlog(self):
-        return self.logbuffer.getvalue()
+        return self.logbuffer.getvalue().decode('utf-8')
 
-    def reload(self):
+    def reload_device(self):
         self.status = 'Sending reload command'
         with self.driver(**self.sessiondata) as session:
-            session.device.send_command("wr\n")
-            session.device.send_command("\n\n\n")
+            session.device.write_channel("wr\n")
+            session.device.write_channel("\n\n\n")
             session.device.read_until_prompt()
-            session.device.send_command("reload")
-            session.device.send_command("\n\n\n")
-            self.checkavailable(1000)
+            session.device.write_channel("reload")
+            session.device.write_channel("\n\n\n")
+        self.checkavailable(1000)
 
     def close(self, logname=None):
         self.status = 'Saving log'

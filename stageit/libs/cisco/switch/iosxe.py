@@ -46,7 +46,7 @@ class IOSXESwitch(BaseDevice):
         if " install failed in switch" in output:
             return False
         else:
-            self.reload()
+            self.reload_device()
             return True
 
 
@@ -54,5 +54,5 @@ class IOSXESwitch(BaseDevice):
         confset = ["no boot system", "boot system "+ uri]
         session.device.send_config_set(confset)
         session.device.send_command("wr\n\n\n\n")
-        self.reload()
+        self.reload_device()
         return True
