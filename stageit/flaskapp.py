@@ -10,7 +10,6 @@ APP_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATE_PATH = os.path.join(APP_PATH, 'stageit/web/templates')
 
 app = Flask(__name__, template_folder=TEMPLATE_PATH)
-app.logger.removeHandler(default_handler)
 
 
 @app.route("/")
