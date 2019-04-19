@@ -72,7 +72,7 @@ class BaseWorker(Thread):
     def stageit(self):
         self.status = 'Working'
         self.driver.checkavailable(1000)
-        try: 
+        try:
             self.driver.upgrade_software(version=self.work['version'],
                                          uri=self.work['uri'],
                                          mode=self.work['mode'])
@@ -82,5 +82,5 @@ class BaseWorker(Thread):
             self.driver.upgrade_software(version=self.work['version'],
                                          uri=self.work['uri'],
                                          mode=self.work['mode'])
-        
+
         self.driver.load_final_config(**self.work['finalconfig'])

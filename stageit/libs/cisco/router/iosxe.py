@@ -2,26 +2,30 @@ from stageit.libs.BaseDevice import BaseDevice
 import re
 import logging
 
+
 class IOSXERouter(BaseDevice):
     def upgrade_software(self, version, uri, mode="INSTALL"):
         self.status = "Checking firmware versions"
         logging.info(self.status)
         firmware = (False, None, None)
         try:
-            version = re.findall(r'isr4300-universalk9(?:_npe)*\.(\d*\w*\.\d*\w*\.\d*\w*)\.', uri)[0]
+            version = re.findall(
+                r'isr4300-universalk9(?:_npe)*\.(\d*\w*\.\d*\w*\.\d*\w*)\.', uri)[0]
         except IndexError:
             raise Warning("Unsupported image file")
-            
+
         if not self._check_rommon():
-            with self.driver(**self.sessiondata) as session:        
-                self.copy_file(session, 
-                    "http://10.82.135.9/ios-xe/isr4200_4300_rommon_169_1r_SPA.pkg")
+            with self.driver(**self.sessiondata) as session:
+                self.copy_file(session,
+                               "http://10.82.135.9/ios-xe/isr4200_4300_rommon_169_1r_SPA.pkg")
                 self.status = "Upgrading ROMMON"
                 logging.info(self.status)
-                driver.device.timeout = 600 # Takes at least a good 5 min
-                driver.device.write_channel("upgrade rom-monitor filename bootflash:isr4200_4300_rommon_169_1r_SPA.pkg all\n")
-                driver.device.read_until_prompt_or_pattern("ROMMON upgrade complete")
-        
+                driver.device.timeout = 600  # Takes at least a good 5 min
+                driver.device.write_channel(
+                    "upgrade rom-monitor filename bootflash:isr4200_4300_rommon_169_1r_SPA.pkg all\n")
+                driver.device.read_until_prompt_or_pattern(
+                    "ROMMON upgrade complete")
+
             self.reload_device()
 
         while not firmware[0]:
@@ -43,7 +47,7 @@ class IOSXERouter(BaseDevice):
                     upgradestatus = self._upgrade_to_bundle(uri)
                 else:
                     upgradestatus = self._upgrade_to_install(uri)
-            
+
             else:
                 upgradestatus = True
 
@@ -121,8 +125,9 @@ class IOSXERouter(BaseDevice):
                     bootvaruri = re.findall(confregex, output)[0]
                 else:
                     bootvaruri = "bootflash:packages.conf"
-                
-                confset = ["no boot system", "boot system {}".format(bootvaruri)]
+
+                confset = ["no boot system",
+                           "boot system {}".format(bootvaruri)]
                 session.device.send_config_set(confset)
                 session.device.send_command("wr\n\n\n\n\n\n\n\n")
 

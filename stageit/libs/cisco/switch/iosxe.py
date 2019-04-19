@@ -10,7 +10,8 @@ class IOSXESwitch(BaseDevice):
         logging.info(self.status)
         firmware = (False, None, None)
         try:
-            version = re.findall(r'cat3k_caa-universalk9(?:ldpe)*\.(\d*\w*\.\d*\w*\.\d*\w*)\.', uri)[0]
+            version = re.findall(
+                r'cat3k_caa-universalk9(?:ldpe)*\.(\d*\w*\.\d*\w*\.\d*\w*)\.', uri)[0]
         except IndexError:
             raise Warning("Unsupported image file")
 
@@ -38,7 +39,8 @@ class IOSXESwitch(BaseDevice):
             return upgradestatus
 
     def _firmware_ok(self, version, mode='INSTALL'):
-        version = version.replace(".0",".") #Strip leading zeroes from IOS version
+        # Strip leading zeroes from IOS version
+        version = version.replace(".0", ".")
         with self.driver(**self.sessiondata) as session:
             showver = session.device.send_command("show version")
 
