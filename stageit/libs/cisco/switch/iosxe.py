@@ -4,9 +4,14 @@ import re
 
 class IOSXESwitch(BaseDevice):
 
-    def upgrade_software(self, version, uri, mode="INSTALL"):
+    def upgrade_software(self, uri, mode="INSTALL"):
         self.status = "Checking firmware version"
         firmware = (False, None, None)
+        try:
+            version = re.findall(r'cat3k_caa-universalk9(?:ldpe)*\.(\d*\w*\.\d*\w*\.\d*\w*)\.', uri)[0]
+        except IndexError:
+            raise Warning("Unsupported image file")
+
         while not firmware[0]:
             firmware = self._firmware_ok(version, mode)
             if not firmware[0]:
@@ -31,6 +36,7 @@ class IOSXESwitch(BaseDevice):
             return upgradestatus
 
     def _firmware_ok(self, version, mode='INSTALL'):
+        version = version.replace(".0",".") #Strip leading zeroes from IOS version
         with self.driver(**self.sessiondata) as session:
             showver = session.device.send_command("show version")
 
@@ -81,7 +87,6 @@ class IOSXESwitch(BaseDevice):
                 self.copy_file(session, uri)
 
             self.status = "Upgrading IOX-XE to BUNDLE mode"
-
             confset = ["no boot system", "boot system {}".format(flashuri)]
             session.device.send_config_set(confset)
             session.device.send_command("wr\n\n\n\n\n\n\n")

@@ -5,6 +5,12 @@ import re
 class IOSXERouter(BaseDevice):
     def upgrade_software(self, version, uri, mode="INSTALL"):
         self.status = "Checking firmware versions"
+        firmware = (False, None, None)
+        try:
+            version = re.findall(r'isr4300-universalk9(?:_npe)*\.(\d*\w*\.\d*\w*\.\d*\w*)\.', uri)[0]
+        except IndexError:
+            raise Warning("Unsupported image file")
+            
         if not self._check_rommon():
             with self.driver(**self.sessiondata) as session:        
                 self.copy_file(session, 
@@ -16,7 +22,6 @@ class IOSXERouter(BaseDevice):
         
             self.reload_device()
 
-        firmware = (False, None, None)
         while not firmware[0]:
             firmware = self._firmware_ok(version, mode)
             if not firmware[0]:  # If firmware is not ok
