@@ -57,6 +57,10 @@ class BaseWorker(Thread):
             device.close()
             from stageit.libs.cisco.router.iosxe import IOSXERouter
             specific_device = IOSXERouter(**self.work)
+        elif any(model in device.facts["model"] for model in ("2960", "3560CX")):
+            device.close()
+            from stageit.libs.cisco.switch.ios import IOSSwitch
+            specific_device = IOSXERouter(**self.work)
 
         else:
             raise ValueError("Unrecognised model")
