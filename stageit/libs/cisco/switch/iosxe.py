@@ -1,5 +1,6 @@
 from stageit.libs.BaseDevice import BaseDevice
 import re
+import logging
 
 
 class IOSXESwitch(BaseDevice):

@@ -1,6 +1,6 @@
 from stageit.libs.BaseDevice import BaseDevice
 import re
-
+import logging
 
 class IOSXERouter(BaseDevice):
     def upgrade_software(self, version, uri, mode="INSTALL"):
