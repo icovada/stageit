@@ -49,8 +49,6 @@ class IOSXESwitch(BaseDevice):
             verregex = r'^\** *(\d) (\d{1,2}) *([A-Za-z0-9\-]*) *([0-9\.]*) *([A-Za-z0-9\-_]*) (\w*)$'
             switches = re.findall(verregex, showver, re.MULTILINE)
 
-            verdict = {}
-
             for member in switches:
                 if version not in member:
                     return (False, member[3], member[5])
