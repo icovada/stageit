@@ -12,31 +12,17 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th scope="col">Port</th>
-                <th scope="col">Task</th>
-                <th scope="col">Status</th>
-                <th scope="col">Action</th>
+                <th scope="col">Name</th>
+                <th>Status</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <th scope="row">10.82.135.2:2033</th>
-                <td>8b3c</td>
-                <td>Waiting for work</td>
-                <td></td>
-            </tr>
-            <tr>
-                <th scope="row">10.82.135.2:2034</th>
-                <td>4252</td>
-                <td>Upgrading IOS-XE to INSTALL mode</td>
-                <td></td>
-            </tr>
-            <tr>
-                <th scope="row">10.82.135.2:2035</th>
-                <td>fede</td>
-                <td>Sending reload command</td>
-                <td></td>
-            </tr>
+            {% for element in workers %}
+                <tr>
+                    <th scope="row">{{element}}</th>
+                    <td>{{workers[element]['thread'].status}}</td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
 </div>

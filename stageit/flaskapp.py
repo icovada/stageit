@@ -19,7 +19,8 @@ def home():
 
 @app.route("/workers")
 def workers():
-    return render_template("workers.html")
+    text = render_template("workers.html", workers=config.worker_array)
+    return text
 
 
 @app.route("/tasks")
