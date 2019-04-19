@@ -2,6 +2,7 @@ from threading import Thread
 import queue
 from stageit.libs.BaseDevice import BaseDevice
 from time import sleep
+import logging
 
 
 class BaseWorker(Thread):
@@ -19,6 +20,7 @@ class BaseWorker(Thread):
         self.status = "Initializing"
 
     def run(self):
+        logging.info("Worker for {}:{} ready".format(self.hostname, self.port))
         while True:
             try:
                 self.status = "Waiting for work"

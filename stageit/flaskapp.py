@@ -1,7 +1,12 @@
+from werkzeug.serving import run_simple
 from flask import Flask, request, stream_with_context, Response
+from flask.logging import default_handler
 import config
 from time import sleep
 import json
+
+app = Flask(__name__)
+app.logger.removeHandler(default_handler)
 
 @app.route("/log/<worker>")
 def log(worker):
@@ -24,6 +29,7 @@ def log(worker):
 
 @app.route("/jobstatus/<worker>")
 def jobstatus(worker):
+    print(config.worker_array)
     return config.worker_array[worker]['thread'].getstatus()
 
 @app.route('/enqueue/<worker>', methods = ['POST'])
@@ -35,4 +41,5 @@ def enqueue(worker):
     config.worker_array[worker]['queue'].put(queueme)
     return "OK"
 
-app = Flask(__name__)
+def run():
+    run_simple('127.0.0.1', 5000, app)

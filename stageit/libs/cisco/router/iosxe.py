@@ -5,6 +5,7 @@ import re
 class IOSXERouter(BaseDevice):
     def upgrade_software(self, version, uri, mode="INSTALL"):
         self.status = "Checking firmware versions"
+        logging.info(self.status)
         firmware = (False, None, None)
         try:
             version = re.findall(r'isr4300-universalk9(?:_npe)*\.(\d*\w*\.\d*\w*\.\d*\w*)\.', uri)[0]
@@ -16,6 +17,7 @@ class IOSXERouter(BaseDevice):
                 self.copy_file(session, 
                     "http://10.82.135.9/ios-xe/isr4200_4300_rommon_169_1r_SPA.pkg")
                 self.status = "Upgrading ROMMON"
+                logging.info(self.status)
                 driver.device.timeout = 600 # Takes at least a good 5 min
                 driver.device.write_channel("upgrade rom-monitor filename bootflash:isr4200_4300_rommon_169_1r_SPA.pkg all\n")
                 driver.device.read_until_prompt_or_pattern("ROMMON upgrade complete")
@@ -50,6 +52,7 @@ class IOSXERouter(BaseDevice):
     def _firmware_ok(self, version, mode='INSTALL'):
         with self.driver(**self.sessiondata) as session:
             self.status = "Checking IOS XE version"
+            logging.info(self.status)
             showver = session.device.send_command("show version")
 
             # This regex parses the following output
@@ -80,6 +83,7 @@ class IOSXERouter(BaseDevice):
     def _check_rommon(self):
         with self.driver(**self.sessiondata) as session:
             self.status = "Checking ROMMON version"
+            logging.info(self.status)
             command = "show rom-monitor RP active\n"
             showrommon = session.device.send_command(command)
 
@@ -94,12 +98,14 @@ class IOSXERouter(BaseDevice):
     def _upgrade_to_install(self, uri):
         with self.driver(**self.sessiondata) as session:
             self.status = "Check file exists"
+            logging.info(self.status)
 
             flashuri = session._gen_full_path(uri.split("/")[-1])
             if not session._check_file_exists(flashuri):
                 self.copy_file(session, uri)
 
             self.status = "Upgrading IOS-XE to INSTALL mode"
+            logging.info(self.status)
             command = "request platform software package expand file {}\n".format(
                 flashuri)
             session.device.timeout = 1800
@@ -126,12 +132,14 @@ class IOSXERouter(BaseDevice):
     def _upgrade_to_bundle(self, uri):
         with self.driver(**self.sessiondata) as session:
             self.status = "Check file exists"
+            logging.info(self.status)
 
             flashuri = session._gen_full_path(uri.split("/")[-1])
             if not session._check_file_exists(flashuri):
                 self.copy_file(session, uri)
 
             self.status = "Upgrading IOS-XE to BUNDLE mode"
+            logging.info(self.status)
             confset = ["no boot system", "boot system {}".format(flashuri)]
             session.device.send_config_set(confset)
             session.device.send_command("wr\n\n\n\n\n\n\n\n")

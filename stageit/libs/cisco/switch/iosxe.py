@@ -6,6 +6,7 @@ class IOSXESwitch(BaseDevice):
 
     def upgrade_software(self, uri, mode="INSTALL"):
         self.status = "Checking firmware version"
+        logging.info(self.status)
         firmware = (False, None, None)
         try:
             version = re.findall(r'cat3k_caa-universalk9(?:ldpe)*\.(\d*\w*\.\d*\w*\.\d*\w*)\.', uri)[0]
@@ -58,12 +59,14 @@ class IOSXESwitch(BaseDevice):
     def _upgrade_to_install(self, uri):
         with self.driver(**self.sessiondata) as session:
             self.status = "Check file exists"
+            logging.info(self.status)
 
             flashuri = session._gen_full_path(uri.split("/")[-1])
             if not session._check_file_exists(flashuri):
                 self.copy_file(session, uri)
 
             self.status = "Upgrading IOS XE to INSTALL mode"
+            logging.info(self.status)
             command = "request platform software package install switch all file {} force new auto-copy\n".format(
                 flashuri)
             session.device.timeout = 1800
@@ -79,12 +82,14 @@ class IOSXESwitch(BaseDevice):
     def _upgrade_to_bundle(self, uri):
         with self.driver(**self.sessiondata) as session:
             self.status = "Check file exists"
+            logging.info(self.status)
 
             flashuri = session._gen_full_path(uri.split("/")[-1])
             if not session._check_file_exists(flashuri):
                 self.copy_file(session, uri)
 
             self.status = "Upgrading IOX-XE to BUNDLE mode"
+            logging.info(self.status)
             confset = ["no boot system", "boot system {}".format(flashuri)]
             session.device.send_config_set(confset)
             session.device.send_command("wr\n\n\n\n\n\n\n")

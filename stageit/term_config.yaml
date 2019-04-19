@@ -3,3 +3,7 @@ terminal_server:
     hostname: 10.82.135.2
     port: 2033
     transport: telnet
+  - terminal:
+    hostname: 10.82.135.2
+    port: 2034
+    transport: telnet
