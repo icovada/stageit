@@ -91,7 +91,7 @@ class IOSXESwitch(BaseDevice):
             if not session._check_file_exists(flashuri):
                 self.copy_file(session, uri)
 
-            self.status = "Upgrading IOX-XE to BUNDLE mode"
+            self.status = "Upgrading IOS-XE to BUNDLE mode"
             logging.info(self.status)
             confset = ["no boot system", "boot system {}".format(flashuri)]
             session.device.send_config_set(confset)
