@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block navbar %}
+<a class="nav-item nav-link active" href="/workers">Workers</a>
+<a class="nav-item nav-link" href="/tasks">Tasks</a>
+<a class="nav-item nav-link" href="/templates">Templates</a>
+{% endblock %}
+
+
+{% block body %}
+<div class="container">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Port</th>
+                <th scope="col">Task</th>
+                <th scope="col">Status</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">10.82.135.2:2033</th>
+                <td>8b3c</td>
+                <td>Waiting for work</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th scope="row">10.82.135.2:2034</th>
+                <td>4252</td>
+                <td>Upgrading IOS-XE to INSTALL mode</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th scope="row">10.82.135.2:2035</th>
+                <td>fede</td>
+                <td>Sending reload command</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

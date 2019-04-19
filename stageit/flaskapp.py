@@ -4,9 +4,37 @@ from flask.logging import default_handler
 import config
 from time import sleep
 import json
+import os
 
-app = Flask(__name__)
+APP_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+TEMPLATE_PATH = os.path.join(APP_PATH, 'stageit/web/templates')
+
+app = Flask(__name__, template_folder=TEMPLATE_PATH)
 app.logger.removeHandler(default_handler)
+
+
+@app.route("/")
+def home():
+    return render_template("layout.html")
+
+
+@app.route("/workers")
+def workers():
+    return render_template("workers.html")
+
+
+@app.route("/tasks")
+def tasks():
+    return render_template("tasks.html")
+
+@app.route("/tasks/<taskid>")
+def taskdetail(taskid):
+    return render_template("tasks/taskdetail.html")
+
+
+@app.route("/templates")
+def templates():
+    return render_template("templates.html")
 
 
 @app.route("/log/<worker>")

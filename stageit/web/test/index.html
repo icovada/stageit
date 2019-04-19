@@ -25,9 +25,11 @@
 
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <a class="nav-item nav-link active" href="#">Workers <span class="sr-only">(current)</span></a>
-        <a class="nav-item nav-link" href="#">Tasks</a>
-        <a class="nav-item nav-link" href="#">Templates</a>
+        {% block navbar %}
+        <a class="nav-item nav-link active" href="/">Workers</a>
+        <a class="nav-item nav-link" href="/tasks">Tasks</a>
+        <a class="nav-item nav-link" href="/templates">Templates</a>
+        {% endblock %}
       </div>
     </div>
   </nav>
