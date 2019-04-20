@@ -18,7 +18,7 @@ if __name__ == '__main__':
                         format='%(asctime)s %(threadName)-12s %(levelname)-8s %(message)s',
                         datefmt='%m-%d %H:%M')
     with open('stageit/term_config.yaml', 'r') as y:
-        configuration = yaml.load(y)
+        configuration = yaml.safe_load(y)
 
     engine = sqlalchemy.create_engine('sqlite:///:memory:', echo=True)
 
