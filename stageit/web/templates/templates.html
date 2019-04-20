@@ -8,12 +8,71 @@
 
 
 {% block body %}
-<div class="container">
-    <div class="alert alert-warning" role="alert">
-        <h4 class="alert-heading">Work in progress</h4>
-        <p>I didn't do this yet</p>
-        <hr>
-        <p class="mb-0">Maybe I should, though</p>
-    </div>
+<h1 class="display-6 content-center pt-md-4 pb-md-4 row justify-content-center">Insert new template</h1>
+<div class="container col col-xl-6 justify-content-center">
+    <form>
+        <div class="form-row mb-3">
+            <div class="col">
+                <label for="templatename">Template Name</label>
+                <input type="text" class="form-control" id="templatename">
+            </div>
+        </div>
+        <div class="form-row mb-3">
+            <div class="col">
+                <label for="vendor">Vendor</label>
+                <select class="custom-select d-block w-100" id="vendor" required="">
+                    <option value="">Cisco IOS/IOS-XE</option>
+                    <option>Cisco Nexus</option>
+                </select>
+            </div>
+        </div>
+        <hr class="pt-3">
+        <h4 class="mb-3">Final configuration details</h4>
+        <div class="form-row mb-3">
+            <div class="col">
+                <label for="templatefile">Template file</label>
+                <input type="text" class="form-control" id="templatefile" aria-describedby="templatefileHelp">
+                <small id="templatefileHelp" class="form-text text-muted">Leave empty to leave final device config
+                    empty</small>
+            </div>
+        </div>
+        <div class="form-row mb-3">
+            <div class="col">
+                <label for="templateyaml">Template values</label>
+                <textarea class="form-control text-monospace" id="templateyaml" rows="5"
+                    aria-describedby="templateyamlHelp"></textarea>
+                <small id="templateyamlHelp" class="form-text text-muted">Insert variables required by your template in
+                    yaml format</small>
+            </div>
+        </div>
+
+        <hr class="pt-3">
+        <h4 class="mb-3">Software version</h4>
+        <div class="form-row mb-3">
+            <div class="col">
+                <label for="firmwarepath">Firmware file path</label>
+                <input type="url" class="form-control" id="templatefile" aria-describedby="firmwarepathHelp">
+                <small id="firmwarepathHelp" class="form-text text-muted">Insert URI to file image. Leave empty to skip
+                    image check</small>
+            </div>
+        </div>
+
+        <hr class="pt-3">
+        <h4 class="mb-3">Post-staging actions</h4>
+        <div class="form-row mb-3">
+            <div class="col">
+                <label for="poststaging">Post-staging</label>
+                <textarea class="form-control text-monospace" id="poststaging" rows="5"
+                    aria-describedby="poststagingHelp"></textarea>
+                <small id="poststagingHelp" class="form-text text-muted">Insert commands to be run after previous tasks
+                    are finished. Enter one per line</small>
+            </div>
+        </div>
+
+
+
+        <hr class="mb-4">
+        <button class="btn btn-primary btn-lg btn-block" type="submit">Save template</button>
+    </form>
 </div>
 {% endblock %}
