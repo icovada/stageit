@@ -8,35 +8,40 @@
 
 
 {% block body %}
-<h1 class="container col col-xl-6 mb-3 mt-3 md-auto display-4">Insert new template</h1>
-<div class="container col col-xl-6 justify-content-center">
+<h1 class="container col col-xl-8 mb-3 mt-3 md-auto display-4">Insert new template</h1>
+<div class="container col col-xl-8 justify-content-center pb-5">
     <form>
         <div class="form-group mb-3">
             <label for="templatename">Template Name</label>
             <input type="text" class="form-control" id="templatename">
         </div>
         <div class="form-group mb-3">
-            <label for="vendor">Vendor</label>
-            <select class="custom-select d-block w-100" id="vendor" required="">
-                <option value="">Cisco IOS/IOS-XE</option>
+            <label for="vendor">Platform</label>
+            <select class="custom-select d-block w-100" id="platform" required="">
+                <option value="">-- None --</option>
+                <option>Cisco IOS/IOS-XE</option>
                 <option>Cisco Nexus</option>
             </select>
         </div>
         <hr class="pt-3">
         <h4 class="mb-3">Final configuration details</h4>
-        <div class="form-group mb-3">
-            <label for="templatefile">Template file</label>
-            <input type="text" class="form-control" id="templatefile" aria-describedby="templatefileHelp">
-            <small id="templatefileHelp" class="form-text text-muted">Leave empty to leave final device config
-                empty</small>
+        <div class="form-row">
+            <div class="form-group col-xl-6 mb-3">
+                <label for="templatefile">Template</label>
+                <textarea class="form-control text-monospace" id="templatefile" rows="6"
+                    aria-describedby="templatefileHelp"></textarea>
+                <small id="templatefileHelp" class="form-text text-muted">Leave empty to leave final device config
+                    empty.<br />Pure text or Jinja2 templates accepted</small>
+            </div>
+            <div class="form-group col-xl-6 mb-3">
+                <label for="templateyaml">Template values</label>
+                <textarea class="form-control text-monospace" id="templateyaml" rows="6"
+                    aria-describedby="templateyamlHelp"></textarea>
+                <small id="templateyamlHelp" class="form-text text-muted">Insert variables required by your template in
+                    yaml format</small>
+            </div>
         </div>
-        <div class="form-group mb-3">
-            <label for="templateyaml">Template values</label>
-            <textarea class="form-control text-monospace" id="templateyaml" rows="5"
-                aria-describedby="templateyamlHelp"></textarea>
-            <small id="templateyamlHelp" class="form-text text-muted">Insert variables required by your template in
-                yaml format</small>
-        </div>
+        <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#rendermodal">Test!</button>
 
         <hr class="pt-3">
         <h4 class="mb-3">Software version</h4>
@@ -64,4 +69,49 @@
         <button class="btn btn-primary btn-lg btn-block" type="submit">Save template</button>
     </form>
 </div>
+
+<div class="modal fade" id="rendermodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Recipient:</label>
+                        <input type="text" class="form-control" id="recipient-name">
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">Message:</label>
+                        <textarea class="form-control" id="message-text"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Send message</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+$('#rendermodal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) // Button that triggered the modal
+    var recipient = button.data('whatever') // Extract info from data-* attributes
+    // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+    // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+    var modal = $(this)
+    modal.find('.modal-title').text('New message to ' + recipient)
+    modal.find('.modal-body input').val(recipient)
+  })
+</script>
 {% endblock %}
