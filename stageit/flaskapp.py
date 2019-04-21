@@ -6,6 +6,7 @@ from time import sleep
 import json
 import yaml
 import os
+from jinja2 import Environment, BaseLoader
 
 APP_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATE_PATH = os.path.join(APP_PATH, 'stageit/web/templates')
@@ -43,7 +44,11 @@ def modal():
 
 @app.route("/convertjinja", methods = ['POST'])
 def convertjinja():
-    return "Hello"
+    rtemplate = Environment(loader=BaseLoader).from_string(request.form["template"])
+    yamlvalues = yaml.load(request.form["values"])
+    if yamlvalues is None:
+        yamlvalues = {}
+    return rtemplate.render(**yamlvalues).replace("\n","<br/>")
 
 @app.route("/log/<worker>")
 def log(worker):
