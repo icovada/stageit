@@ -4,6 +4,7 @@ from flask.logging import default_handler
 import config
 from time import sleep
 import json
+import yaml
 import os
 
 APP_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -36,6 +37,13 @@ def taskdetail(taskid):
 def templates():
     return render_template("templates.html")
 
+@app.route("/modal")
+def modal():
+    return render_template("test/modal.html")
+
+@app.route("/convertjinja", methods = ['POST'])
+def convertjinja():
+    return "Hello"
 
 @app.route("/log/<worker>")
 def log(worker):
