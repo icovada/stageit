@@ -29,6 +29,7 @@ def workers():
 def tasks():
     return render_template("tasks.html")
 
+
 @app.route("/tasks/<taskid>")
 def taskdetail(taskid):
     return render_template("tasks/taskdetail.html")
@@ -38,17 +39,25 @@ def taskdetail(taskid):
 def templates():
     return render_template("templates.html")
 
+
 @app.route("/modal")
 def modal():
     return render_template("test/modal.html")
 
-@app.route("/convertjinja", methods = ['POST'])
+
+@app.route("/api/addtemplate", methods=['POST'])
+def apiaddtemplate():
+    return "Got this bro"
+
+@app.route("/convertjinja", methods=['POST'])
 def convertjinja():
-    rtemplate = Environment(loader=BaseLoader).from_string(request.form["template"])
+    rtemplate = Environment(loader=BaseLoader).from_string(
+        request.form["template"])
     yamlvalues = yaml.load(request.form["values"])
     if yamlvalues is None:
         yamlvalues = {}
-    return rtemplate.render(**yamlvalues).replace("\n","<br/>")
+    return rtemplate.render(**yamlvalues).replace("\n", "<br/>")
+
 
 @app.route("/log/<worker>")
 def log(worker):
