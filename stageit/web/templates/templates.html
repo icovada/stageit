@@ -10,14 +10,14 @@
 {% block body %}
 <h1 class="container col col-xl-8 mb-3 mt-3 md-auto display-4">Insert new template</h1>
 <div class="container col col-xl-8 justify-content-center pb-5">
-    <form>
+    <form class="needs-validation" action="/api/addtemplate" id="templateform" method="post">
         <div class="form-group mb-3">
             <label for="templatename">Template Name</label>
-            <input type="text" class="form-control" id="templatename">
+            <input type="text" class="form-control" id="templatename" required>
         </div>
         <div class="form-group mb-3">
             <label for="vendor">Platform</label>
-            <select class="custom-select d-block w-100" id="platform" required="">
+            <select class="custom-select d-block w-100" id="platform" required>
                 <option value="">-- None --</option>
                 <option>Cisco IOS/IOS-XE</option>
                 <option>Cisco Nexus</option>
@@ -105,7 +105,10 @@
                 $('#templaterender').collapse('hide')
                 $('#templaterenderview').html("");
                 $("#templaterenderspinner").show()
-                $('#renderalertspace').append('<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Holy guacamole!</strong> You should check in on some of those fields below.                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                $('#renderalertspace').append('<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+                                              '<strong>Error</strong> Check whether your template or your data are incorrect' +
+                                              '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                                              '<span aria-hidden="true">&times;</span></button></div>')
             }
         });
     })
@@ -115,6 +118,21 @@
         $('#templaterenderview').html("");
     })
 
+    var form = $('#templateform')
+
+    form.submit(function (event) {
+        event.preventDefault();
+        var formData = $(form).serialize();
+        $.ajax({
+            type: 'POST',
+            url: $(form).attr('action'),
+            data: formData
+        }).done(function (response) {
+            alert(response);
+        }).fail(function (data) {
+            alert(response);
+        });
+    });
 
 </script>
 {% endblock %}
