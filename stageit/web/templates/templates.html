@@ -89,7 +89,7 @@
 
 {% block script %}
 <script>
-    $("#templaterender").on('show.bs.collapse', function () {
+    $("#templaterender").on('shown.bs.collapse', function () {
         $.ajax({
             type: "POST",
             url: "convertjinja",
@@ -98,11 +98,11 @@
                 values: $('#templateyaml').val()
             },
             success: function (msg) {
-                $('#templaterenderview').html(msg);
                 $("#templaterenderspinner").hide()
+                $('#templaterenderview').html(msg);
             },
             error: function () {
-                $('#templaterenderview').collapse()
+                $('#templaterender').collapse('hide')
                 $('#templaterenderview').html("");
                 $("#templaterenderspinner").show()
                 $('#renderalertspace').append('<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Holy guacamole!</strong> You should check in on some of those fields below.                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
@@ -111,9 +111,8 @@
     })
 
     $("#templaterender").on('hidden.bs.collapse', function () {
-        $('#templaterenderview').html("");
         $("#templaterenderspinner").show()
-
+        $('#templaterenderview').html("");
     })
 
 
