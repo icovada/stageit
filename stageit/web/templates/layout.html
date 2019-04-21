@@ -15,7 +15,7 @@
 
 <body>
     <nav class="navbar navbar-expand-md navbar-dark" style="background-color: #455565">
-        <a class="navbar-brand" href="/" style="background-color: #69be28;">
+        <a class="navbar-brand row" href="/" style="background-color: #69be28;">
             <img src="https://www.dimensiondata.com/Areas/DDCorporate/assets/images/brand/logo-dimension-data.svg"
                 height="30" alt="">StageIT
         </a>
@@ -43,7 +43,9 @@
         </div>
     </div>
     {% endblock %}
+    </div>
 
+    {% block script %}{% endblock %}
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
