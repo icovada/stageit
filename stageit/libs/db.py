@@ -11,7 +11,7 @@ Base = declarative_base()
 class Templates(Base):
     __tablename__ = 'templates'
     id = Column(String(36), primary_key=True)
-    name = Column(String(50), nullable=False)
+    name = Column(String(50), nullable=False, unique=True)
     platform = Column(String(30), nullable=False)
     template = Column(String(20000))
     templatevalues = Column(BLOB(4096))

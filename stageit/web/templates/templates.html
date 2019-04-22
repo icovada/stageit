@@ -82,7 +82,7 @@
 
         <hr class="mb-4">
         <button class="btn btn-primary btn-lg btn-block" type="submit">Save template</button>
-        <div id="submitalertspace"></div>
+        <div id="submitalertspace" class="my-3"></div>
     </form>
 </div>
 
@@ -137,8 +137,11 @@
                     '<strong>Submitted</strong> Task <a href="/templates/' + response + '">' + response + '</a> was submitted' +
                     '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
                     '<span aria-hidden="true">&times;</span></button></div>')
-        }).fail(function (data) {
-            alert(response);
+        }).fail(function (response) {
+            $('#submitalertspace').append('<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+                    '<strong>Error</strong> There was an error submitting the task. Most likely it has a duplicate name' +
+                    '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                    '<span aria-hidden="true">&times;</span></button></div>')
         });
     });
 
