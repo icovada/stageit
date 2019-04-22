@@ -3,7 +3,7 @@ import sys
 from sqlalchemy import Column, ForeignKey, Integer, String, BLOB, DATETIME, MetaData, Table
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, MetaData
 
 Base = declarative_base()
 
@@ -12,9 +12,11 @@ class Templates(Base):
     __tablename__ = 'templates'
     id = Column(String(36), primary_key=True)
     name = Column(String(50), nullable=False)
-    folder = Column(ForeignKey('templates.id'))
-    templatefile = Column(String(50))
-    templatedata = Column(BLOB(4096))
+    platform = Column(String(30), nullable=False)
+    template = Column(String(20000))
+    templatevalues = Column(BLOB(4096))
+    filepath = Column(String(256))
+    poststaging = Column(String(2048))
 
 
 class History(Base):
@@ -32,7 +34,14 @@ class History(Base):
 engine = create_engine('sqlite:///stagedb.db')
 conn = engine.connect()
 
+md = MetaData(engine)
+
+
 
 if __name__ == '__main__':
-    print("Running as main, creating new database.")
     Base.metadata.create_all(engine)
+    print("Running as main, creating new database.")
+else:
+    md.reflect()
+    history = md.tables['history']
+    templates = md.tables['templates']
