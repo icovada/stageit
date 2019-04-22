@@ -16,6 +16,7 @@
         {% for col in header%}
         <th scope="col">{{col}}</th>
         {% endfor %}
+        <th scope="col">Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -24,7 +25,17 @@
         <th scope="row">{{row[0]}}</th>
         <td>{{row[1]}}</td>
         <td>{{row[2]}}</td>
-        <td>{{row[3]}}</td>
+        <td><div class="dropdown">
+                <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Dropdown link
+                </a>
+              
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                  <a class="dropdown-item" href="#">Action</a>
+                  <a class="dropdown-item" href="#">Another action</a>
+                  <a class="dropdown-item" href="#">Something else here</a>
+                </div>
+              </div></td>
       </tr>
       {% endfor %}
     </tbody>
