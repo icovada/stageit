@@ -58,7 +58,7 @@ def apiaddtemplate():
     print(argdict)
     ins = db.templates.insert().values(**argdict)
     db.conn.execute(ins)
-    return str(print(argdict))
+    return argdict['id']
 
 
 @app.route("/convertjinja", methods=['POST'])

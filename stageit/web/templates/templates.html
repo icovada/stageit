@@ -82,6 +82,7 @@
 
         <hr class="mb-4">
         <button class="btn btn-primary btn-lg btn-block" type="submit">Save template</button>
+        <div id="submitalertspace"></div>
     </form>
 </div>
 
@@ -94,8 +95,8 @@
             type: "POST",
             url: "convertjinja",
             data: {
-                template: $('#templatefile').val(),
-                values: $('#templateyaml').val()
+                template: $('#template').val(),
+                values: $('#templatevalues').val()
             },
             success: function (msg) {
                 $("#templaterenderspinner").hide()
@@ -132,7 +133,10 @@
                 poststaging: $('#poststaging').val()
             }
         }).done(function (response) {
-            alert(response);
+            $('#submitalertspace').append('<div class="alert alert-success alert-dismissible fade show" role="alert">' +
+                    '<strong>Submitted</strong> Task <a href="/templates/' + response + '">' + response + '</a> was submitted' +
+                    '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                    '<span aria-hidden="true">&times;</span></button></div>')
         }).fail(function (data) {
             alert(response);
         });
