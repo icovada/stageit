@@ -11,7 +11,7 @@ from libs.BaseWorker import BaseWorker
 import config
 
 
-def main(engine):
+def main():
     logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s %(threadName)-12s %(levelname)-8s %(message)s',
                         datefmt='%m-%d %H:%M')
@@ -34,9 +34,7 @@ def main(engine):
 
 if __name__ == '__main__':
     import flaskapp
-    import sqlalchemy
-
-    engine = sqlalchemy.create_engine('sqlite:///appdb.sqlite', echo=True)
-
-    main(engine)
+    import libs.db
+    
+    main()
     flaskapp.run()
