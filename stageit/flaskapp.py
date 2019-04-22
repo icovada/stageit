@@ -7,6 +7,9 @@ import json
 import yaml
 import os
 from jinja2 import Environment, BaseLoader
+from uuid import uuid4 as uuid
+import libs.db as db
+import pickle
 
 APP_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATE_PATH = os.path.join(APP_PATH, 'stageit/web/templates')
@@ -47,7 +50,16 @@ def modal():
 
 @app.route("/api/addtemplate", methods=['POST'])
 def apiaddtemplate():
-    return "Got this bro"
+    argdict = request.form.copy()
+    argdict['id'] = str(uuid())
+    del argdict['templatevalues']
+    argdict['templatevalues'] = pickle.dumps(yaml.load(request.form['templatevalues']))
+    print("VARS")
+    print(argdict)
+    ins = db.templates.insert().values(**argdict)
+    db.conn.execute(ins)
+    return str(print(argdict))
+
 
 @app.route("/convertjinja", methods=['POST'])
 def convertjinja():
@@ -90,7 +102,6 @@ def enqueue(worker):
     queueme = request.form.copy()
     queueme['tempconfig'] = json.loads(request.form['tempconfig'])
     queueme['finalconfig'] = json.loads(request.form['finalconfig'])
-
     config.worker_array[worker]['queue'].put(queueme)
     return "OK"
 

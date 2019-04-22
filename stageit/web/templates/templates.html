@@ -12,11 +12,11 @@
 <div class="container col col-xl-8 justify-content-center pb-5">
     <form class="needs-validation" action="/api/addtemplate" id="templateform" method="post">
         <div class="form-group mb-3">
-            <label for="templatename">Template Name</label>
-            <input type="text" class="form-control" id="templatename" required>
+            <label for="name">Template Name</label>
+            <input type="text" class="form-control" id="name" required>
         </div>
         <div class="form-group mb-3">
-            <label for="vendor">Platform</label>
+            <label for="platform">Platform</label>
             <select class="custom-select d-block w-100" id="platform" required>
                 <option value="">-- None --</option>
                 <option>Cisco IOS/IOS-XE</option>
@@ -27,17 +27,17 @@
         <h4 class="mb-3">Final configuration details</h4>
         <div class="form-row">
             <div class="form-group col-xl-6 mb-3">
-                <label for="templatefile">Template</label>
-                <textarea class="form-control text-monospace" id="templatefile" rows="6"
-                    aria-describedby="templatefileHelp"></textarea>
-                <small id="templatefileHelp" class="form-text text-muted">Leave empty to leave final device config
+                <label for="template">Template</label>
+                <textarea class="form-control text-monospace" id="template" rows="6"
+                    aria-describedby="templateHelp"></textarea>
+                <small id="templateHelp" class="form-text text-muted">Leave empty to leave final device config
                     empty.<br />Pure text or Jinja2 templates accepted</small>
             </div>
             <div class="form-group col-xl-6 mb-3">
-                <label for="templateyaml">Template values</label>
-                <textarea class="form-control text-monospace" id="templateyaml" rows="6"
-                    aria-describedby="templateyamlHelp"></textarea>
-                <small id="templateyamlHelp" class="form-text text-muted">Insert variables required by your template in
+                <label for="templatevalues">Template values</label>
+                <textarea class="form-control text-monospace" id="templatevalues" rows="6"
+                    aria-describedby="templatevaluesHelp"></textarea>
+                <small id="templatevaluesHelp" class="form-text text-muted">Insert variables required by your template in
                     yaml format</small>
             </div>
         </div>
@@ -61,9 +61,9 @@
         <hr class="pt-3">
         <h4 class="mb-3">Software version</h4>
         <div class="form-group mb-3">
-            <label for="firmwarepath">Firmware file path</label>
-            <input type="url" class="form-control" id="templatefile" aria-describedby="firmwarepathHelp">
-            <small id="firmwarepathHelp" class="form-text text-muted">Insert URI to file image. Leave empty to skip
+            <label for="filepath">Firmware file path</label>
+            <input type="url" class="form-control" id="filepath" aria-describedby="filepathHelp">
+            <small id="filepathHelp" class="form-text text-muted">Insert URI to file image. Leave empty to skip
                 image check</small>
             </dv>
         </div>
@@ -118,15 +118,19 @@
         $('#templaterenderview').html("");
     })
 
-    var form = $('#templateform')
-
-    form.submit(function (event) {
+    $('#templateform').submit(function (event) {
         event.preventDefault();
-        var formData = $(form).serialize();
         $.ajax({
             type: 'POST',
-            url: $(form).attr('action'),
-            data: formData
+            url: $('#templateform').attr('action'),
+            data: {
+                name: $('#name').val(),
+                platform: $('#platform').val(),
+                template: $('#template').val(),
+                templatevalues: $('#templatevalues').val(),
+                filepath: $('#filepath').val(),
+                poststaging: $('#poststaging').val()
+            }
         }).done(function (response) {
             alert(response);
         }).fail(function (data) {
