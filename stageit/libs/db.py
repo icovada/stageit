@@ -29,8 +29,10 @@ class History(Base):
 
 # Create an engine that stores data in the local directory's
 # sqlalchemy_example.db file.
-engine = create_engine('sqlite:///sqlalchemy_example.db')
+engine = create_engine('sqlite:///stagedb.db')
+conn = engine.connect()
 
 
-if '__name__' = '__main__':
+if __name__ == '__main__':
+    print("Running as main, creating new database.")
     Base.metadata.create_all(engine)
