@@ -34,7 +34,6 @@ def main():
 
 if __name__ == '__main__':
     import flaskapp
-    import libs.db
     
     main()
     flaskapp.run()
