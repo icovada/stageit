@@ -10,6 +10,7 @@ from jinja2 import Environment, BaseLoader
 from uuid import uuid4 as uuid
 import libs.db as db
 import pickle
+from sqlalchemy.sql.expression import select
 
 APP_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATE_PATH = os.path.join(APP_PATH, 'stageit/web/templates')
@@ -30,7 +31,14 @@ def workers():
 
 @app.route("/tasks")
 def tasks():
-    return render_template("tasks.html")
+    templatecolumns = db.templates.columns
+    query = select((templatecolumns['id'],
+                    templatecolumns['name'],
+                    templatecolumns['platform']))
+    res = db.conn.execute(query)
+    allrows = res.fetchall()
+
+    return render_template("tasks.html", header=("Id", "Name", "Platform"), table=allrows)
 
 
 @app.route("/tasks/<taskid>")

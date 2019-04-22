@@ -8,12 +8,26 @@
 
 
 {% block body %}
-<div class="container">
-    <div class="alert alert-warning" role="alert">
-        <h4 class="alert-heading">Work in progress</h4>
-        <p>I didn't do this yet</p>
-        <hr>
-        <p class="mb-0">Maybe I should, though</p>
-    </div>
-</div>
+<h1 class="container col col-xl-8 mb-3 mt-3 md-auto display-4">Template List</h1>
+<div class="container col col-xl-8 justify-content-center pb-5">
+<table class="table">
+    <thead>
+      <tr>
+        {% for col in header%}
+        <th scope="col">{{col}}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in table %}
+      <tr>
+        <th scope="row">{{row[0]}}</th>
+        <td>{{row[1]}}</td>
+        <td>{{row[2]}}</td>
+        <td>{{row[3]}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
 {% endblock %}
