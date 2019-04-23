@@ -5,7 +5,7 @@ import logging
 
 class IOSSwitch(BaseDevice):
 
-    def upgrade_software(self, uri, version = 'BUNDLE'):
+    def upgrade_software(self, uri, mode='BUNDLE'):
         self.status = "Checking firmware version"
         logging.info(self.status)
         firmware = (False, None, None)
@@ -41,7 +41,8 @@ class IOSSwitch(BaseDevice):
                 return (False, curversion, "BUNDLE")
 
     def _upgrade_to_install(self, uri):
-        raise Exception("IOS does not have install mode. You should not have reached this")
+        raise Exception(
+            "IOS does not have install mode. You should not have reached this")
 
     def _upgrade_to_bundle(self, uri):
         with self.driver(**self.sessiondata) as session:
