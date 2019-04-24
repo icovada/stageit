@@ -11,10 +11,17 @@
 <h1 class="container col col-xl-8 mb-3 mt-3 md-auto display-4">Insert new template</h1>
 <div class="container col col-xl-8 justify-content-center pb-5">
     <form class="needs-validation" action="/api/addtemplate" id="templateform" method="post">
-        <div class="form-group mb-3">
-            <label for="name">Template Name</label>
-            <input type="text" class="form-control" id="name" required>
+        <div class="form-row">
+            <div class="form-group col-xl-6 mb-3">
+                <label for="name">Name</label>
+                <input type="text" class="form-control" id="name" required>
+            </div>
+            <div class="form-group col-xl-6 mb-3">
+                <label for="description">Description</label>
+                <input type="text" class="form-control" id="description" required>
+            </div>
         </div>
+
         <div class="form-group mb-3">
             <label for="platform">Platform</label>
             <select class="custom-select d-block w-100" id="platform" required>
@@ -94,7 +101,7 @@
     $("#templaterender").on('shown.bs.collapse', function () {
         $.ajax({
             type: "POST",
-            url: "convertjinja",
+            url: "/api/convertjinja",
             data: {
                 template: $('#template').val(),
                 values: $('#templatevalues').val()
@@ -137,6 +144,7 @@
             url: $('#templateform').attr('action'),
             data: {
                 name: $('#name').val(),
+                description: $('description').val(),
                 platform: $('#platform').val(),
                 template: $('#template').val(),
                 templatevalues: $('#templatevalues').val(),

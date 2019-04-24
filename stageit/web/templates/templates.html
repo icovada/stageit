@@ -22,20 +22,9 @@
     <tbody>
       {% for row in table %}
       <tr>
-        <th scope="row"><a href="/templates/{{row[0]}}">{{row[0][:5]}}</a></th>
+        <th scope="row"><a href="/templates/{{row[0]}}">{{row[1]}}</a></th>
         <td>{{row[1]}}</td>
-        <td>{{row[2]}}</td>
-        <td><div class="dropdown">
-                <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Dropdown link
-                </a>
-              
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                  <a class="dropdown-item" href="#">Action</a>
-                  <a class="dropdown-item" href="#">Another action</a>
-                  <a class="dropdown-item" href="#">Something else here</a>
-                </div>
-              </div></td>
+        <td><button type="button" class="btn btn-success btn-sm">Create task</button> <button type="button" class="btn btn-danger btn-sm">Delete</button></td>
       </tr>
       {% endfor %}
     </tbody>

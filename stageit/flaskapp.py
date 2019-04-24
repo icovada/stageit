@@ -36,11 +36,11 @@ def tasks():
     templatecolumns = db.templates.columns
     query = select((templatecolumns['id'],
                     templatecolumns['name'],
-                    templatecolumns['platform']))
+                    templatecolumns['description']))
     res = db.conn.execute(query)
     allrows = res.fetchall()
 
-    return render_template("templates.html", header=("Id", "Name", "Platform"), table=allrows)
+    return render_template("templates.html", header=("Name", "Description"), table=allrows)
 
 
 @app.route("/tasks/<taskid>")
@@ -50,7 +50,7 @@ def taskdetail(taskid):
 
 @app.route("/templates/add")
 def templates():
-    return render_template("addtemplates.html")
+    return render_template("addtemplate.html")
 
 
 @app.route("/modal")
@@ -71,7 +71,7 @@ def apiaddtemplate():
     return argdict['id']
 
 
-@app.route("/convertjinja", methods=['POST'])
+@app.route("/api/convertjinja", methods=['POST'])
 def convertjinja():
     try:
         rtemplate = Environment(loader=BaseLoader).from_string(
