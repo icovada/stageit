@@ -22,7 +22,7 @@
     <tbody>
       {% for row in table %}
       <tr>
-        <th scope="row">{{row[0]}}</th>
+        <th scope="row"><a href="/templates/{{row[0]}}">{{row[0][:5]}}</a></th>
         <td>{{row[1]}}</td>
         <td>{{row[2]}}</td>
         <td><div class="dropdown">
