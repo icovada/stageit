@@ -76,15 +76,16 @@ class BaseWorker(Thread):
     def stageit(self):
         self.status = 'Working'
         self.driver.checkavailable(1000)
-        try:
-            self.driver.upgrade_software(version=self.work['version'],
-                                         uri=self.work['uri'],
-                                         mode=self.work['mode'])
-        except ConnectionError:
-            self.driver.load_temp_config(**self.work['tempconfig'])
-            sleep(3)
-            self.driver.upgrade_software(version=self.work['version'],
-                                         uri=self.work['uri'],
-                                         mode=self.work['mode'])
+
+        # Skip upgrade if file path not provided
+        if self.work['uri'] != '':
+            try:
+                self.driver.upgrade_software(uri=self.work['uri'],
+                                             mode=self.work['mode'])
+            except ConnectionError:
+                self.driver.load_temp_config(**self.work['tempconfig'])
+                sleep(3)
+                self.driver.upgrade_software(uri=self.work['uri'],
+                                             mode=self.work['mode'])
 
         self.driver.load_final_config(**self.work['finalconfig'])

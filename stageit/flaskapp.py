@@ -1,5 +1,5 @@
 from werkzeug.serving import run_simple
-from flask import Flask, request, stream_with_context, Response, render_template
+from flask import Flask, request, stream_with_context, Response, render_template, abort, jsonify
 from flask.logging import default_handler
 import config
 from time import sleep
@@ -7,10 +7,12 @@ import json
 import yaml
 import os
 from jinja2 import Environment, BaseLoader
+import jinja2
 from uuid import uuid4 as uuid
 import libs.db as db
 import pickle
 from sqlalchemy.sql.expression import select
+from uuid import uuid4 as uuid
 
 APP_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATE_PATH = os.path.join(APP_PATH, 'stageit/web/templates')
@@ -71,12 +73,18 @@ def apiaddtemplate():
 
 @app.route("/convertjinja", methods=['POST'])
 def convertjinja():
-    rtemplate = Environment(loader=BaseLoader).from_string(
-        request.form["template"])
+    try:
+        rtemplate = Environment(loader=BaseLoader).from_string(
+            request.form["template"])
+    except jinja2.exceptions.TemplateSyntaxError as e:
+        return jsonify({'status':'Error', 'message':str(e)})
+
     yamlvalues = yaml.load(request.form["values"])
     if yamlvalues is None:
         yamlvalues = {}
-    return rtemplate.render(**yamlvalues).replace("\n", "<br/>")
+    
+    result = {'status':'OK', 'message': rtemplate.render(**yamlvalues).replace("\n", "<br/>")}
+    return jsonify(result)
 
 
 @app.route("/log/<worker>")

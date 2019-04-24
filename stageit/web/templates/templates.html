@@ -37,7 +37,8 @@
                 <label for="templatevalues">Template values</label>
                 <textarea class="form-control text-monospace" id="templatevalues" rows="6"
                     aria-describedby="templatevaluesHelp"></textarea>
-                <small id="templatevaluesHelp" class="form-text text-muted">Insert variables required by your template in
+                <small id="templatevaluesHelp" class="form-text text-muted">Insert variables required by your template
+                    in
                     yaml format</small>
             </div>
         </div>
@@ -99,17 +100,27 @@
                 values: $('#templatevalues').val()
             },
             success: function (msg) {
-                $("#templaterenderspinner").hide()
-                $('#templaterenderview').html(msg);
+                if (msg['status'] == 'OK') {
+                    $("#templaterenderspinner").hide()
+                    $('#templaterenderview').html(msg['message']);
+                } else {
+                    $('#templaterender').collapse('hide')
+                    $('#templaterenderview').html("");
+                    $("#templaterenderspinner").show()
+                    $('#renderalertspace').append('<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+                        '<strong>Error</strong> ' + msg['message'] +
+                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                        '<span aria-hidden="true">&times;</span></button></div>')
+                }
             },
             error: function () {
                 $('#templaterender').collapse('hide')
                 $('#templaterenderview').html("");
                 $("#templaterenderspinner").show()
                 $('#renderalertspace').append('<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
-                                              '<strong>Error</strong> Check whether your template or your data are incorrect' +
-                                              '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-                                              '<span aria-hidden="true">&times;</span></button></div>')
+                    '<strong>Error</strong> General error' +
+                    '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                    '<span aria-hidden="true">&times;</span></button></div>')
             }
         });
     })
@@ -134,14 +145,14 @@
             }
         }).done(function (response) {
             $('#submitalertspace').append('<div class="alert alert-success alert-dismissible fade show" role="alert">' +
-                    '<strong>Submitted</strong> Task <a href="/templates/' + response + '">' + response + '</a> was submitted' +
-                    '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-                    '<span aria-hidden="true">&times;</span></button></div>')
+                '<strong>Submitted</strong> Task <a href="/templates/' + response + '">' + response + '</a> was submitted' +
+                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                '<span aria-hidden="true">&times;</span></button></div>')
         }).fail(function (response) {
             $('#submitalertspace').append('<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
-                    '<strong>Error</strong> There was an error submitting the task. Most likely it has a duplicate name' +
-                    '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-                    '<span aria-hidden="true">&times;</span></button></div>')
+                '<strong>Error</strong> There was an error submitting the task. Most likely it has a duplicate name' +
+                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                '<span aria-hidden="true">&times;</span></button></div>')
         });
     });
 
