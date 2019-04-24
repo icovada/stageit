@@ -31,7 +31,7 @@ def workers():
     return text
 
 
-@app.route("/tasks")
+@app.route("/templates")
 def tasks():
     templatecolumns = db.templates.columns
     query = select((templatecolumns['id'],
@@ -40,7 +40,7 @@ def tasks():
     res = db.conn.execute(query)
     allrows = res.fetchall()
 
-    return render_template("tasks.html", header=("Id", "Name", "Platform"), table=allrows)
+    return render_template("templates.html", header=("Id", "Name", "Platform"), table=allrows)
 
 
 @app.route("/tasks/<taskid>")
