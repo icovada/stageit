@@ -50,7 +50,7 @@ def taskdetail(taskid):
 
 @app.route("/templates/add")
 def templates():
-    return render_template("addtemplate.html")
+    return render_template("templates/add.html")
 
 
 @app.route("/modal")
