@@ -48,9 +48,9 @@ def taskdetail(taskid):
     return render_template("tasks/taskdetail.html")
 
 
-@app.route("/templates")
+@app.route("/templates/add")
 def templates():
-    return render_template("templates.html")
+    return render_template("addtemplates.html")
 
 
 @app.route("/modal")
