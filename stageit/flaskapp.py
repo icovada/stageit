@@ -43,6 +43,21 @@ def tasks():
     return render_template("templates.html", header=("Name", "Description"), table=allrows)
 
 
+@app.route("/templates/<uuid>/<action>")
+def templatemanager(uuid, action):
+    if action == 'create':
+        templatecolumns = db.templates.columns
+        query = select(templatecolumns).where(templatecolumns['id'] == uuid)
+        res = db.conn.execute(query)
+        dbdata = res.fetchone()
+        templatedict = dict(zip(dbdata.keys(), dbdata.values()))
+        templatedict['templatevalues'] = yaml.dump(pickle.loads(templatedict['templatevalues']))
+
+        return render_template("templates/createtask.html", uuid=uuid, **templatedict)
+    if action == 'add':
+
+
+
 @app.route("/tasks/<taskid>")
 def taskdetail(taskid):
     return render_template("tasks/taskdetail.html")
@@ -60,6 +75,18 @@ def modal():
 
 @app.route("/api/addtemplate", methods=['POST'])
 def apiaddtemplate():
+    argdict = request.form.copy()
+    argdict['id'] = str(uuid())
+    del argdict['templatevalues']
+    argdict['templatevalues'] = pickle.dumps(yaml.load(request.form['templatevalues']))
+    print("VARS")
+    print(argdict)
+    ins = db.templates.insert().values(**argdict)
+    db.conn.execute(ins)
+    return argdict['id']
+
+@app.route("/api/addtask", methods=['POST'])
+def apiaddtask():
     argdict = request.form.copy()
     argdict['id'] = str(uuid())
     del argdict['templatevalues']

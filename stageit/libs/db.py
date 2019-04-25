@@ -30,6 +30,13 @@ class History(Base):
     rundata = Column(BLOB(1024000))
 
 
+class Tasks(Base):
+    __tablename__ = 'tasks'
+    id = Column(String(36), primary_key=True)
+    fktemplate = Column(String(36), ForeignKey('templates.id'))
+    templatevalues = Column(BLOB(4096))
+
+
 # Create an engine that stores data in the local directory's
 # sqlalchemy_example.db file.
 engine = create_engine('sqlite:///stagedb.db')
