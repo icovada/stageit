@@ -34,7 +34,7 @@ class Tasks(Base):
     __tablename__ = 'tasks'
     id = Column(String(36), primary_key=True)
     fktemplate = Column(String(36), ForeignKey('templates.id'))
-    templatevalues = Column(BLOB(4096))
+    taskvalues = Column(BLOB(4096))
 
 
 # Create an engine that stores data in the local directory's
@@ -53,3 +53,4 @@ else:
     md.reflect()
     history = md.tables['history']
     templates = md.tables['templates']
+    tasks = md.tables['tasks']
