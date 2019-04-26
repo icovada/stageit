@@ -77,6 +77,22 @@ def tasks():
     return render_template("tasks.html", header=("ID", "Template", "Description"), table=allrows)
 
 
+@app.route("/templates/<templateid>")
+def templatedetail(templateid):
+    templatecolumns = db.templates.columns
+    query = select(templatecolumns).where(templatecolumns['id'] == templateid)
+    res = db.conn.execute(query)
+    dbdata = res.fetchone()
+    if dbdata is None:
+        raise InvalidUsage("Template ID not valid", 500)
+
+    templatedict = dict(zip(dbdata.keys(), dbdata.values()))
+    templatedict['templatevalues'] = yaml.dump(pickle.loads(dbdata['templatevalues']))
+
+    # print(ins)
+    return render_template('templates/detail.html', **templatedict)
+
+
 @app.route("/templates/<templateid>/add", methods=['POST'])
 def templatemanager(templateid):
     templatecolumns = db.templates.columns
