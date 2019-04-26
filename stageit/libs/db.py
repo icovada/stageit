@@ -2,7 +2,7 @@ import os
 import sys
 from sqlalchemy import Column, ForeignKey, Integer, String, BLOB, DATETIME, MetaData, Table
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, session
 from sqlalchemy import create_engine, MetaData
 
 Base = declarative_base()
@@ -42,7 +42,7 @@ class Tasks(Base):
 # sqlalchemy_example.db file.
 engine = create_engine('sqlite:///stagedb.db')
 conn = engine.connect()
-
+s = session.Session(bind=engine)
 md = MetaData(engine)
 
 
