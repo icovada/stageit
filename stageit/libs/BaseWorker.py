@@ -16,6 +16,9 @@ class BaseWorker(Thread):
         self.hostname = kwargs['hostname']
         self.port = kwargs['port']
         self.transport = kwargs['transport']
+        # TODO: Pass these from template
+        self.username = "cisco"
+        self.password = "cisco"
 
         self.status = "Initializing"
 
@@ -33,6 +36,8 @@ class BaseWorker(Thread):
             self.work['hostname'] = self.hostname
             self.work['port'] = self.port
             self.work['transport'] = self.transport
+            self.work['username'] = self.username
+            self.work['password'] = self.password
             self.status = "Discovering platform"
             self.driver = self.find_model()
             self.status = "Working"
@@ -78,14 +83,14 @@ class BaseWorker(Thread):
         self.driver.checkavailable(1000)
 
         # Skip upgrade if file path not provided
-        if self.work['uri'] != '':
+        if self.work['filepath'] != '':
             try:
-                self.driver.upgrade_software(uri=self.work['uri'],
+                self.driver.upgrade_software(uri=self.work['filepath'],
                                              mode=self.work['mode'])
             except ConnectionError:
                 self.driver.load_temp_config(**self.work['tempconfig'])
                 sleep(3)
-                self.driver.upgrade_software(uri=self.work['uri'],
+                self.driver.upgrade_software(uri=self.work['filepath'],
                                              mode=self.work['mode'])
 
-        self.driver.load_final_config(**self.work['finalconfig'])
+        self.driver.load_final_config(self.work['finalconfig'])

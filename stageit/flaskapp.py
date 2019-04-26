@@ -74,7 +74,39 @@ def tasks():
     res = db.conn.execute(query)
     allrows = res.fetchall()
 
-    return render_template("tasks.html", header=("ID", "Template", "Description"), table=allrows)
+    return render_template("tasks.html", header=("ID", "Template", "Description"), table=allrows, workers=config.worker_array.keys())
+
+
+@app.route('/tasks/<worker>/<taskid>')
+def enqueue(worker, taskid):
+    taskcolumns = db.tasks.columns
+    query = select(taskcolumns).where(taskcolumns['id']==taskid)
+    res = db.conn.execute(query)
+    taskrow = res.fetchone()
+
+    taskdict = dict(zip(taskrow.keys(), taskrow.values()))
+
+    templatecolumns = db.templates.columns
+    query = select(templatecolumns).where(templatecolumns['id']==taskdict['fktemplate'])
+    res = db.conn.execute(query)
+    templaterow = res.fetchone()
+
+    templatedict = dict(zip(templaterow.keys(), templaterow.values()))
+    
+
+    try:
+        rtemplate = Environment(loader=BaseLoader).from_string(templatedict['template'])
+    except jinja2.exceptions.TemplateSyntaxError as e:
+        return jsonify({'status': 'Error', 'message': str(e)})
+
+    finalconfig = rtemplate.render(pickle.loads(taskrow['taskvalues'])).split("\n")
+
+    
+    queueme = templatedict
+    queueme['finalconfig'] = finalconfig
+    config.worker_array[worker]['queue'].put(queueme)
+    return "OK"
+
 
 
 @app.route("/templates/<templateid>")
@@ -237,14 +269,6 @@ def jobstatus(worker):
     print(config.worker_array)
     return config.worker_array[worker]['thread'].getstatus()
 
-
-@app.route('/enqueue/<worker>', methods=['POST'])
-def enqueue(worker):
-    queueme = request.form.copy()
-    queueme['tempconfig'] = json.loads(request.form['tempconfig'])
-    queueme['finalconfig'] = json.loads(request.form['finalconfig'])
-    config.worker_array[worker]['queue'].put(queueme)
-    return "OK"
 
 
 def run():

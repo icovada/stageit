@@ -6,7 +6,7 @@ import logging
 
 
 class BaseDevice():
-    def __init__(self, hostname, port, transport, vendor, username, password, **kwargs):
+    def __init__(self, hostname, port, transport, platform, username, password, **kwargs):
         self.status = 'Init'
         logging.info(self.status)
         self._has_connectivity = False
@@ -17,7 +17,7 @@ class BaseDevice():
             username = ''
             password = ''
 
-        self.driver = napalm.get_network_driver(vendor)
+        self.driver = napalm.get_network_driver(platform)
         self.logbuffer = BytesIO()
         self.sessiondata = {'hostname': hostname,
                             'username': username,
@@ -87,13 +87,14 @@ class BaseDevice():
 
         self._has_connectivity = True
 
-    def load_final_config(self, **kwargs):
+    def load_final_config(self, config):
         self.status = 'Loading final config'
         logging.info(self.status)
         with self.driver(**self.sessiondata) as session:
-            session.load_template(template_path=os.path.abspath(
-                                  os.path.curdir) + "/configs",
-                                  **kwargs)
+            session.device.send_config_set(config)
+        
+        self.save_config()
+
 
     def copy_file(self, session, uri):
         self.status = 'Copying from {}'.format(uri)
@@ -116,6 +117,15 @@ class BaseDevice():
 
     def getlog(self):
         return self.logbuffer.getvalue().decode('utf-8')
+
+    def save_config(self):
+        self.status = 'Saving config'
+        logging.info(self.status)
+        with self.driver(**self.sessiondata) as session:
+            session.device.write_channel("wr\n")
+            session.device.write_channel("\n\n\n")
+            session.device.read_until_prompt()
+
 
     def reload_device(self):
         self.status = 'Sending reload command'
