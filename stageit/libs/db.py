@@ -33,6 +33,7 @@ class History(Base):
 class Tasks(Base):
     __tablename__ = 'tasks'
     id = Column(String(36), primary_key=True)
+    description = Column(String(50))
     fktemplate = Column(String(36), ForeignKey('templates.id'))
     taskvalues = Column(BLOB(4096))
 
