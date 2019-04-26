@@ -25,7 +25,17 @@
         <th scope="row"><a href="/tasks/{{row[0]}}">{{row[0]}}</a></th>
         <td>{{row[1]}}</td>
         <td>{{row[2]}}</td>
-        <td><button type="button" class="btn btn-success btn-sm">Assign</button> <button type="button" class="btn btn-danger btn-sm">Delete</button></td>
+        <td><div class="dropdown">
+            <button class="btn btn-sm btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Assign
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              {% for worker in workers %}
+              <a class="dropdown-item" href="#">{{worker}}</a>
+              {% endfor %}
+            </div>
+          </div>
+           <button type="button" class="btn btn-danger btn-sm">Delete</button></td>
       </tr>
       {% endfor %}
     </tbody>
