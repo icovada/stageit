@@ -1,11 +1,11 @@
 import logging
 import sys
 import os
-sys.path.append( os.path.join( os.path.dirname(__file__), os.path.pardir ) ) 
-
 import yaml
 import json
 import queue
+
+sys.path.append( os.path.join( os.path.dirname(__file__), os.path.pardir ) ) 
 from libs.FakeWorker import FakeWorker
 from libs.BaseWorker import BaseWorker
 import config

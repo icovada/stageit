@@ -80,33 +80,33 @@ def tasks():
 @app.route('/tasks/<worker>/<taskid>')
 def enqueue(worker, taskid):
     taskcolumns = db.tasks.columns
-    query = select(taskcolumns).where(taskcolumns['id']==taskid)
+    query = select(taskcolumns).where(taskcolumns['id'] == taskid)
     res = db.conn.execute(query)
     taskrow = res.fetchone()
 
     taskdict = dict(zip(taskrow.keys(), taskrow.values()))
 
     templatecolumns = db.templates.columns
-    query = select(templatecolumns).where(templatecolumns['id']==taskdict['fktemplate'])
+    query = select(templatecolumns).where(
+        templatecolumns['id'] == taskdict['fktemplate'])
     res = db.conn.execute(query)
     templaterow = res.fetchone()
 
     templatedict = dict(zip(templaterow.keys(), templaterow.values()))
-    
 
     try:
-        rtemplate = Environment(loader=BaseLoader).from_string(templatedict['template'])
+        rtemplate = Environment(loader=BaseLoader).from_string(
+            templatedict['template'])
     except jinja2.exceptions.TemplateSyntaxError as e:
         return jsonify({'status': 'Error', 'message': str(e)})
 
-    finalconfig = rtemplate.render(pickle.loads(taskrow['taskvalues'])).split("\n")
+    finalconfig = rtemplate.render(
+        pickle.loads(taskrow['taskvalues'])).split("\n")
 
-    
     queueme = templatedict
     queueme['finalconfig'] = finalconfig
     config.worker_array[worker]['queue'].put(queueme)
     return "OK"
-
 
 
 @app.route("/templates/<templateid>")
@@ -119,7 +119,8 @@ def templatedetail(templateid):
         raise InvalidUsage("Template ID not valid", 500)
 
     templatedict = dict(zip(dbdata.keys(), dbdata.values()))
-    templatedict['templatevalues'] = yaml.dump(pickle.loads(dbdata['templatevalues']))
+    templatedict['templatevalues'] = yaml.dump(
+        pickle.loads(dbdata['templatevalues']))
 
     # print(ins)
     return render_template('templates/detail.html', **templatedict)
@@ -166,7 +167,8 @@ def createtemplate(templateid):
 @app.route("/templates/<templateid>/delete")
 def deletetemplate(templateid):
     templatecolumns = db.templates.columns
-    query = select((templatecolumns['id'],)).where(templatecolumns['id'] == templateid)
+    query = select((templatecolumns['id'],)).where(
+        templatecolumns['id'] == templateid)
     res = db.conn.execute(query)
     dbdata = res.fetchone()
     if dbdata is None:
@@ -205,9 +207,10 @@ def apiaddtemplate():
     db.conn.execute(ins)
     return argdict['id']
 
+
 @app.route("/api/deletetemplate/<templateid>")
 def apideletetemplate(templateid):
-    query = db.templates.delete().where(id==templateid)
+    query = db.templates.delete().where(id == templateid)
     db.conn.execute(query)
     db.s.commit()
     return redirect('/templates', code=302)
@@ -268,7 +271,6 @@ def log(worker):
 def jobstatus(worker):
     print(config.worker_array)
     return config.worker_array[worker]['thread'].getstatus()
-
 
 
 def run():
