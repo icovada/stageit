@@ -46,7 +46,6 @@ s = session.Session(bind=engine)
 md = MetaData(engine)
 
 
-
 if __name__ == '__main__':
     Base.metadata.create_all(engine)
     print("Running as main, creating new database.")

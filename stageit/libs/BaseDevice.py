@@ -92,9 +92,8 @@ class BaseDevice():
         logging.info(self.status)
         with self.driver(**self.sessiondata) as session:
             session.device.send_config_set(config)
-        
-        self.save_config()
 
+        self.save_config()
 
     def copy_file(self, session, uri):
         self.status = 'Copying from {}'.format(uri)
@@ -125,7 +124,6 @@ class BaseDevice():
             session.device.write_channel("wr\n")
             session.device.write_channel("\n\n\n")
             session.device.read_until_prompt()
-
 
     def reload_device(self):
         self.status = 'Sending reload command'
