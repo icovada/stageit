@@ -11,7 +11,7 @@ import jinja2
 from uuid import uuid4 as uuid
 import libs.db as db
 import pickle
-from sqlalchemy.sql.expression import select, insert
+from sqlalchemy.sql.expression import select, insert, delete
 
 APP_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATE_PATH = os.path.join(APP_PATH, 'stageit/web/templates')
@@ -131,6 +131,18 @@ def createtemplate(templateid):
     return render_template("templates/createtask.html", uuid=templateid, **templatedict)
 
 
+@app.route("/templates/<templateid>/delete")
+def deletetemplate(templateid):
+    templatecolumns = db.templates.columns
+    query = select((templatecolumns['id'],)).where(templatecolumns['id'] == templateid)
+    res = db.conn.execute(query)
+    dbdata = res.fetchone()
+    if dbdata is None:
+        raise InvalidUsage("Template ID not valid", 500)
+
+    return render_template("templates/delete.html", id=templateid)
+
+
 @app.route("/templates/add")
 def templatesadd():
     return render_template("templates/add.html")
@@ -160,6 +172,13 @@ def apiaddtemplate():
                                        poststaging=argdict['poststaging'])
     db.conn.execute(ins)
     return argdict['id']
+
+@app.route("/api/deletetemplate/<templateid>")
+def apideletetemplate(templateid):
+    query = db.templates.delete().where(id==templateid)
+    db.conn.execute(query)
+    db.s.commit()
+    return redirect('/templates', code=302)
 
 
 @app.route("/api/addtask", methods=['POST'])
