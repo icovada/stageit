@@ -196,11 +196,8 @@ def apiupdatetemplate(pkid):
 
     argdict = request.form.to_dict()
 
-    taskvalues = yaml.load(request.form['templatevalues'])
-    if taskvalues is not None:
-        taskvalues = pickle.dumps(taskvalues)
-
-    argdict['taskvalues'] = taskvalues
+    if request.form['templatevalues'] is not None:
+        argdict['templatevalues'] = pickle.dumps(yaml.load(request.form['templatevalues']))
 
     for key, value in argdict.items():
         setattr(template, key, value)
@@ -255,6 +252,8 @@ def apideletetask(pkid):
 
     return "OK"
 
+
+# Backend
 
 @app.route("/log/<worker>")
 def log(worker):

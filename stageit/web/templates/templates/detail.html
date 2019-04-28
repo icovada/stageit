@@ -26,8 +26,8 @@
             <label for="platform">Platform</label>
             <select class="custom-select d-block w-100" id="platform" required>
                 <option value="">-- None --</option>
-                <option {% if platform == 'ios'%}selected="selected" {%endif%}>Cisco IOS/IOS-XE</option>
-                <option {% if platform == 'nx-os'%}selected="selected" {%endif%}>Cisco Nexus</option>
+                <option {% if platform == 'ios'%}selected="selected" {%endif%}value="ios">Cisco IOS/IOS-XE</option>
+                <option {% if platform == 'nx-os'%}selected="selected" {%endif%}value="nx-os">Cisco Nexus</option>
             </select>
         </div>
         <hr class="pt-3">
@@ -153,7 +153,7 @@
             data: {
                 name: $('#name').val(),
                 description: $('#description').val(),
-                platform: $('#platform').val(),
+                platform: document.getElementById('platform').value,
                 template: $('#template').val(),
                 templatevalues: $('#templatevalues').val(),
                 filepath: $('#filepath').val(),
