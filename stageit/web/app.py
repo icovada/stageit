@@ -83,12 +83,13 @@ def tasks():
 @app.route("/templates/<templateid>")
 def templatedetail(templateid):
     session = newsession()
-    template = session.query(Templates).filter(
-        Templates.pkid == templateid).one()
+    template = session.query(Templates).get(templateid)
     templatedict = template.__dict__
 
-    templatedict['templatevalues'] = yaml.dump(
-        pickle.loads(templatedict['templatevalues']))
+    if template.templatevalues is not None:
+        templatedict['templatevalues'] = yaml.dump(pickle.loads(template.templatevalues))
+    else: 
+        templatedict['templatevalues'] = ''
 
     return render_template('templates/templates/detail.html', **templatedict)
 
@@ -102,12 +103,13 @@ def templatesadd():
 def createtask():
     fktemplate = request.args.get('fktemplate')
     session = newsession()
-    template = session.query(Templates).filter(
-        Templates.pkid == fktemplate).one()
+    template = session.query(Templates).get(fktemplate)
     templatedict = template.__dict__
 
-    templatedict['templatevalues'] = yaml.dump(
-        pickle.loads(templatedict['templatevalues']))
+    if template.templatevalues is not None:
+        templatedict['templatevalues'] = yaml.dump(pickle.loads(template.templatevalues))
+    else: 
+        templatedict['templatevalues'] = ''
 
     return render_template("templates/tasks/add.html", fktemplate=fktemplate, **templatedict)
 
@@ -131,6 +133,12 @@ def enqueue(worker, taskid):
     except jinja2.exceptions.TemplateSyntaxError as e:
         return jsonify({'status': 'Error', 'message': str(e)})
 
+    taskvalues = pickle.loads(templatedict['taskvalues'])
+    if taskvalues is not None:
+        taskvalues = yaml.dump(taskvalues)
+    
+    taskdict['taskvalues'] = taskvalues
+
     finalconfig = rtemplate.render(
         pickle.loads(taskdict['taskvalues'])).split("\n")
 
@@ -143,8 +151,7 @@ def enqueue(worker, taskid):
 @app.route("/templates/<templateid>/add", methods=['POST'])
 def templatemanager(templateid):
     session = newsession()
-    template = session.query(Templates).filter(
-        Templates.pkid == templateid).one()
+    template = session.query(Templates).get(templateid)
     templatedict = template.__dict__
 
     picklevalues = pickle.dumps(yaml.load(request.form['taskvalues']))
@@ -162,22 +169,17 @@ def templatemanager(templateid):
 @app.route("/api/templates", methods=['POST'])
 def apiaddtemplate():
     session = newsession()
-    argdict = request.form.copy()
+    argdict = request.form.to_dict()
     argdict['pkid'] = str(uuid())
-    del argdict['templatevalues']
-    argdict['templatevalues'] = pickle.dumps(
-        yaml.load(request.form['templatevalues']))
-    print("VARS")
-    print(argdict)
 
-    template = Templates(pkid=argdict['pkid'],
-                         name=argdict['name'],
-                         description=argdict['description'],
-                         platform=argdict['platform'],
-                         template=argdict['template'],
-                         templatevalues=argdict['templatevalues'],
-                         filepath=argdict['filepath'],
-                         poststaging=argdict['poststaging'])
+    templatevalues = yaml.load(request.form['templatevalues'])
+    if templatevalues is not None:
+        templatevalues = pickle.dumps(templatevalues)
+
+    argdict['templatevalues'] = templatevalues
+
+    template = Templates(**argdict)
+
     session.add(template)
     session.commit()
     return argdict['pkid']
@@ -187,18 +189,18 @@ def apiaddtemplate():
 def apiupdatetemplate(pkid):
     session = newsession()
 
-    # Check the template is not associated with pending tasks
-    tasks = session.query(Tasks).filter(Tasks.fktemplate == pkid).all()
-
-    if len(tasks) != 0:
-        raise InvalidUsage("Pending tasks assigned", 409)
-
     template = session.query(Templates).get(pkid)
+    # Check the template is not associated with pending tasks
+    if len(template.tasks) != 0:
+        raise InvalidUsage("Pending tasks assigned", 409)
 
     argdict = request.form.to_dict()
 
-    argdict['templatevalues'] = pickle.dumps(
-        yaml.load(request.form['templatevalues']))
+    taskvalues = yaml.load(request.form['templatevalues'])
+    if taskvalues is not None:
+        taskvalues = pickle.dumps(taskvalues)
+
+    argdict['taskvalues'] = taskvalues
 
     for key, value in argdict.items():
         setattr(template, key, value)
@@ -223,16 +225,19 @@ def apideletetemplate(pkid):
 @app.route("/api/tasks", methods=['POST'])
 def apiaddtask():
     session = newsession()
-    argdict = request.form.copy()
+    argdict = request.form.to_dict()
 
     argdict['pkid'] = str(uuid())
-    argdict['taskvalues'] = pickle.dumps(
-        yaml.load(request.form['taskvalues']))
 
-    task = Tasks(pkid=argdict['pkid'],
-                 fktemplate=argdict['fktemplate'],
-                 taskvalues=argdict['taskvalues'],
-                 description=argdict['description'])
+    if request.form['taskvalues'] is None:
+        taskvalues = None
+    else:
+        taskvalues = pickle.dumps(yaml.load(request.form['taskvalues']))
+
+    argdict['taskvalues'] = taskvalues
+
+    task = Tasks(**argdict)
+
     session.add(task)
     session.commit()
     return argdict['pkid']
