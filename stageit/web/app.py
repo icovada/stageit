@@ -1,7 +1,7 @@
 from werkzeug.serving import run_simple
 from flask import Flask, request, stream_with_context, Response, render_template, abort, jsonify, redirect, url_for
 from flask.logging import default_handler
-import config
+import stageit.config as config
 from time import sleep
 import json
 import yaml
@@ -9,12 +9,11 @@ import os
 from jinja2 import Environment, BaseLoader
 import jinja2
 from uuid import uuid4 as uuid
-from libs.db import Templates, History, Tasks, newsession
+from stageit.libs.db import Templates, History, Tasks, newsession
 import pickle
-import libs.db as db
 
 APP_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TEMPLATE_PATH = os.path.join(APP_PATH, 'stageit/web/templates')
+TEMPLATE_PATH = os.path.join(APP_PATH, 'web')
 
 app = Flask(__name__, template_folder=TEMPLATE_PATH)
 
@@ -44,12 +43,12 @@ def handle_invalid_usage(error):
 
 @app.route("/")
 def home():
-    return render_template("layout.html")
+    return render_template("templates/layout.html")
 
 
 @app.route("/workers")
 def workers():
-    text = render_template("workers.html", workers=config.worker_array)
+    text = render_template("templates/workers.html", workers=config.worker_array)
     return text
 
 
@@ -60,7 +59,7 @@ def templates():
                               Templates.name,
                               Templates.description)
 
-    return render_template("templates.html", 
+    return render_template("templates/templates.html", 
                            header=("Name", "Description"),
                            table=templates.all())
 
@@ -72,7 +71,7 @@ def tasks():
                           Tasks.fktemplate,
                           Tasks.description)
 
-    return render_template("tasks.html",
+    return render_template("templates/tasks.html",
                            header=("ID", "Template", "Description"),
                            table=tasks.all(),
                            workers=config.worker_array.keys())
@@ -110,7 +109,7 @@ def templatedetail(templateid):
     templatedict['templatevalues'] = yaml.dump(pickle.loads(templatedict['templatevalues']))
 
     # print(ins)
-    return render_template('templates/detail.html', **templatedict)
+    return render_template('templates/templates/detail.html', **templatedict)
 
 
 @app.route("/templates/<templateid>/add", methods=['POST'])
@@ -140,17 +139,17 @@ def createtemplate(templateid):
     templatedict['templatevalues'] = yaml.dump(
         pickle.loads(templatedict['templatevalues']))
 
-    return render_template("templates/tasks/add.html", uuid=templateid, **templatedict)
+    return render_template("templates/templates/tasks/add.html", uuid=templateid, **templatedict)
 
 
 @app.route("/templates/<templateid>/delete")
 def deletetemplate(templateid):
-    return render_template("templates/delete.html", id=templateid)
+    return render_template("templates/templates/delete.html", id=templateid)
 
 
 @app.route("/templates/add")
 def templatesadd():
-    return render_template("templates/add.html")
+    return render_template("templates/templates/add.html")
 
 
 @app.route("/api/addtemplate", methods=['POST'])

@@ -33,7 +33,7 @@ def main():
 
 
 if __name__ == '__main__':
-    import flaskapp
+    import stageit.web.app as app
     
     main()
-    flaskapp.run()
+    app.run()
