@@ -233,6 +233,7 @@ def apiaddtask():
         yaml.load(request.form['taskvalues']))
 
     task = Tasks(pkid = argdict['pkid'],
+                 fktemplate = argdict['fktemplate'],
                  taskvalues = argdict['taskvalues'],
                  description = argdict['description'])
     session.add(task)
