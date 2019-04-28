@@ -229,10 +229,17 @@ def apiaddtask():
 
     argdict['pkid'] = str(uuid())
 
-    if request.form['taskvalues'] is None:
+    if request.form['taskvalues'] == '':
         taskvalues = None
     else:
-        taskvalues = pickle.dumps(yaml.load(request.form['taskvalues']))
+        yamlconfig = yaml.load(request.form['taskvalues'])
+        if (argdict['description'] == '' and 'hostname' not in yamlconfig):
+            raise InvalidUsage("Missing description")
+        else:
+            taskvalues = pickle.dumps(yamlconfig)
+            if 'hostname' in yamlconfig:
+                argdict['description'] = yamlconfig['hostname']
+
 
     argdict['taskvalues'] = taskvalues
 

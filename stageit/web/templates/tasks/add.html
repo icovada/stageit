@@ -15,15 +15,41 @@
             <label for="description">Description</label>
             <input type="text" class="form-control" name="description" id="description" required>
         </div>
-        <div class="form-group col-xl-6 mb-3">
-            <label for="taskvalues">Template values</label>
-            <textarea class="form-control text-monospace" name="taskvalues" id="taskvalues" rows="6"
-                aria-describedby="taskvaluesHelp">{{templatevalues}}</textarea>
-            <small id="taskvaluesHelp" class="form-text text-muted">Insert variables required by your task in
-                yaml format</small>
+        <h4 class="mb-3">Final configuration details</h4>
+        <div class="form-row">
+            <div class="form-group col-xl-6 mb-3">
+                <label for="template">Template</label>
+                <textarea class="form-control text-monospace" id="template" rows="6"
+                    aria-describedby="templateHelp" disabled>{{template}}</textarea>
+                <small id="templateHelp" class="form-text text-muted">Modify template to change this</small>
+            </div>
+            <div class="form-group col-xl-6 mb-3">
+                <label for="taskvalues">Template values</label>
+                <textarea class="form-control text-monospace" id="taskvalues" rows="6"
+                    aria-describedby="taskvaluesHelp">{{templatevalues}}</textarea>
+                <small id="taskvaluesHelp" class="form-text text-muted">Insert variables required by your template
+                    in
+                    yaml format</small>
+            </div>
         </div>
+        <p>
+            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#templaterender"
+                aria-expanded="false" aria-controls="templaterender">Test</button>
+        </p>
+        <div id="renderalertspace"></div>
+        <div class="row">
+            <div class="col">
+                <div class="collapse multi-collapse" id="templaterender">
+                    <div class="card card-body">
+                        <div class="spinner-grow" role="status" , id="templaterenderspinner"></div>
+                        <div class="text-monospace" id="templaterenderview"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-row col-xl-6 mb-3 text-monospace" id="renderview" style="display: none;"></div>
         <hr class="mb-4">
-        <button class="btn btn-primary btn-lg btn-block" type="submit">Create task</button>
+        <button class="btn btn-primary btn-lg btn-block" type="button", id=createbutton>Create task</button>
         <div id="submitalertspace" class="my-3"></div>
     </form>
 </div>
@@ -71,7 +97,7 @@
         $('#templaterenderview').html("");
     })
 
-    $('#taskform').submit(function (event) {
+    $('#createbutton').on('click', function (event) {
         event.preventDefault();
         $.ajax({
             type: 'POST',
@@ -83,10 +109,12 @@
             }
         }).done(function (response) {
             $('#submitalertspace').append('<div class="alert alert-success alert-dismissible fade show" role="alert">' +
-                '<strong>Submitted</strong> Task <a href="/templates/' + response + '">' + response.substring(0, 5) + '</a> was submitted' +
+                '<strong>Submitted</strong> Task <a href="/tasks/' + response + '">' + response.substring(0, 5) + '</a> was submitted' +
                 '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
                 '<span aria-hidden="true">&times;</span></button></div>')
         }).fail(function (response) {
+            var descinput = document.getElementById('description')
+            descinput.classList.add("is-invalid");
             $('#submitalertspace').append('<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
                 '<strong>Error</strong> There was an error submitting the task' +
                 '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
