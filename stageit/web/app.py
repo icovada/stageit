@@ -114,6 +114,15 @@ def createtask():
     return render_template("templates/tasks/add.html", fktemplate=fktemplate, **templatedict)
 
 
+@app.route("/tasks/<taskid>")
+def taskdetail(taskid):
+    session = newsession()
+    task = session.query(Tasks).get(taskid)
+    taskdict = task.__dict__
+
+    return render_template('templates/tasks/detail.html', **taskdict)
+
+
 # API
 
 
