@@ -196,8 +196,11 @@ def apiupdatetemplate(pkid):
 
     argdict = request.form.to_dict()
 
-    if request.form['templatevalues'] is not None:
-        argdict['templatevalues'] = pickle.dumps(yaml.load(request.form['templatevalues']))
+    templatevalues = yaml.load(request.form['templatevalues'])
+    if templatevalues is not None:
+        templatevalues = pickle.dumps(templatevalues)
+
+    argdict['templatevalues'] = templatevalues
 
     for key, value in argdict.items():
         setattr(template, key, value)
