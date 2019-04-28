@@ -22,10 +22,10 @@
     <tbody>
       {% for row in table %}
       <tr>
-        <th scope="row"><a href="/tasks/{{row[0]}}">{{row[0]}}</a></th>
-        <td>{{row[1]}}</td>
+        <th scope="row"><a href="/tasks/{{row[0]}}">{{row[0][:5]}}</a></th>
+        <td><a href="/tasks/{{row[1]}}">{{row[1][:5]}}</a></td>
         <td>{{row[2]}}</td>
-        <td><div class="dropdown">
+        <td><div class="row"><div class="dropdown">
             <button class="btn btn-sm btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Assign
             </button>
@@ -35,7 +35,7 @@
               {% endfor %}
             </div>
           </div>
-           <button type="button" class="btn btn-danger btn-sm">Delete</button></td>
+           <button type="button" class="btn btn-danger btn-sm">Delete</button></div></td>
       </tr>
       {% endfor %}
     </tbody>
