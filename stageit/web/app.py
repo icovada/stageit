@@ -212,15 +212,17 @@ def apiupdatetemplate(pkid):
     return "ok"
 
 
-@app.route("/api/deletetemplate/<templateid>")
-def apideletetemplate(templateid):
+@app.route("/api/templates/<pkid>", methods=['DELETE'])
+def apideletetemplate(pkid):
     session = newsession()
-    template = session.query(Templates).filter(
-        Templates.pkid == templateid).one()
+    template = session.query(Templates).get(pkid)
     session.delete(template)
-    session.commit()
+    try:
+        session.commit()
+    except:
+        raise InvalidUsage("Template used by one or more tasks", 412)
 
-    return redirect('/templates', code=302)
+    return "OK"
 
 
 @app.route("/api/tasks", methods=['POST'])

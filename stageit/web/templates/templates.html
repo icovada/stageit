@@ -8,9 +8,10 @@
 
 
 {% block body %}
-<h1 class="container col col-xl-8 mb-3 mt-3 md-auto display-4">Template List   <a class="btn btn-success btn-primary" role="button" href="/templates/add">Add new</button></a></h1>
+<h1 class="container col col-xl-8 mb-3 mt-3 md-auto display-4">Template List <a class="btn btn-success btn-primary"
+    role="button" href="/templates/add">Add new</a></h1>
 <div class="container col col-xl-8 justify-content-center pb-5">
-<table class="table">
+  <table class="table">
     <thead>
       <tr>
         {% for col in header%}
@@ -24,10 +25,30 @@
       <tr>
         <th scope="row"><a href="/templates/{{row[0]}}">{{row[1]}}</a></th>
         <td>{{row[1]}}</td>
-        <td><a role="button" class="btn btn-success btn-sm" href="/tasks/add?fktemplate={{row[0]}}">Create task</a> <a type="button" class="btn btn-danger btn-sm" href="/templates/{{row[0]}}/delete">Delete</a></td>
+        <td><a role="button" class="btn btn-success btn-sm" href="/tasks/add?fktemplate={{row[0]}}">Create task</a> <button
+            id="deletetemplate" class="btn btn-danger btn-sm" templateid="{{row[0]}}">Delete</button></td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
-  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+  $('#deletetemplate').on('click', function (event) {
+    var a = confirm("Confirm deletion");
+    if (a == true) {
+      $.ajax({
+        type: 'DELETE',
+        url: "/api/templates/" + $(this).attr("templateid"),
+      }).done(function (response) {
+        location.reload();
+      }).fail(function (response) {
+        alert(response.responseJSON.message)
+      })
+    }
+  });
+
+</script>
 {% endblock %}
