@@ -150,6 +150,7 @@ def enqueue(worker, taskid):
 
     queueme = templatedict
     queueme['finalconfig'] = finalconfig
+    queueme['taskobject'] = task
     config.worker_array[worker]['queue'].put(queueme)
     return "OK"
 
