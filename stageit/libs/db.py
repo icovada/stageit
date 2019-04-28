@@ -34,7 +34,7 @@ class Tasks(Base):
     __tablename__ = 'tasks'
     pkid = Column(String(36), primary_key=True)
     description = Column(String(50))
-    fktemplate = Column(String(50), ForeignKey('templates.pkid'))
+    fktemplate = Column(String(50), ForeignKey('templates.pkid'), nullable=False)
     taskvalues = Column(BLOB(4096))
 
 def newsession():
