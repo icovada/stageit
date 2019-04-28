@@ -129,27 +129,24 @@ def taskdetail(taskid):
 @app.route('/tasks/<worker>/<taskid>')
 def enqueue(worker, taskid):
     session = newsession()
-    task = session.query(Tasks).filter(Tasks.pkid == taskid).one()
+    task = session.query(Tasks).get(taskid)
     taskdict = task.__dict__
 
-    template = session.query(Templates).filter(
-        Templates.pkid == taskdict['fktemplate'])
-    templatedict = template.one().__dict__
+    template = task.template
+    templatedict = template.__dict__
 
     try:
         rtemplate = Environment(loader=BaseLoader).from_string(
-            templatedict['template'])
+            template.template)
     except jinja2.exceptions.TemplateSyntaxError as e:
         return jsonify({'status': 'Error', 'message': str(e)})
 
-    taskvalues = pickle.loads(templatedict['taskvalues'])
+    taskvalues = pickle.loads(task.taskvalues)
     if taskvalues is not None:
-        taskvalues = yaml.dump(taskvalues)
-    
-    taskdict['taskvalues'] = taskvalues
-
-    finalconfig = rtemplate.render(
-        pickle.loads(taskdict['taskvalues'])).split("\n")
+        finalconfig = template.template
+    else:
+        taskdict['taskvalues'] = taskvalues
+        finalconfig = rtemplate.render(pickle.loads(task.taskvalues)).split("\n")
 
     queueme = templatedict
     queueme['finalconfig'] = finalconfig
