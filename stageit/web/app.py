@@ -164,7 +164,7 @@ def templatemanager(templateid):
     return redirect('/tasks/' + templateid, code=302)
 
 
-@app.route("/api/addtemplate", methods=['POST'])
+@app.route("/api/templates", methods=['POST'])
 def apiaddtemplate():
     session = newsession()
     argdict = request.form.copy()
