@@ -80,29 +80,12 @@ def tasks():
 
 @app.route('/tasks/<worker>/<taskid>')
 def enqueue(worker, taskid):
-<<<<<<< HEAD
-    taskcolumns = db.tasks.columns
-    query = select(taskcolumns).where(taskcolumns['id'] == taskid)
-    res = db.conn.execute(query)
-    taskrow = res.fetchone()
-
-    taskdict = dict(zip(taskrow.keys(), taskrow.values()))
-
-    templatecolumns = db.templates.columns
-    query = select(templatecolumns).where(
-        templatecolumns['id'] == taskdict['fktemplate'])
-    res = db.conn.execute(query)
-    templaterow = res.fetchone()
-
-    templatedict = dict(zip(templaterow.keys(), templaterow.values()))
-=======
     session = newsession()
     task = session.query(Tasks).filter(Tasks.pkid == taskid).one()
     taskdict = task.__dict__
 
     template = session.query(Templates).filter(Templates.pkid == taskdict['fktemplate'])
     templatedict = template.one().__dict__    
->>>>>>> sqlredo
 
     try:
         rtemplate = Environment(loader=BaseLoader).from_string(
@@ -110,12 +93,7 @@ def enqueue(worker, taskid):
     except jinja2.exceptions.TemplateSyntaxError as e:
         return jsonify({'status': 'Error', 'message': str(e)})
 
-<<<<<<< HEAD
-    finalconfig = rtemplate.render(
-        pickle.loads(taskrow['taskvalues'])).split("\n")
-=======
     finalconfig = rtemplate.render(pickle.loads(taskdict['taskvalues'])).split("\n")
->>>>>>> sqlredo
 
     queueme = templatedict
     queueme['finalconfig'] = finalconfig
@@ -129,13 +107,7 @@ def templatedetail(templateid):
     template = session.query(Templates).filter(Templates.id == templateid).one()
     templatedict = template.__dict__
 
-<<<<<<< HEAD
-    templatedict = dict(zip(dbdata.keys(), dbdata.values()))
-    templatedict['templatevalues'] = yaml.dump(
-        pickle.loads(dbdata['templatevalues']))
-=======
     templatedict['templatevalues'] = yaml.dump(pickle.loads(templatedict['templatevalues']))
->>>>>>> sqlredo
 
     # print(ins)
     return render_template('templates/detail.html', **templatedict)
@@ -168,22 +140,11 @@ def createtemplate(templateid):
     templatedict['templatevalues'] = yaml.dump(
         pickle.loads(templatedict['templatevalues']))
 
-    return render_template("templates/createtask.html", uuid=templateid, **templatedict)
+    return render_template("templates/tasks/add.html", uuid=templateid, **templatedict)
 
 
 @app.route("/templates/<templateid>/delete")
 def deletetemplate(templateid):
-<<<<<<< HEAD
-    templatecolumns = db.templates.columns
-    query = select((templatecolumns['id'],)).where(
-        templatecolumns['id'] == templateid)
-    res = db.conn.execute(query)
-    dbdata = res.fetchone()
-    if dbdata is None:
-        raise InvalidUsage("Template ID not valid", 500)
-
-=======
->>>>>>> sqlredo
     return render_template("templates/delete.html", id=templateid)
 
 
@@ -219,17 +180,11 @@ def apiaddtemplate():
 
 @app.route("/api/deletetemplate/<templateid>")
 def apideletetemplate(templateid):
-<<<<<<< HEAD
-    query = db.templates.delete().where(id == templateid)
-    db.conn.execute(query)
-    db.s.commit()
-=======
     session = newsession()
     template = session.query(Templates).filter(Templates.pkid == templateid).one()
     session.delete(template)
     session.commit()
 
->>>>>>> sqlredo
     return redirect('/templates', code=302)
 
 

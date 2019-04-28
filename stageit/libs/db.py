@@ -45,16 +45,4 @@ def newsession():
 engine = create_engine('sqlite:///stagedb.db', echo=True)
 Session = sessionmaker(bind=engine)
 
-<<<<<<< HEAD
-
-if __name__ == '__main__':
-    Base.metadata.create_all(engine)
-    print("Running as main, creating new database.")
-else:
-    md.reflect()
-    history = md.tables['history']
-    templates = md.tables['templates']
-    tasks = md.tables['tasks']
-=======
 Base.metadata.create_all(engine)
->>>>>>> sqlredo
