@@ -86,8 +86,19 @@
         </div>
 
         <hr class="mb-4">
-        <button class="btn btn-primary btn-lg btn-block" type="submit">Update template</button>
-        <div id="submitalertspace" class="my-3"></div>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <a id="btncreatetask" role="button" class="btn btn-primary btn-lg btn-block btn-success" href="/tasks/add?fktemplate={{pkid}}">Create task</a>
+            </div>
+            <div class="col-md-4 mb-3">
+                <button id="btnsave" class="btn btn-primary btn-lg btn-block" type="submit">Save</button>
+            </div>
+            <div class="col-md-4 mb-3">
+                <button id="btndelete" class="btn btn-primary btn-lg btn-block btn-danger" type="button">Delete</button>
+            </div>
+        </div>
+        <div id="submitalertspace" class="my-3">
+        </div>
     </form>
 </div>
 
@@ -134,11 +145,11 @@
         $('#templaterenderview').html("");
     })
 
-    $('#templateform').submit(function (event) {
+    $('#btnsave').on('click', function (event) {
         event.preventDefault();
         $.ajax({
             type: 'PUT',
-            url: $('#templateform').attr('action'),
+            url: "/api/templates/{{pkid}}",
             data: {
                 name: $('#name').val(),
                 description: $('#description').val(),
@@ -149,16 +160,27 @@
                 poststaging: $('#poststaging').val()
             }
         }).done(function (response) {
-            $('#submitalertspace').append('<div class="alert alert-success alert-dismissible fade show" role="alert">' +
-                'Update successful' +
-                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-                '<span aria-hidden="true">&times;</span></button></div>')
+            window.location.href = "/templates";
         }).fail(function (response) {
             $('#submitalertspace').append('<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
                 '<strong>Error</strong> ' + response.responseJSON.message +
                 '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
                 '<span aria-hidden="true">&times;</span></button></div>')
         });
+    });
+
+    $('#btndelete').on('click', function (event) {
+        var a = confirm("Confirm deletion");
+        if (a == true) {
+            $.ajax({
+                type: 'DELETE',
+                url: "/api/templates/{{pkid}}",
+            }).done(function (response) {
+                window.location.href = "/templates";
+            }).fail(function (response) {
+                alert(response.responseJSON.message)
+            })
+        }
     });
 
 </script>
