@@ -243,6 +243,19 @@ def apiaddtask():
     return argdict['pkid']
 
 
+@app.route("/api/tasks/<pkid>", methods=['DELETE'])
+def apideletetask(pkid):
+    session = newsession()
+    task = session.query(Tasks).get(pkid)
+    session.delete(task)
+    try:
+        session.commit()
+    except:
+        raise InvalidUsage("Failed", 412)
+
+    return "OK"
+
+
 @app.route("/log/<worker>")
 def log(worker):
     def streambytes():

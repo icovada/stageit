@@ -35,10 +35,29 @@
               {% endfor %}
             </div>
           </div>
-           <button type="button" class="btn btn-danger btn-sm">Delete</button></div></td>
+          <button id="deletetask" class="btn btn-danger btn-sm" taskid="{{row[0]}}">Delete</button>
       </tr>
       {% endfor %}
     </tbody>
   </table>
   </div>
+{% endblock %}
+
+{% block script %}
+<script>
+  $('#deletetask').on('click', function (event) {
+    var a = confirm("Confirm deletion");
+    if (a == true) {
+      $.ajax({
+        type: 'DELETE',
+        url: "/api/tasks/" + $(this).attr("taskid"),
+      }).done(function (response) {
+        location.reload();
+      }).fail(function (response) {
+        alert(response.responseJSON.message)
+      })
+    }
+  });
+
+</script>
 {% endblock %}
