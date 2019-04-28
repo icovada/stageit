@@ -10,57 +10,57 @@
 {% block body %}
 <h1 class="row justify-content-center py-4">Task List</h1>
 <div class="container col col-xl-8 justify-content-center pb-5">
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        {% for col in header%}
-        <th scope="col">{{col}}</th>
-        {% endfor %}
-        <th scope="col">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for row in table %}
-      <tr>
-        <th scope="row"><a href="/tasks/{{row[0]}}">{{row[0][:5]}}</a></th>
-        <td><a href="/tasks/{{row[1]}}">{{row[1][:5]}}</a></td>
-        <td>{{row[2]}}</td>
-        <td>
-          <div class="row">
-            <div class="dropdown">
-              <button class="btn btn-sm btn-success dropdown-toggle" type="button" id="dropdownMenuButton"
-                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Assign
-              </button>
-              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                {% for worker in workers %}
-                <a class="dropdown-item" href="#">{{worker}}</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                {% for col in header%}
+                <th scope="col">{{col}}</th>
                 {% endfor %}
-              </div>
-            </div>
-            <button id="deletetask" class="btn btn-danger btn-sm" taskid="{{row[0]}}">Delete</button>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in table %}
+            <tr>
+                <th scope="row"><a href="/tasks/{{row[0]}}">{{row[0][:5]}}</a></th>
+                <td><a href="/tasks/{{row[1]}}">{{row[1][:5]}}</a></td>
+                <td>{{row[2]}}</td>
+                <td>
+                    <div class="row">
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-success dropdown-toggle" type="button" id="dropdownMenuButton"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Assign
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                {% for worker in workers %}
+                                <a class="dropdown-item" href="#">{{worker}}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <button id="deletetask" class="btn btn-danger btn-sm" taskid="{{row[0]}}">Delete</button>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}
 
 {% block script %}
 <script>
-  $('#deletetask').on('click', function (event) {
-    var a = confirm("Confirm deletion");
-    if (a == true) {
-      $.ajax({
-        type: 'DELETE',
-        url: "/api/tasks/" + $(this).attr("taskid"),
-      }).done(function (response) {
-        location.reload();
-      }).fail(function (response) {
-        alert(response.responseJSON.message)
-      })
-    }
-  });
+    $('#deletetask').on('click', function (event) {
+        var a = confirm("Confirm deletion");
+        if (a == true) {
+            $.ajax({
+                type: 'DELETE',
+                url: "/api/tasks/" + $(this).attr("taskid"),
+            }).done(function (response) {
+                location.reload();
+            }).fail(function (response) {
+                alert(response.responseJSON.message)
+            })
+        }
+    });
 
 </script>
 {% endblock %}

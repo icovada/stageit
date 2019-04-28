@@ -10,23 +10,23 @@
 {% block body %}
 <h1 class="row justify-content-center py-4">Task List</h1>
 <div class="container col col-xl-8 justify-content-center pb-5">
-  <div class="container">
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th scope="col">Name</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for element in workers %}
-        <tr>
-          <th scope="row">{{element}}</th>
-          <td>{{workers[element]['thread'].status}}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+    <div class="container">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for element in workers %}
+                <tr>
+                    <th scope="row">{{element}}</th>
+                    <td>{{workers[element]['thread'].status}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}

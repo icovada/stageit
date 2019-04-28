@@ -9,48 +9,50 @@
 
 {% block body %}
 <div class="row">
-  <h1 class="col col-6 offset-3 justify-content-center py-4 row">Template List </h1>
-  <a class="btn btn-success mx-4 row btn-lg h-100 my-auto" role="button" href="/templates/add">Add new</a>
+    <h1 class="col col-6 offset-3 justify-content-center py-4 row">Template List </h1>
+    <a class="btn btn-success mx-4 row btn-lg h-100 my-auto" role="button" href="/templates/add">Add new</a>
 </div>
 <div class="container col col-xl-8 justify-content-center pb-5">
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        {% for col in header%}
-        <th scope="col">{{col}}</th>
-        {% endfor %}
-        <th scope="col">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for row in table %}
-      <tr>
-        <th scope="row"><a href="/templates/{{row[0]}}">{{row[1]}}</a></th>
-        <td>{{row[1]}}</td>
-        <td><a role="button" class="btn btn-success btn-sm" href="/tasks/add?fktemplate={{row[0]}}">Create task</a>
-          <button id="deletetemplate" class="btn btn-danger btn-sm" templateid="{{row[0]}}">Delete</button></td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                {% for col in header%}
+                <th scope="col">{{col}}</th>
+                {% endfor %}
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in table %}
+            <tr>
+                <th scope="row"><a href="/templates/{{row[0]}}">{{row[1]}}</a></th>
+                <td>{{row[1]}}</td>
+                <td><a role="button" class="btn btn-success btn-sm" href="/tasks/add?fktemplate={{row[0]}}">Create
+                        task</a>
+                    <button id="deletetemplate" class="btn btn-danger btn-sm" templateid="{{row[0]}}">Delete</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}
 
 {% block script %}
 <script>
-  $('#deletetemplate').on('click', function (event) {
-    var a = confirm("Confirm deletion");
-    if (a == true) {
-      $.ajax({
-        type: 'DELETE',
-        url: "/api/templates/" + $(this).attr("templateid"),
-      }).done(function (response) {
-        location.reload();
-      }).fail(function (response) {
-        alert(response.responseJSON.message)
-      })
-    }
-  });
+    $('#deletetemplate').on('click', function (event) {
+        var a = confirm("Confirm deletion");
+        if (a == true) {
+            $.ajax({
+                type: 'DELETE',
+                url: "/api/templates/" + $(this).attr("templateid"),
+            }).done(function (response) {
+                location.reload();
+            }).fail(function (response) {
+                alert(response.responseJSON.message)
+            })
+        }
+    });
 
 </script>
 {% endblock %}
