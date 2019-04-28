@@ -8,23 +8,23 @@
 
 
 {% block body %}
-<h1 class="container col col-xl-8 mb-3 mt-3 md-auto display-4">Template details    <a class="btn btn-success btn-primary" role="button" href="/templates/{{id}}/create">Create task</button></a></h1>
+<h1 class="container col col-xl-8 mb-3 mt-3 md-auto display-4">Template details</h1>
 <div class="container col col-xl-8 justify-content-center pb-5">
-    <form class="needs-validation" action="/api/addtemplate" id="templateform" method="post">
+    <form class="needs-validation" action="/api/templates/{{pkid}}" id="templateform" method="post">
         <div class="form-row">
             <div class="form-group col-xl-6 mb-3">
                 <label for="name">Name</label>
-                <input type="text" class="form-control" id="name" placeholder="{{name}}" required disabled>
+                <input type="text" class="form-control" id="name" value="{{name}}" required>
             </div>
             <div class="form-group col-xl-6 mb-3">
                 <label for="description">Description</label>
-                <input type="text" class="form-control" id="description" placeholder="{{description}}" required disabled>
+                <input type="text" class="form-control" id="description" value="{{description}}" required>
             </div>
         </div>
 
         <div class="form-group mb-3">
             <label for="platform">Platform</label>
-            <select class="custom-select d-block w-100" id="platform" required disabled>
+            <select class="custom-select d-block w-100" id="platform" required>
                 <option value="">-- None --</option>
                 <option {% if platform == 'ios'%}selected="selected"{%endif%}>Cisco IOS/IOS-XE</option>
                 <option {% if platform == 'nx-os'%}selected="selected"{%endif%}>Cisco Nexus</option>
@@ -70,7 +70,7 @@
         <h4 class="mb-3">Software version</h4>
         <div class="form-group mb-3">
             <label for="filepath">Firmware file path</label>
-            <input type="url" class="form-control" id="filepath" aria-describedby="filepathHelp" placeholder="{{filepath}}" disabled>
+            <input type="url" class="form-control" id="filepath" aria-describedby="filepathHelp" value="{{filepath}}">
             <small id="filepathHelp" class="form-text text-muted">Insert URI to file image. Leave empty to skip
                 image check</small>
         </div>
@@ -86,6 +86,7 @@
         </div>
 
         <hr class="mb-4">
+        <button class="btn btn-primary btn-lg btn-block" type="submit">Update template</button>
         <div id="submitalertspace" class="my-3"></div>
     </form>
 </div>
@@ -132,6 +133,34 @@
         $("#templaterenderspinner").show()
         $('#templaterenderview').html("");
     })
+
+    $('#templateform').submit(function (event) {
+        event.preventDefault();
+        $.ajax({
+            type: 'PUT',
+            url: $('#templateform').attr('action'),
+            data: {
+                name: $('#name').val(),
+                description: $('#description').val(),
+                platform: $('#platform').val(),
+                template: $('#template').val(),
+                templatevalues: $('#templatevalues').val(),
+                filepath: $('#filepath').val(),
+                poststaging: $('#poststaging').val()
+            }
+        }).done(function (response) {
+            $('#submitalertspace').append('<div class="alert alert-success alert-dismissible fade show" role="alert">' +
+                'Update successful' +
+                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                '<span aria-hidden="true">&times;</span></button></div>')
+        }).fail(function (response) {
+            alert(response)
+            $('#submitalertspace').append('<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+                '<strong>Error</strong> ' + response.responseJSON.message + 
+                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                '<span aria-hidden="true">&times;</span></button></div>')
+        });
+    });
 
 </script>
 {% endblock %}

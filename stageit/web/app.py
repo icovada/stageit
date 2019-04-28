@@ -85,13 +85,12 @@ def tasks():
 def templatedetail(templateid):
     session = newsession()
     template = session.query(Templates).filter(
-        Templates.id == templateid).one()
+        Templates.pkid == templateid).one()
     templatedict = template.__dict__
 
     templatedict['templatevalues'] = yaml.dump(
         pickle.loads(templatedict['templatevalues']))
 
-    # print(ins)
     return render_template('templates/templates/detail.html', **templatedict)
 
 
@@ -188,6 +187,29 @@ def apiaddtemplate():
     session.add(template)
     session.commit()
     return argdict['pkid']
+
+
+@app.route("/api/templates/<pkid>", methods=['PUT'])
+def apiupdatetemplate(pkid):
+    session = newsession()
+
+    # Check the template is not associated with pending tasks
+    tasks = session.query(Tasks).filter(Tasks.fktemplate == pkid).all()
+
+    if len(tasks) != 0:
+        raise InvalidUsage("Pending tasks assigned", 409)
+
+    template = session.query(Templates).get(pkid)
+
+    argdict = request.form.to_dict()
+
+    argdict['templatevalues'] = pickle.dumps(yaml.load(request.form['templatevalues']))
+
+    for key, value in argdict.items():
+        setattr(template, key, value)
+
+    session.commit()
+    return "ok"
 
 
 @app.route("/api/deletetemplate/<templateid>")
