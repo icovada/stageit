@@ -1,0 +1,98 @@
+{% extends "templates/layout.html" %}
+
+{% block navbar %}
+<a class="nav-item nav-link" href="/workers">Workers</a>
+<a class="nav-item nav-link" href="/tasks">Tasks</a>
+<a class="nav-item nav-link" href="/templates">Templates</a>
+{% endblock %}
+
+
+{% block body %}
+<h1 class="container col col-xl-8 mb-3 mt-3 md-auto display-4">Create task from {{fktemplate[:5]}}</h1>
+<div class="container col col-xl-8 justify-content-center pb-5">
+    <form class="needs-validation" action="/api/tasks" id="taskform" method="post">
+        <div class="form-group mb-3">
+            <label for="description">Description</label>
+            <input type="text" class="form-control" name="description" id="description" required>
+        </div>
+        <div class="form-group col-xl-6 mb-3">
+            <label for="taskvalues">Template values</label>
+            <textarea class="form-control text-monospace" name="taskvalues" id="taskvalues" rows="6"
+                aria-describedby="taskvaluesHelp">{{templatevalues}}</textarea>
+            <small id="taskvaluesHelp" class="form-text text-muted">Insert variables required by your task in
+                yaml format</small>
+        </div>
+        <hr class="mb-4">
+        <button class="btn btn-primary btn-lg btn-block" type="submit">Create task</button>
+        <div id="submitalertspace" class="my-3"></div>
+    </form>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    $("#templaterender").on('shown.bs.collapse', function () {
+        $.ajax({
+            type: "POST",
+            url: "/api/convertjinja",
+            data: {
+                template: $('#template').val(),
+                values: $('#templatevalues').val()
+            },
+            success: function (msg) {
+                if (msg['status'] == 'OK') {
+                    $("#templaterenderspinner").hide()
+                    $('#templaterenderview').html(msg['message']);
+                } else {
+                    $('#templaterender').collapse('hide')
+                    $('#templaterenderview').html("");
+                    $("#templaterenderspinner").show()
+                    $('#renderalertspace').append('<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+                        '<strong>Error</strong> ' + msg['message'] +
+                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                        '<span aria-hidden="true">&times;</span></button></div>')
+                }
+            },
+            error: function () {
+                $('#templaterender').collapse('hide')
+                $('#templaterenderview').html("");
+                $("#templaterenderspinner").show()
+                $('#renderalertspace').append('<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+                    '<strong>Error</strong> General error' +
+                    '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                    '<span aria-hidden="true">&times;</span></button></div>')
+            }
+        });
+    })
+
+    $("#templaterender").on('hidden.bs.collapse', function () {
+        $("#templaterenderspinner").show()
+        $('#templaterenderview').html("");
+    })
+
+    $('#taskform').submit(function (event) {
+        event.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: $('#taskform').attr('action'),
+            data: {
+                fktemplate: "{{fktemplate}}",
+                description: $('#description').val(),
+                taskvalues: $('#taskvalues').val(),
+            }
+        }).done(function (response) {
+            $('#submitalertspace').append('<div class="alert alert-success alert-dismissible fade show" role="alert">' +
+                '<strong>Submitted</strong>Template <a href="/templates/' + response + '">' + response.substring(0, 5) + '</a> was submitted' +
+                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                '<span aria-hidden="true">&times;</span></button></div>')
+        }).fail(function (response) {
+            $('#submitalertspace').append('<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+                '<strong>Error</strong> There was an error submitting the task' +
+                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                '<span aria-hidden="true">&times;</span></button></div>')
+        });
+    });
+
+</script>
+{% endblock %}

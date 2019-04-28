@@ -104,17 +104,18 @@ def templatesadd():
     return render_template("templates/templates/add.html")
 
 
-@app.route("/templates/<templateid>/create")
-def createtemplate(templateid):
+@app.route("/tasks/add")
+def createtask():
+    fktemplate = request.args.get('fktemplate')
     session = newsession()
     template = session.query(Templates).filter(
-        Templates.pkid == templateid).one()
+        Templates.pkid == fktemplate).one()
     templatedict = template.__dict__
 
     templatedict['templatevalues'] = yaml.dump(
         pickle.loads(templatedict['templatevalues']))
 
-    return render_template("templates/templates/tasks/add.html", uuid=templateid, **templatedict)
+    return render_template("templates/tasks/add.html", fktemplate=fktemplate, **templatedict)
 
 
 # API
@@ -199,20 +200,21 @@ def apideletetemplate(templateid):
     return redirect('/templates', code=302)
 
 
-@app.route("/api/addtask", methods=['POST'])
+@app.route("/api/tasks", methods=['POST'])
 def apiaddtask():
     session = newsession()
     argdict = request.form.copy()
-    argdict['id'] = str(uuid())
-    del argdict['templatevalues']
-    argdict['templatevalues'] = pickle.dumps(
-        yaml.load(request.form['templatevalues']))
-    print("VARS")
-    print(argdict)
-    template = Templates(**argdict)
-    session.add(template)
+
+    argdict['pkid'] = str(uuid())
+    argdict['taskvalues'] = pickle.dumps(
+        yaml.load(request.form['taskvalues']))
+
+    task = Tasks(pkid = argdict['pkid'],
+                 taskvalues = argdict['taskvalues'],
+                 description = argdict['description'])
+    session.add(task)
     session.commit()
-    return argdict['id']
+    return argdict['pkid']
 
 
 @app.route("/log/<worker>")
