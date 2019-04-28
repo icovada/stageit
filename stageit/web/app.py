@@ -74,7 +74,6 @@ def tasks():
                           Tasks.fktemplate,
                           Tasks.description)
 
-    workers=config.worker_array
     return render_template("templates/tasks.html",
                            header=("ID", "Template", "Description"),
                            table=tasks.all(),
@@ -92,11 +91,6 @@ def templatedetail(templateid):
         pickle.loads(templatedict['templatevalues']))
 
     return render_template('templates/templates/detail.html', **templatedict)
-
-
-@app.route("/templates/<templateid>/delete")
-def deletetemplate(templateid):
-    return render_template("templates/templates/delete.html", id=templateid)
 
 
 @app.route("/templates/add")
