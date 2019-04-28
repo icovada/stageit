@@ -40,6 +40,8 @@ def handle_invalid_usage(error):
     response.status_code = error.status_code
     return response
 
+# User Interface
+
 
 @app.route("/")
 def home():
@@ -48,7 +50,8 @@ def home():
 
 @app.route("/workers")
 def workers():
-    text = render_template("templates/workers.html", workers=config.worker_array)
+    text = render_template("templates/workers.html",
+                           workers=config.worker_array)
     return text
 
 
@@ -59,7 +62,7 @@ def templates():
                               Templates.name,
                               Templates.description)
 
-    return render_template("templates/templates.html", 
+    return render_template("templates/templates.html",
                            header=("Name", "Description"),
                            table=templates.all())
 
@@ -77,14 +80,55 @@ def tasks():
                            workers=config.worker_array.keys())
 
 
+@app.route("/templates/<templateid>")
+def templatedetail(templateid):
+    session = newsession()
+    template = session.query(Templates).filter(
+        Templates.id == templateid).one()
+    templatedict = template.__dict__
+
+    templatedict['templatevalues'] = yaml.dump(
+        pickle.loads(templatedict['templatevalues']))
+
+    # print(ins)
+    return render_template('templates/templates/detail.html', **templatedict)
+
+
+@app.route("/templates/<templateid>/delete")
+def deletetemplate(templateid):
+    return render_template("templates/templates/delete.html", id=templateid)
+
+
+@app.route("/templates/add")
+def templatesadd():
+    return render_template("templates/templates/add.html")
+
+
+@app.route("/templates/<templateid>/create")
+def createtemplate(templateid):
+    session = newsession()
+    template = session.query(Templates).filter(
+        Templates.pkid == templateid).one()
+    templatedict = template.__dict__
+
+    templatedict['templatevalues'] = yaml.dump(
+        pickle.loads(templatedict['templatevalues']))
+
+    return render_template("templates/templates/tasks/add.html", uuid=templateid, **templatedict)
+
+
+# API
+
+
 @app.route('/tasks/<worker>/<taskid>')
 def enqueue(worker, taskid):
     session = newsession()
     task = session.query(Tasks).filter(Tasks.pkid == taskid).one()
     taskdict = task.__dict__
 
-    template = session.query(Templates).filter(Templates.pkid == taskdict['fktemplate'])
-    templatedict = template.one().__dict__    
+    template = session.query(Templates).filter(
+        Templates.pkid == taskdict['fktemplate'])
+    templatedict = template.one().__dict__
 
     try:
         rtemplate = Environment(loader=BaseLoader).from_string(
@@ -92,7 +136,8 @@ def enqueue(worker, taskid):
     except jinja2.exceptions.TemplateSyntaxError as e:
         return jsonify({'status': 'Error', 'message': str(e)})
 
-    finalconfig = rtemplate.render(pickle.loads(taskdict['taskvalues'])).split("\n")
+    finalconfig = rtemplate.render(
+        pickle.loads(taskdict['taskvalues'])).split("\n")
 
     queueme = templatedict
     queueme['finalconfig'] = finalconfig
@@ -100,22 +145,11 @@ def enqueue(worker, taskid):
     return "OK"
 
 
-@app.route("/templates/<templateid>")
-def templatedetail(templateid):
-    session = newsession()
-    template = session.query(Templates).filter(Templates.id == templateid).one()
-    templatedict = template.__dict__
-
-    templatedict['templatevalues'] = yaml.dump(pickle.loads(templatedict['templatevalues']))
-
-    # print(ins)
-    return render_template('templates/templates/detail.html', **templatedict)
-
-
 @app.route("/templates/<templateid>/add", methods=['POST'])
 def templatemanager(templateid):
     session = newsession()
-    template = session.query(Templates).filter(Templates.pkid == templateid).one()
+    template = session.query(Templates).filter(
+        Templates.pkid == templateid).one()
     templatedict = template.__dict__
 
     picklevalues = pickle.dumps(yaml.load(request.form['taskvalues']))
@@ -128,28 +162,6 @@ def templatemanager(templateid):
     session.add(task)
     session.commit()
     return redirect('/tasks/' + templateid, code=302)
-
-
-@app.route("/templates/<templateid>/create")
-def createtemplate(templateid):
-    session = newsession()
-    template = session.query(Templates).filter(Templates.pkid == templateid).one()
-    templatedict = template.__dict__
-
-    templatedict['templatevalues'] = yaml.dump(
-        pickle.loads(templatedict['templatevalues']))
-
-    return render_template("templates/templates/tasks/add.html", uuid=templateid, **templatedict)
-
-
-@app.route("/templates/<templateid>/delete")
-def deletetemplate(templateid):
-    return render_template("templates/templates/delete.html", id=templateid)
-
-
-@app.route("/templates/add")
-def templatesadd():
-    return render_template("templates/templates/add.html")
 
 
 @app.route("/api/addtemplate", methods=['POST'])
@@ -176,11 +188,11 @@ def apiaddtemplate():
     return argdict['pkid']
 
 
-
 @app.route("/api/deletetemplate/<templateid>")
 def apideletetemplate(templateid):
     session = newsession()
-    template = session.query(Templates).filter(Templates.pkid == templateid).one()
+    template = session.query(Templates).filter(
+        Templates.pkid == templateid).one()
     session.delete(template)
     session.commit()
 
@@ -201,23 +213,6 @@ def apiaddtask():
     session.add(template)
     session.commit()
     return argdict['id']
-
-
-@app.route("/api/convertjinja", methods=['POST'])
-def convertjinja():
-    try:
-        rtemplate = Environment(loader=BaseLoader).from_string(
-            request.form["template"])
-    except jinja2.exceptions.TemplateSyntaxError as e:
-        return jsonify({'status': 'Error', 'message': str(e)})
-
-    yamlvalues = yaml.load(request.form["values"])
-    if yamlvalues is None:
-        yamlvalues = {}
-
-    result = {'status': 'OK', 'message': rtemplate.render(
-        **yamlvalues).replace("\n", "<br/>")}
-    return jsonify(result)
 
 
 @app.route("/log/<worker>")
@@ -244,6 +239,25 @@ def log(worker):
 def jobstatus(worker):
     print(config.worker_array)
     return config.worker_array[worker]['thread'].getstatus()
+
+
+# AJAX
+
+@app.route("/api/convertjinja", methods=['POST'])
+def convertjinja():
+    try:
+        rtemplate = Environment(loader=BaseLoader).from_string(
+            request.form["template"])
+    except jinja2.exceptions.TemplateSyntaxError as e:
+        return jsonify({'status': 'Error', 'message': str(e)})
+
+    yamlvalues = yaml.load(request.form["values"])
+    if yamlvalues is None:
+        yamlvalues = {}
+
+    result = {'status': 'OK', 'message': rtemplate.render(
+        **yamlvalues).replace("\n", "<br/>")}
+    return jsonify(result)
 
 
 def run():
