@@ -19,6 +19,8 @@ class Templates(Base):
     filepath = Column(String(256))
     poststaging = Column(String(2048))
 
+    tasks = relationship("Tasks", backref="template")
+
 
 class History(Base):
     __tablename__ = 'history'
