@@ -5,6 +5,9 @@ from io import BytesIO
 import logging
 import random
 import io
+from stageit.libs.db import Templates, History, Tasks, newsession
+from uuid import uuid4
+import pickle
 
 
 class FakeWorker(Thread):
@@ -105,15 +108,31 @@ class FakeWorker(Thread):
                 self.status = "Dead"
                 return
 
+            self.session = newsession()
+            self.dbrow = History(pkid=str(uuid4()))
+            self.session.add(self.dbrow)
+            self.session.commit()
             self.log = io.BytesIO()
+
             self.stageit()
+
             self.q.task_done()
 
     def getstatus(self):
         return self.status
 
+    def driver(self):
+        def getlog(self):
+            return self.log.getvalue().decode('utf-8')
+
     def stageit(self):
-        for i in range(random.randint(5, 60)):
+        self.dbrow.serial = "FOCTHIS"
+        self.session.commit()
+        for i in range(random.randint(5, 10)):
             self.status = self.statuses[random.randint(0, len(self.statuses)-1)]
             self.log.write(self.status.encode('utf-8'))
+            self.log.write("\n".encode('utf-8'))
             sleep(random.randint(1, 10))
+
+        self.dbrow.rundata = pickle.dumps({"runlog":self.log.getvalue()})
+        self.session.commit()
