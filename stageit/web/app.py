@@ -1,7 +1,7 @@
 from werkzeug.serving import run_simple
 from flask import Flask, request, stream_with_context, Response, render_template, abort, jsonify, redirect, url_for
 from flask.logging import default_handler
-import stageit.config as config
+import config
 from time import sleep
 import json
 import yaml
@@ -74,6 +74,7 @@ def tasks():
                           Tasks.fktemplate,
                           Tasks.description)
 
+    workers=config.worker_array
     return render_template("templates/tasks.html",
                            header=("ID", "Template", "Description"),
                            table=tasks.all(),
