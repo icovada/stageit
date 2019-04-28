@@ -197,7 +197,8 @@ def apiupdatetemplate(pkid):
 
     argdict = request.form.to_dict()
 
-    argdict['templatevalues'] = pickle.dumps(yaml.load(request.form['templatevalues']))
+    argdict['templatevalues'] = pickle.dumps(
+        yaml.load(request.form['templatevalues']))
 
     for key, value in argdict.items():
         setattr(template, key, value)
@@ -228,10 +229,10 @@ def apiaddtask():
     argdict['taskvalues'] = pickle.dumps(
         yaml.load(request.form['taskvalues']))
 
-    task = Tasks(pkid = argdict['pkid'],
-                 fktemplate = argdict['fktemplate'],
-                 taskvalues = argdict['taskvalues'],
-                 description = argdict['description'])
+    task = Tasks(pkid=argdict['pkid'],
+                 fktemplate=argdict['fktemplate'],
+                 taskvalues=argdict['taskvalues'],
+                 description=argdict['description'])
     session.add(task)
     session.commit()
     return argdict['pkid']

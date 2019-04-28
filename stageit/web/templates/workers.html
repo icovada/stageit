@@ -18,10 +18,10 @@
         </thead>
         <tbody>
             {% for element in workers %}
-                <tr>
-                    <th scope="row">{{element}}</th>
-                    <td>{{workers[element]['thread'].status}}</td>
-                </tr>
+            <tr>
+                <th scope="row">{{element}}</th>
+                <td>{{workers[element]['thread'].status}}</td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>

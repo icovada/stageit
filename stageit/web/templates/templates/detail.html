@@ -26,8 +26,8 @@
             <label for="platform">Platform</label>
             <select class="custom-select d-block w-100" id="platform" required>
                 <option value="">-- None --</option>
-                <option {% if platform == 'ios'%}selected="selected"{%endif%}>Cisco IOS/IOS-XE</option>
-                <option {% if platform == 'nx-os'%}selected="selected"{%endif%}>Cisco Nexus</option>
+                <option {% if platform == 'ios'%}selected="selected" {%endif%}>Cisco IOS/IOS-XE</option>
+                <option {% if platform == 'nx-os'%}selected="selected" {%endif%}>Cisco Nexus</option>
             </select>
         </div>
         <hr class="pt-3">
@@ -155,7 +155,7 @@
                 '<span aria-hidden="true">&times;</span></button></div>')
         }).fail(function (response) {
             $('#submitalertspace').append('<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
-                '<strong>Error</strong> ' + response.responseJSON.message + 
+                '<strong>Error</strong> ' + response.responseJSON.message +
                 '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
                 '<span aria-hidden="true">&times;</span></button></div>')
         });
