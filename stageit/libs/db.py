@@ -28,8 +28,13 @@ class History(Base):
     serial = Column(String(20))
     datestart = Column(DATETIME)
     dateend = Column(DATETIME)
-    templatename = Column(String(50))
+    template = Column(String(20000))
+    templatevalues = Column(BLOB(4096))
     rundata = Column(BLOB(1024000))
+    vendor = Column(String(30))
+    serial_number = Column(String(50))
+    os_version = Column(String(300))
+    model = Column(String(50))
 
 
 class Tasks(Base):
