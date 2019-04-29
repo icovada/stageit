@@ -84,7 +84,7 @@ def tasks():
 def history():
     session = newsession()
     tasks = session.query(History.pkid,
-                          History.serial,
+                          History.serial_number,
                           History.model,
                           History.description)
 
