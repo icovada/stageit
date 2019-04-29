@@ -80,6 +80,18 @@ def tasks():
                            workers=config.worker_array.keys())
 
 
+@app.route("/history")
+def history():
+    session = newsession()
+    tasks = session.query(History.pkid,
+                          History.serial,
+                          History.model,
+                          History.description)
+
+    return render_template("templates/history.html",
+                           table=tasks.all())
+
+
 @app.route("/templates/<templateid>")
 def templatedetail(templateid):
     session = newsession()
