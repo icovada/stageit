@@ -35,7 +35,8 @@
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 {% for worker in workers %}
-                                <a class="dropdown-item" href="#">{{worker}}</a>
+                                <a class="dropdown-item" href="#" id="assignworker" worker="{{worker}}"
+                                    taskid="{{row[0]}}">{{worker}}</a>
                                 {% endfor %}
                             </div>
                         </div>
@@ -63,6 +64,21 @@
                 alert(response.responseJSON.message)
             })
         }
+    });
+
+    $('#assignworker').on('click', function (event) {
+        $.ajax({
+            type: 'POST',
+            url: "/api/worker",
+            data: {
+                taskpkid: $(this).attr("taskid"),
+                worker: $(this).attr("worker")
+            }
+        }).done(function (response) {
+            alert("OK")
+        }).fail(function (response) {
+            alert("Fail")
+        })
     });
 
 </script>
