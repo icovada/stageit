@@ -4,7 +4,7 @@ import logging
 
 
 class IOSXERouter(BaseDevice):
-    def upgrade_software(self, version, uri, mode="INSTALL"):
+    def upgrade_software(self, uri, mode="INSTALL"):
         self.status = "Checking firmware versions"
         logging.info(self.status)
         firmware = (False, None, None)
