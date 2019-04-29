@@ -11,13 +11,13 @@ Base = declarative_base()
 class Templates(Base):
     __tablename__ = 'templates'
     pkid = Column(String(36), primary_key=True)
-    name = Column(String(50), nullable=False, unique=True)
     description = Column(String(50))
+    filepath = Column(String(256))
+    name = Column(String(50), nullable=False, unique=True)
     platform = Column(String(30), nullable=False)
+    poststaging = Column(String(2048))
     template = Column(String(20000))
     templatevalues = Column(BLOB(4096))
-    filepath = Column(String(256))
-    poststaging = Column(String(2048))
 
     tasks = relationship("Tasks", backref="template")
 
@@ -25,17 +25,17 @@ class Templates(Base):
 class History(Base):
     __tablename__ = 'history'
     pkid = Column(String(36), primary_key=True)
-    serial = Column(String(20))
-    datestart = Column(DATETIME)
     dateend = Column(DATETIME)
+    datestart = Column(DATETIME)
+    description = Column(String(50))
+    model = Column(String(50))
+    os_version = Column(String(300))
+    rundata = Column(BLOB(1024000))
+    serial = Column(String(20))
+    serial_number = Column(String(50))
     template = Column(String(20000))
     templatevalues = Column(BLOB(4096))
-    rundata = Column(BLOB(1024000))
-    description = Column(String(50))
     vendor = Column(String(30))
-    serial_number = Column(String(50))
-    os_version = Column(String(300))
-    model = Column(String(50))
 
 
 class Tasks(Base):
