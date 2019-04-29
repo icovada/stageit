@@ -31,6 +31,7 @@ class History(Base):
     template = Column(String(20000))
     templatevalues = Column(BLOB(4096))
     rundata = Column(BLOB(1024000))
+    description = Column(String(50))
     vendor = Column(String(30))
     serial_number = Column(String(50))
     os_version = Column(String(300))
