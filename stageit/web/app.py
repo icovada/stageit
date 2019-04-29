@@ -126,51 +126,16 @@ def taskdetail(taskid):
 # API
 
 
-@app.route('/tasks/<worker>/<taskid>')
-def enqueue(worker, taskid):
+@app.route('/api/worker', methods={'POST'})
+def enqueue():
     session = newsession()
-    task = session.query(Tasks).get(taskid)
-    taskdict = task.__dict__
+    argdict = request.form.to_dict()
 
-    template = task.template
-    templatedict = template.__dict__
+    # Check if task exists
+    task = session.query(Tasks).get(argdict['taskpkid'])
 
-    try:
-        rtemplate = Environment(loader=BaseLoader).from_string(
-            template.template)
-    except jinja2.exceptions.TemplateSyntaxError as e:
-        return jsonify({'status': 'Error', 'message': str(e)})
-
-    taskvalues = pickle.loads(task.taskvalues)
-    if taskvalues is not None:
-        finalconfig = template.template
-    else:
-        taskdict['taskvalues'] = taskvalues
-        finalconfig = rtemplate.render(pickle.loads(task.taskvalues)).split("\n")
-
-    queueme = templatedict
-    queueme['finalconfig'] = finalconfig
-    queueme['taskobject'] = task
-    config.worker_array[worker]['queue'].put(queueme)
+    config.worker_array[worker]['queue'].put(task.pkid)
     return "OK"
-
-
-@app.route("/templates/<templateid>/add", methods=['POST'])
-def templatemanager(templateid):
-    session = newsession()
-    template = session.query(Templates).get(templateid)
-    templatedict = template.__dict__
-
-    picklevalues = pickle.dumps(yaml.load(request.form['taskvalues']))
-
-    task = Tasks(pkid=str(uuid()),
-                 taskvalues=picklevalues,
-                 description=request.form['description'],
-                 fktemplate=templatedict['pkid'])
-
-    session.add(task)
-    session.commit()
-    return redirect('/tasks/' + templateid, code=302)
 
 
 @app.route("/api/templates", methods=['POST'])
