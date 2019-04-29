@@ -3,10 +3,12 @@ import os
 import netmiko
 from io import BytesIO
 import logging
+from stageit.libs.db import Templates, History, Tasks, newsession
+from time import sleep
 
 
 class BaseDevice():
-    def __init__(self, hostname, port, transport, platform, username, password, **kwargs):
+    def __init__(self, hostname, port, transport, platform, username, password, pkid, **kwargs):
         self.status = 'Init'
         logging.info(self.status)
         self._has_connectivity = False
@@ -26,6 +28,8 @@ class BaseDevice():
                                               'transport': transport,
                                               'session_log': self.logbuffer}}
 
+        self.pkid = pkid
+
     def checkavailable(self, retries):
         self.status = 'Waiting for connection'
         logging.info(self.status)
@@ -37,8 +41,10 @@ class BaseDevice():
                 logging.info(self.status)
                 try:
                     self.getfacts()
-                except (netmiko.ssh_exception.NetMikoAuthenticationException, ValueError) as e:
-                    pass
+                except (netmiko.ssh_exception.NetMikoAuthenticationException, ValueError) as e: #ConnectionRefusedError) as e:
+                    if retries > 100:
+                        # Chill. Still booting.
+                        sleep(10)
             else:
                 raise IOError("Device unavailable")
 
@@ -46,7 +52,17 @@ class BaseDevice():
         self.status = 'Getting facts'
         logging.info(self.status)
         with self.driver(**self.sessiondata) as session:
+            session.timeout=10
             self.facts = session.get_facts()
+        session = newsession()
+        dbrow = session.query(History).get(self.pkid)
+        dbrow.vendor = self.facts['vendor']
+        dbrow.serial_number = self.facts['serial_number']
+        dbrow.os_version = self.facts['os_version']
+        dbrow.model = self.facts['model']
+        session.commit()
+        session.close()
+        
 
     def load_temp_config(self, **kwargs):
         self.status = 'Loading temp config'
@@ -55,9 +71,6 @@ class BaseDevice():
         if 'ip' not in kwargs or 'netmask' not in kwargs:
             kwargs['ip'] = 'dhcp'
 
-        assert kwargs['username']
-        assert kwargs['password']
-
         with self.driver(**self.sessiondata) as session:
             templateargs = kwargs.copy()
             # Ignore warnings and worry later
@@ -65,12 +78,13 @@ class BaseDevice():
             session.load_template(template_name="upgrade_template",
                                   template_path=os.path.abspath(
                                       os.path.curdir) + "/configs",
-                                  **templateargs)
+                                  username="cisco",
+                                  password="cisco",
+                                  l2_interface="Gi1/0/48",
+                                  l3_interface="Vlan 1",
+                                  vlan=1,
+                                  ip="dhcp")
             session.commit_config()
-
-            # tempsessiondata = {'username': 'cisco',
-            #                    'password': 'cisco'
-            #                    }
 
             if kwargs['ip'] == 'dhcp':
                 self.status = "Waiting for DHCP"
@@ -80,18 +94,17 @@ class BaseDevice():
                 while len(int_ip) == 0:
                     int_ip = session.get_interfaces_ip()
 
-                # tempsessiondata['hostname'] = list(int_ip.keys())
-            # else:
-                # Value of 'ipv4' of the first interface in the dict. We should only have one for now anyway
-            #     tempsessiondata['hostname'] = list(list(b.values())[0]['ipv4'].keys())[0]
-
         self._has_connectivity = True
 
-    def load_final_config(self, config):
+    def load_final_config(self, config, **values):
         self.status = 'Loading final config'
         logging.info(self.status)
         with self.driver(**self.sessiondata) as session:
-            session.device.send_config_set(config)
+            session.load_template(template_source=config,
+                                  template_name="stdin",
+                                  **values)
+
+            session.commit_config()
 
         self.save_config()
 

@@ -146,7 +146,7 @@ def enqueue():
     # Check if task exists
     task = session.query(Tasks).get(argdict['taskpkid'])
 
-    config.worker_array[worker]['queue'].put(task.pkid)
+    config.worker_array[argdict['worker']]['queue'].put(task.pkid)
     return "OK"
 
 
