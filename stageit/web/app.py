@@ -1,3 +1,4 @@
+"""Main Flask application."""
 from werkzeug.serving import run_simple
 from flask import Flask, request, stream_with_context, Response, render_template, abort, jsonify, redirect, url_for
 from flask.logging import default_handler
@@ -19,9 +20,12 @@ app = Flask(__name__, template_folder=TEMPLATE_PATH)
 
 
 class InvalidUsage(Exception):
+    """Define method to return error. Taken from Flask docs."""
+
     status_code = 400
 
     def __init__(self, message, status_code=None, payload=None):
+        """Init class."""
         Exception.__init__(self)
         self.message = message
         if status_code is not None:
@@ -29,6 +33,7 @@ class InvalidUsage(Exception):
         self.payload = payload
 
     def to_dict(self):
+        """Taken from docs."""
         rv = dict(self.payload or ())
         rv['message'] = self.message
         return rv
@@ -36,6 +41,7 @@ class InvalidUsage(Exception):
 
 @app.errorhandler(InvalidUsage)
 def handle_invalid_usage(error):
+    """Handle errors."""
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
@@ -45,11 +51,13 @@ def handle_invalid_usage(error):
 
 @app.route("/")
 def home():
+    """Render home page."""
     return render_template("templates/layout.html")
 
 
 @app.route("/workers")
 def workers():
+    """Render workers list."""
     text = render_template("templates/workers.html",
                            workers=config.worker_array)
     return text
@@ -57,6 +65,7 @@ def workers():
 
 @app.route("/templates")
 def templates():
+    """Render template list."""
     session = newsession()
     templates = session.query(Templates.pkid,
                               Templates.name,
@@ -69,6 +78,7 @@ def templates():
 
 @app.route("/tasks")
 def tasks():
+    """Render task list."""
     session = newsession()
     tasks = session.query(Tasks.pkid,
                           Tasks.fktemplate,
@@ -82,6 +92,7 @@ def tasks():
 
 @app.route("/history")
 def history():
+    """Render history list."""
     session = newsession()
     tasks = session.query(History.pkid,
                           History.serial_number,
@@ -94,6 +105,7 @@ def history():
 
 @app.route("/templates/<templateid>")
 def templatedetail(templateid):
+    """Render template detail page."""
     session = newsession()
     template = session.query(Templates).get(templateid)
     templatedict = template.__dict__
@@ -108,11 +120,13 @@ def templatedetail(templateid):
 
 @app.route("/templates/add")
 def templatesadd():
+    """Render template addition page."""
     return render_template("templates/templates/add.html")
 
 
 @app.route("/tasks/add")
 def createtask():
+    """Render task addition page."""
     fktemplate = request.args.get('fktemplate')
     session = newsession()
     template = session.query(Templates).get(fktemplate)
@@ -128,6 +142,7 @@ def createtask():
 
 @app.route("/tasks/<taskid>")
 def taskdetail(taskid):
+    """Render task detail page."""
     session = newsession()
     task = session.query(Tasks).get(taskid)
     taskdict = task.__dict__
@@ -140,6 +155,7 @@ def taskdetail(taskid):
 
 @app.route('/api/worker', methods={'POST'})
 def enqueue():
+    """Assign task to worker."""
     session = newsession()
     argdict = request.form.to_dict()
 
@@ -152,6 +168,7 @@ def enqueue():
 
 @app.route("/api/templates", methods=['POST'])
 def apiaddtemplate():
+    """Add template API."""
     session = newsession()
     argdict = request.form.to_dict()
     argdict['pkid'] = str(uuid())
@@ -171,6 +188,7 @@ def apiaddtemplate():
 
 @app.route("/api/templates/<pkid>", methods=['PUT'])
 def apiupdatetemplate(pkid):
+    """Update template API."""
     session = newsession()
 
     template = session.query(Templates).get(pkid)
@@ -195,6 +213,7 @@ def apiupdatetemplate(pkid):
 
 @app.route("/api/templates/<pkid>", methods=['DELETE'])
 def apideletetemplate(pkid):
+    """Delete template API."""
     session = newsession()
     template = session.query(Templates).get(pkid)
     session.delete(template)
@@ -208,6 +227,7 @@ def apideletetemplate(pkid):
 
 @app.route("/api/tasks", methods=['POST'])
 def apiaddtask():
+    """Add task API."""
     session = newsession()
     argdict = request.form.to_dict()
 
@@ -236,6 +256,7 @@ def apiaddtask():
 
 @app.route("/api/tasks/<pkid>", methods=['DELETE'])
 def apideletetask(pkid):
+    """Delete task API."""
     session = newsession()
     task = session.query(Tasks).get(pkid)
     session.delete(task)
@@ -251,6 +272,7 @@ def apideletetask(pkid):
 
 @app.route("/log/<worker>")
 def log(worker):
+    """Return stream of worker console log."""
     def streambytes():
         oldposition = 0
         while config.worker_array[worker]['thread'].status != "Waiting for work":
@@ -271,6 +293,7 @@ def log(worker):
 
 @app.route("/jobstatus/<worker>")
 def jobstatus(worker):
+    """Return Worker.status."""
     print(config.worker_array)
     return config.worker_array[worker]['thread'].getstatus()
 
@@ -279,6 +302,7 @@ def jobstatus(worker):
 
 @app.route("/api/convertjinja", methods=['POST'])
 def convertjinja():
+    """Return rendered Jinja2 template."""
     try:
         rtemplate = Environment(loader=BaseLoader).from_string(
             request.form["template"])
@@ -295,4 +319,5 @@ def convertjinja():
 
 
 def run():
+    """Run app."""
     run_simple('127.0.0.1', 5000, app)

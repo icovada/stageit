@@ -1,3 +1,5 @@
+"""Database definition and session generator."""
+
 import os
 import sys
 from sqlalchemy import Column, ForeignKey, Integer, String, BLOB, DATETIME, MetaData, Table
@@ -9,6 +11,8 @@ Base = declarative_base()
 
 
 class Templates(Base):
+    """Defines templates table."""
+
     __tablename__ = 'templates'
     pkid = Column(String(36), primary_key=True)
     description = Column(String(50))
@@ -23,6 +27,8 @@ class Templates(Base):
 
 
 class History(Base):
+    """Defines history table."""
+
     __tablename__ = 'history'
     pkid = Column(String(36), primary_key=True)
     dateend = Column(DATETIME)
@@ -40,6 +46,8 @@ class History(Base):
 
 
 class Tasks(Base):
+    """Defines tasks table."""
+
     __tablename__ = 'tasks'
     pkid = Column(String(36), primary_key=True)
     description = Column(String(50))
@@ -47,6 +55,7 @@ class Tasks(Base):
     taskvalues = Column(BLOB(4096))
 
 def newsession():
+    """Return a new session."""
     return Session()
 
 # Create an engine that stores data in the local directory's

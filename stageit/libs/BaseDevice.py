@@ -1,3 +1,4 @@
+"""BaseDevice to be expanded by subclasses."""
 import napalm
 import os
 import netmiko
@@ -8,7 +9,10 @@ from time import sleep
 
 
 class BaseDevice():
+    """BaseDevice to be expanded by subclasses."""
+
     def __init__(self, hostname, port, transport, platform, username, password, pkid, cservermgmt, **kwargs):
+        """Define all class data."""
         self.status = 'Init'
         logging.info(self.status)
         self._has_connectivity = False
@@ -32,6 +36,7 @@ class BaseDevice():
         self.cservermgmt=cservermgmt
 
     def checkavailable(self, retries):
+        """Check if device is available and has booted."""
         self.status = 'Waiting for connection'
         logging.info(self.status)
         self.facts = None
@@ -54,6 +59,7 @@ class BaseDevice():
                 raise IOError("Device unavailable")
 
     def getfacts(self):
+        """Get device facts and update history db table."""
         self.status = 'Getting facts'
         logging.info(self.status)
         with self.driver(**self.sessiondata) as session:
@@ -70,6 +76,11 @@ class BaseDevice():
         
 
     def load_temp_config(self, **kwargs):
+        """
+        Load temporary configuration to transfer files.
+
+        Is called by upgrade_software if self._has_connectivity is False.
+        """
         self.status = 'Loading temp config'
         logging.info(self.status)
         # Check if we have info from outside, otherwise default to dhcp
@@ -101,6 +112,7 @@ class BaseDevice():
         self._has_connectivity = True
 
     def load_final_config(self, config, **values):
+        """Load final configuration from template."""
         self.status = 'Loading final config'
         logging.info(self.status)
         with self.driver(**self.sessiondata) as session:
@@ -113,6 +125,7 @@ class BaseDevice():
         self.save_config()
 
     def copy_file(self, session, uri):
+        """Connect to device and issue copy command from uri."""
         self.status = 'Copying from {}'.format(uri)
         logging.info(self.status)
         session.device.send_config_set(["file prompt quiet"])
@@ -129,12 +142,15 @@ class BaseDevice():
             return
 
     def upgrade_software(self, version, uri, mode_install):
+        """Not implemented."""
         raise NotImplementedError
 
     def getlog(self):
+        """Return session log."""
         return self.logbuffer.getvalue().decode('utf-8')
 
     def save_config(self):
+        """Issue write command."""
         self.status = 'Saving config'
         logging.info(self.status)
         with self.driver(**self.sessiondata) as session:
@@ -143,6 +159,7 @@ class BaseDevice():
             session.device.read_until_prompt()
 
     def reload_device(self):
+        """Issue reload command."""
         self.status = 'Sending reload command'
         logging.info(self.status)
         with self.driver(**self.sessiondata) as session:
@@ -154,6 +171,7 @@ class BaseDevice():
         self.checkavailable(1000)
 
     def close(self, logname=None):
+        """Wrap-up task."""
         self.status = 'Saving log'
         logging.info(self.status)
         if logname is not None:

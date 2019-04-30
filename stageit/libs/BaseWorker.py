@@ -1,3 +1,5 @@
+"""Base Worker thread from which BaseDevice is spawned."""
+
 from threading import Thread
 import queue
 from stageit.libs.BaseDevice import BaseDevice
@@ -11,11 +13,10 @@ from datetime import datetime
 
 
 class BaseWorker(Thread):
-    """
-    Base class to connect to network device
-    """
+    """Base class to connect to network device."""
 
     def __init__(self, q, cservermgmt, **kwargs):
+        """Init worker thread."""
         Thread.__init__(self)
         self.q = q
         self.hostname = kwargs['hostname']
@@ -31,6 +32,7 @@ class BaseWorker(Thread):
         self.cservermgmt = cservermgmt
 
     def run(self):
+        """Multithreading calls this to start the task."""
         logging.info("Worker for {}:{} ready".format(self.hostname, self.port))
 
         while True:
@@ -101,11 +103,7 @@ class BaseWorker(Thread):
             self.q.task_done()
 
     def find_model(self):
-        """
-        Find device type and return appropriate class to deal with upgrading,
-        version checking and else
-        """
-
+        """Find device type and return appropriate class to deal with upgrading, version checking and else."""
         device = BaseDevice(**self.devicedata,
                             cservermgmt=self.cservermgmt)
 
@@ -133,12 +131,14 @@ class BaseWorker(Thread):
         return specific_device
 
     def getstatus(self):
+        """Return status of Worker or Device."""
         if self.status == 'Working':
             return self.driver.status
         else:
             return self.status
 
     def stageit(self):
+        """Do the job."""
         self.status = 'Working'
         self.driver.checkavailable(1000)
 

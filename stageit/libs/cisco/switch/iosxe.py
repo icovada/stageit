@@ -1,11 +1,14 @@
+"""Use with IOS-XE switches such as 3650 and 3850."""
 from stageit.libs.BaseDevice import BaseDevice
 import re
 import logging
 
 
 class IOSXESwitch(BaseDevice):
+    """Expand BaseDevice with 3650- and 3850-specific commands."""
 
     def upgrade_software(self, uri, mode="INSTALL"):
+        """Verify software version and if necessary upgrade through proper path."""
         self.status = "Checking firmware version"
         logging.info(self.status)
         firmware = (False, None, None)

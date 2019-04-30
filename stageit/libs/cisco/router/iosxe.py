@@ -1,10 +1,14 @@
+"""Use with IOS-XE routers such as ISR 4000."""
 from stageit.libs.BaseDevice import BaseDevice
 import re
 import logging
 
 
 class IOSXERouter(BaseDevice):
+    """Expand BaseDevice with ISR4000-specific commands."""
+
     def upgrade_software(self, uri, mode="INSTALL"):
+        """Verify software version and if necessary upgrade through proper path."""
         self.status = "Checking firmware versions"
         logging.info(self.status)
         firmware = (False, None, None)
