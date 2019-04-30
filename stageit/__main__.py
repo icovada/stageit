@@ -8,7 +8,7 @@ import logging
 import queue
 import yaml
 from stageit.libs.fake_worker import FakeWorker
-from stageit.libs.BaseWorker import BaseWorker
+from stageit.libs.base_worker import BaseWorker
 
 import config
 

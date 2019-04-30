@@ -1,8 +1,14 @@
-from stageit.libs.consoleserver import BaseConsoleServer
+"""Cisco Console Server class"""
+
 from netmiko import Netmiko as netmiko
+from stageit.libs.consoleserver import BaseConsoleServer
 
 class CiscoConsoleServer(BaseConsoleServer):
+    """Overload reset method for Cisco routers
+    Tested on Cisco 1801"""
+
     def reset(self):
+        """Connect and clear line"""
         devicetypemap = {'telnet': 'cisco_ios_telnet',
                          'ssh': 'cisco_ios'}
         net_connect = netmiko(host=self.hostname,
