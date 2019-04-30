@@ -54,6 +54,7 @@ class BaseWorker(Thread):
             self.platform = template.platform
             self.poststaging = template.poststaging
             self.filepath = template.filepath
+            self.installmode = template.installmode
 
             self.pkid = str(uuid4())
 
@@ -61,6 +62,7 @@ class BaseWorker(Thread):
                 pkid=self.pkid,
                 datestart=datetime.utcnow(),
                 description=self.description,
+                installmode=self.installmode,
                 templatevalues=task.taskvalues,
                 template=self.template
             )
@@ -133,13 +135,13 @@ class BaseWorker(Thread):
         # Skip upgrade if file path not provided
         if self.filepath != '':
             try:
-                self.driver.upgrade_software(uri=self.filepath)
-                                             # TODO mode=self.work['mode'])
+                self.driver.upgrade_software(uri=self.filepath,
+                                             mode=self.installmode)
             except ConnectionError:
                 self.driver.load_temp_config(**self.tempconfig)
                 sleep(3)
-                self.driver.upgrade_software(uri=self.filepath)
-                                             # TODO mode=self.work['mode'])
+                self.driver.upgrade_software(uri=self.filepath,
+                                             mode=self.installmode)
 
         self.driver.load_final_config(self.template, **self.templatevalues)
                 

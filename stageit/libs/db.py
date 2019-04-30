@@ -13,12 +13,12 @@ class Templates(Base):
     pkid = Column(String(36), primary_key=True)
     description = Column(String(50))
     filepath = Column(String(256))
+    installmode = Column(String(20))
     name = Column(String(50), nullable=False, unique=True)
     platform = Column(String(30), nullable=False)
     poststaging = Column(String(2048))
     template = Column(String(20000))
     templatevalues = Column(BLOB(4096))
-
     tasks = relationship("Tasks", backref="template")
 
 
@@ -28,6 +28,7 @@ class History(Base):
     dateend = Column(DATETIME)
     datestart = Column(DATETIME)
     description = Column(String(50))
+    installmode = Column(String(20))
     model = Column(String(50))
     os_version = Column(String(300))
     rundata = Column(BLOB(1024000))
