@@ -6,7 +6,12 @@ Stage network devices
 
 import logging
 import queue
+import sys
+import os
 import yaml
+
+sys.path.append(os.path.join(os.path.dirname(__file__), os.path.pardir)) 
+
 from stageit.libs.fake_worker import FakeWorker
 from stageit.libs.base_worker import BaseWorker
 
