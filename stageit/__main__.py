@@ -57,7 +57,7 @@ def main():
 
 
 if __name__ == '__main__':
-    import stageit.web.app as app
+    import web.app as app
 
     main()
     app.run()

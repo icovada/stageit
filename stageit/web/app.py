@@ -57,7 +57,8 @@ def home():
 def workers():
     """Render workers list."""
     text = render_template("templates/workers.html",
-                           workers=config.WORKER_DICT)
+                           workers=config.WORKER_DICT,
+                           navbar="worker")
     return text
 
 
@@ -71,7 +72,8 @@ def templates():
 
     return render_template("templates/templates.html",
                            header=("Name", "Description"),
-                           table=dbtemplates.all())
+                           table=dbtemplates.all(),
+                           navbar="template")
 
 
 @APP.route("/tasks")
@@ -85,7 +87,8 @@ def tasks():
     return render_template("templates/tasks.html",
                            header=("ID", "Template", "Description"),
                            table=dbtasks.all(),
-                           workers=config.WORKER_DICT.keys())
+                           workers=config.WORKER_DICT.keys(),
+                           navbar="task")
 
 
 @APP.route("/history")
@@ -98,7 +101,8 @@ def history():
                             History.description)
 
     return render_template("templates/history.html",
-                           table=dbtasks.all())
+                           table=dbtasks.all(),
+                           navbar="history")
 
 
 @APP.route("/templates/<templateid>")
@@ -114,13 +118,16 @@ def templatedetail(templateid):
     else:
         templatedict['templatevalues'] = ''
 
-    return render_template('templates/templates/detail.html', **templatedict)
+    return render_template('templates/templates/detail.html',
+                           navbar="template",
+                           **templatedict)
 
 
 @APP.route("/templates/add")
 def templatesadd():
     """Render template addition page."""
-    return render_template("templates/templates/add.html")
+    return render_template("templates/templates/add.html",
+                           navbar="template")
 
 
 @APP.route("/tasks/add")
@@ -137,7 +144,10 @@ def createtask():
     else:
         templatedict['templatevalues'] = ''
 
-    return render_template("templates/tasks/add.html", fktemplate=fktemplate, **templatedict)
+    return render_template("templates/tasks/add.html",
+                           fktemplate=fktemplate,
+                           navbar="task"
+                           **templatedict)
 
 
 @APP.route("/tasks/<taskid>")
@@ -147,7 +157,9 @@ def taskdetail(taskid):
     task = session.query(Tasks).get(taskid)
     taskdict = task.__dict__
 
-    return render_template('templates/tasks/detail.html', **taskdict)
+    return render_template('templates/tasks/detail.html',
+                           navbar="task",
+                           **taskdict)
 
 
 # API
