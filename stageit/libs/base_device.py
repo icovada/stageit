@@ -1,17 +1,18 @@
 """BaseDevice to be expanded by subclasses."""
-import napalm
 import os
-import netmiko
 from io import BytesIO
 import logging
-from stageit.libs.db import Templates, History, Tasks, newsession
 from time import sleep
+import napalm
+import netmiko
+from stageit.libs.db import History, newsession
 
 
 class BaseDevice():
     """BaseDevice to be expanded by subclasses."""
 
-    def __init__(self, hostname, port, transport, platform, username, password, pkid, cservermgmt, **kwargs):
+    def __init__(self, hostname, port, transport, platform,
+                 username, password, pkid, cservermgmt, **kwargs):
         """Define all class data."""
         self.status = 'Init'
         logging.info(self.status)
@@ -32,8 +33,10 @@ class BaseDevice():
                                               'transport': transport,
                                               'session_log': self.logbuffer}}
 
-        self.pkid=pkid
-        self.cservermgmt=cservermgmt
+        self.pkid = pkid
+        self.cservermgmt = cservermgmt
+
+        self.facts = None
 
     def checkavailable(self, retries):
         """Check if device is available and has booted."""
@@ -47,7 +50,7 @@ class BaseDevice():
                 logging.info(self.status)
                 try:
                     self.getfacts()
-                except (netmiko.ssh_exception.NetMikoAuthenticationException, ValueError) as e:
+                except (netmiko.ssh_exception.NetMikoAuthenticationException, ValueError):
                     if retries > 100:
                         # Chill. Still booting.
                         sleep(10)
@@ -63,7 +66,7 @@ class BaseDevice():
         self.status = 'Getting facts'
         logging.info(self.status)
         with self.driver(**self.sessiondata) as session:
-            session.timeout=10
+            session.timeout = 10
             self.facts = session.get_facts()
         session = newsession()
         dbrow = session.query(History).get(self.pkid)
@@ -73,7 +76,7 @@ class BaseDevice():
         dbrow.model = self.facts['model']
         session.commit()
         session.close()
-        
+
 
     def load_temp_config(self, **kwargs):
         """
@@ -106,7 +109,7 @@ class BaseDevice():
                 logging.info(self.status)
                 # Wait for device to grab ip.
                 int_ip = {}
-                while len(int_ip) == 0:
+                while int_ip:
                     int_ip = session.get_interfaces_ip()
 
         self._has_connectivity = True

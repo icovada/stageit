@@ -1,7 +1,7 @@
 """Use with IOS-XE routers such as ISR 4000."""
-from stageit.libs.BaseDevice import BaseDevice
 import re
 import logging
+from stageit.libs.base_device import BaseDevice
 
 
 class IOSXERouter(BaseDevice):
@@ -24,10 +24,10 @@ class IOSXERouter(BaseDevice):
                                "http://10.82.135.9/ios-xe/isr4200_4300_rommon_169_1r_SPA.pkg")
                 self.status = "Upgrading ROMMON"
                 logging.info(self.status)
-                driver.device.timeout = 600  # Takes at least a good 5 min
-                driver.device.write_channel(
+                session.device.timeout = 600  # Takes at least a good 5 min
+                session.device.write_channel(
                     "upgrade rom-monitor filename bootflash:isr4200_4300_rommon_169_1r_SPA.pkg all\n")
-                driver.device.read_until_prompt_or_pattern(
+                session.device.read_until_prompt_or_pattern(
                     "ROMMON upgrade complete")
 
             self.reload_device()
@@ -38,14 +38,15 @@ class IOSXERouter(BaseDevice):
                 if not self._has_connectivity:
                     raise ConnectionError("Cannot copy file, device has no IP")
                 # Check if firmware is version 03
-                # Version 03 cannot expand version 16 directly and need to be booted in BUNDLE mode first
+                # Version 03 cannot expand version 16 directly
+                # and need to be booted in BUNDLE mode first
 
                 oldmajor = int(firmware[1].split(".")[0])
                 newmajor = int(version.split(".")[0])
 
                 if oldmajor < 16:
                     if newmajor > 15:
-                        upgradestatus = self.upgrade_to_bundle(uri)
+                        upgradestatus = self._upgrade_to_bundle(uri)
 
                 if mode == "BUNDLE":
                     upgradestatus = self._upgrade_to_bundle(uri)

@@ -1,13 +1,14 @@
+"""Fake worker returning Sim City 4 loading screen messages"""
+
 from threading import Thread
 import queue
 from time import sleep
-from io import BytesIO
 import logging
 import random
 import io
-from stageit.libs.db import Templates, History, Tasks, newsession
 from uuid import uuid4
 import pickle
+from stageit.libs.db import History, newsession
 
 
 class FakeWorker(Thread):
@@ -17,7 +18,7 @@ class FakeWorker(Thread):
 
     def __init__(self, q, **kwargs):
         Thread.__init__(self)
-        self.q = q
+        self.this_queue = q
         self.status = "Initializing"
 
         # Adapted from Sim City 4 loading screen to fit network
@@ -97,12 +98,17 @@ class FakeWorker(Thread):
                          "Unable to Reveal Current Activity",
                          "Zeroing nvram"]
 
+        self.work = None
+        self.session = None
+        self.dbrow = None
+        self.log = None
+
     def run(self):
         logging.info("Fake Worker ready")
         while True:
             try:
                 self.status = "Waiting for work"
-                self.work = self.q.get(timeout=600)
+                self.work = self.this_queue.get(timeout=600)
 
             except queue.Empty:
                 self.status = "Dead"
@@ -116,16 +122,23 @@ class FakeWorker(Thread):
 
             self.stageit()
 
-            self.q.task_done()
+            self.this_queue.task_done()
 
     def getstatus(self):
+        """Return status of running task"""
         return self.status
 
     def driver(self):
+        """
+        Return complete log.
+
+        Subroutine because emulates an import in BaseWorker
+        """
         def getlog(self):
             return self.log.getvalue().decode('utf-8')
 
     def stageit(self):
+        """Choose random status"""
         self.dbrow.serial = "FOCTHIS"
         self.session.commit()
         for i in range(random.randint(5, 10)):

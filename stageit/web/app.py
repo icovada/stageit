@@ -1,22 +1,20 @@
-"""Main Flask application."""
-from werkzeug.serving import run_simple
-from flask import Flask, request, stream_with_context, Response, render_template, abort, jsonify, redirect, url_for
-from flask.logging import default_handler
-import config
+"""Main Flask APPlication."""
 from time import sleep
-import json
-import yaml
 import os
+from uuid import uuid4 as uuid
+import pickle
+from werkzeug.serving import run_simple
+from flask import Flask, request, stream_with_context, Response, render_template, jsonify
+import yaml
 from jinja2 import Environment, BaseLoader
 import jinja2
-from uuid import uuid4 as uuid
 from stageit.libs.db import Templates, History, Tasks, newsession
-import pickle
+import config
 
 APP_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATE_PATH = os.path.join(APP_PATH, 'web')
 
-app = Flask(__name__, template_folder=TEMPLATE_PATH)
+APP = Flask(__name__, template_folder=TEMPLATE_PATH)
 
 
 class InvalidUsage(Exception):
@@ -34,12 +32,12 @@ class InvalidUsage(Exception):
 
     def to_dict(self):
         """Taken from docs."""
-        rv = dict(self.payload or ())
-        rv['message'] = self.message
-        return rv
+        ret_val = dict(self.payload or ())
+        ret_val['message'] = self.message
+        return ret_val
 
 
-@app.errorhandler(InvalidUsage)
+@APP.errorhandler(InvalidUsage)
 def handle_invalid_usage(error):
     """Handle errors."""
     response = jsonify(error.to_dict())
@@ -49,61 +47,61 @@ def handle_invalid_usage(error):
 # User Interface
 
 
-@app.route("/")
+@APP.route("/")
 def home():
     """Render home page."""
     return render_template("templates/layout.html")
 
 
-@app.route("/workers")
+@APP.route("/workers")
 def workers():
     """Render workers list."""
     text = render_template("templates/workers.html",
-                           workers=config.worker_array)
+                           workers=config.WORKER_DICT)
     return text
 
 
-@app.route("/templates")
+@APP.route("/templates")
 def templates():
     """Render template list."""
     session = newsession()
-    templates = session.query(Templates.pkid,
-                              Templates.name,
-                              Templates.description)
+    dbtemplates = session.query(Templates.pkid,
+                                Templates.name,
+                                Templates.description)
 
     return render_template("templates/templates.html",
                            header=("Name", "Description"),
-                           table=templates.all())
+                           table=dbtemplates.all())
 
 
-@app.route("/tasks")
+@APP.route("/tasks")
 def tasks():
     """Render task list."""
     session = newsession()
-    tasks = session.query(Tasks.pkid,
-                          Tasks.fktemplate,
-                          Tasks.description)
+    dbtasks = session.query(Tasks.pkid,
+                            Tasks.fktemplate,
+                            Tasks.description)
 
     return render_template("templates/tasks.html",
                            header=("ID", "Template", "Description"),
-                           table=tasks.all(),
-                           workers=config.worker_array.keys())
+                           table=dbtasks.all(),
+                           workers=config.WORKER_DICT.keys())
 
 
-@app.route("/history")
+@APP.route("/history")
 def history():
     """Render history list."""
     session = newsession()
-    tasks = session.query(History.pkid,
-                          History.serial_number,
-                          History.model,
-                          History.description)
+    dbtasks = session.query(History.pkid,
+                            History.serial_number,
+                            History.model,
+                            History.description)
 
     return render_template("templates/history.html",
-                           table=tasks.all())
+                           table=dbtasks.all())
 
 
-@app.route("/templates/<templateid>")
+@APP.route("/templates/<templateid>")
 def templatedetail(templateid):
     """Render template detail page."""
     session = newsession()
@@ -111,20 +109,21 @@ def templatedetail(templateid):
     templatedict = template.__dict__
 
     if template.templatevalues is not None:
-        templatedict['templatevalues'] = yaml.dump(pickle.loads(template.templatevalues))
-    else: 
+        templatedict['templatevalues'] = yaml.dump(
+            pickle.loads(template.templatevalues))
+    else:
         templatedict['templatevalues'] = ''
 
     return render_template('templates/templates/detail.html', **templatedict)
 
 
-@app.route("/templates/add")
+@APP.route("/templates/add")
 def templatesadd():
     """Render template addition page."""
     return render_template("templates/templates/add.html")
 
 
-@app.route("/tasks/add")
+@APP.route("/tasks/add")
 def createtask():
     """Render task addition page."""
     fktemplate = request.args.get('fktemplate')
@@ -133,14 +132,15 @@ def createtask():
     templatedict = template.__dict__
 
     if template.templatevalues is not None:
-        templatedict['templatevalues'] = yaml.dump(pickle.loads(template.templatevalues))
-    else: 
+        templatedict['templatevalues'] = yaml.dump(
+            pickle.loads(template.templatevalues))
+    else:
         templatedict['templatevalues'] = ''
 
     return render_template("templates/tasks/add.html", fktemplate=fktemplate, **templatedict)
 
 
-@app.route("/tasks/<taskid>")
+@APP.route("/tasks/<taskid>")
 def taskdetail(taskid):
     """Render task detail page."""
     session = newsession()
@@ -153,7 +153,7 @@ def taskdetail(taskid):
 # API
 
 
-@app.route('/api/worker', methods={'POST'})
+@APP.route('/api/worker', methods={'POST'})
 def enqueue():
     """Assign task to worker."""
     session = newsession()
@@ -162,11 +162,11 @@ def enqueue():
     # Check if task exists
     task = session.query(Tasks).get(argdict['taskpkid'])
 
-    config.worker_array[argdict['worker']]['queue'].put(task.pkid)
+    config.WORKER_DICT[argdict['worker']]['queue'].put(task.pkid)
     return "OK"
 
 
-@app.route("/api/templates", methods=['POST'])
+@APP.route("/api/templates", methods=['POST'])
 def apiaddtemplate():
     """Add template API."""
     session = newsession()
@@ -186,14 +186,14 @@ def apiaddtemplate():
     return argdict['pkid']
 
 
-@app.route("/api/templates/<pkid>", methods=['PUT'])
+@APP.route("/api/templates/<pkid>", methods=['PUT'])
 def apiupdatetemplate(pkid):
     """Update template API."""
     session = newsession()
 
     template = session.query(Templates).get(pkid)
     # Check the template is not associated with pending tasks
-    if len(template.tasks) != 0:
+    if not len:
         raise InvalidUsage("Pending tasks assigned", 409)
 
     argdict = request.form.to_dict()
@@ -211,7 +211,7 @@ def apiupdatetemplate(pkid):
     return "ok"
 
 
-@app.route("/api/templates/<pkid>", methods=['DELETE'])
+@APP.route("/api/templates/<pkid>", methods=['DELETE'])
 def apideletetemplate(pkid):
     """Delete template API."""
     session = newsession()
@@ -225,7 +225,7 @@ def apideletetemplate(pkid):
     return "OK"
 
 
-@app.route("/api/tasks", methods=['POST'])
+@APP.route("/api/tasks", methods=['POST'])
 def apiaddtask():
     """Add task API."""
     session = newsession()
@@ -244,7 +244,6 @@ def apiaddtask():
             if 'hostname' in yamlconfig:
                 argdict['description'] = yamlconfig['hostname']
 
-
     argdict['taskvalues'] = taskvalues
 
     task = Tasks(**argdict)
@@ -254,7 +253,7 @@ def apiaddtask():
     return argdict['pkid']
 
 
-@app.route("/api/tasks/<pkid>", methods=['DELETE'])
+@APP.route("/api/tasks/<pkid>", methods=['DELETE'])
 def apideletetask(pkid):
     """Delete task API."""
     session = newsession()
@@ -270,20 +269,20 @@ def apideletetask(pkid):
 
 # Backend
 
-@app.route("/log/<worker>")
+@APP.route("/log/<worker>")
 def log(worker):
     """Return stream of worker console log."""
     def streambytes():
         oldposition = 0
-        while config.worker_array[worker]['thread'].status != "Waiting for work":
+        while config.WORKER_DICT[worker]['thread'].status != "Waiting for work":
             sleep(0.1)
-            newbuffer = config.worker_array[worker]['thread'].driver.getlog()
+            newbuffer = config.WORKER_DICT[worker]['thread'].driver.getlog()
             yield newbuffer[oldposition:].replace("\n", "<br/>")
             oldbuffer = newbuffer
             oldposition = len(oldbuffer)
 
     try:
-        if config.worker_array[worker]['thread'].status != "Waiting for work":
+        if config.WORKER_DICT[worker]['thread'].status != "Waiting for work":
             return Response(stream_with_context(streambytes()))
         else:
             return "No work queued, come back later"
@@ -291,23 +290,23 @@ def log(worker):
         return "Discovering platform, please refresh later"
 
 
-@app.route("/jobstatus/<worker>")
+@APP.route("/jobstatus/<worker>")
 def jobstatus(worker):
     """Return Worker.status."""
-    print(config.worker_array)
-    return config.worker_array[worker]['thread'].getstatus()
+    print(config.WORKER_DICT)
+    return config.WORKER_DICT[worker]['thread'].getstatus()
 
 
 # AJAX
 
-@app.route("/api/convertjinja", methods=['POST'])
+@APP.route("/api/convertjinja", methods=['POST'])
 def convertjinja():
     """Return rendered Jinja2 template."""
     try:
         rtemplate = Environment(loader=BaseLoader).from_string(
             request.form["template"])
-    except jinja2.exceptions.TemplateSyntaxError as e:
-        return jsonify({'status': 'Error', 'message': str(e)})
+    except jinja2.exceptions.TemplateSyntaxError as exception:
+        return jsonify({'status': 'Error', 'message': str(exception)})
 
     yamlvalues = yaml.load(request.form["values"])
     if yamlvalues is None:
@@ -319,5 +318,5 @@ def convertjinja():
 
 
 def run():
-    """Run app."""
-    run_simple('127.0.0.1', 5000, app)
+    """Run APP."""
+    run_simple('127.0.0.1', 5000, APP)

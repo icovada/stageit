@@ -2,14 +2,14 @@
 
 from threading import Thread
 import queue
-from stageit.libs.BaseDevice import BaseDevice
-from stageit.libs.db import Templates, History, Tasks, newsession
 from time import sleep
 import logging
 from uuid import uuid4
 import pickle
-from jinja2 import Environment, BaseLoader
 from datetime import datetime
+from jinja2 import Environment, BaseLoader
+from stageit.libs.base_device import BaseDevice
+from stageit.libs.db import History, Tasks, newsession
 
 
 class BaseWorker(Thread):
@@ -18,7 +18,7 @@ class BaseWorker(Thread):
     def __init__(self, q, cservermgmt, **kwargs):
         """Init worker thread."""
         Thread.__init__(self)
-        self.q = q
+        self.this_queue = q
         self.hostname = kwargs['hostname']
         self.port = kwargs['port']
         self.transport = kwargs['transport']
@@ -31,15 +31,29 @@ class BaseWorker(Thread):
 
         self.cservermgmt = cservermgmt
 
+        self.description = None
+        self.templatevalues = None
+        self.template = None
+        self.finalconfig = None
+        self.platform = None
+        self.poststaging = None
+        self.filepath = None
+        self.installmode = None
+        self.pkid = None
+        self.dbrow = None
+        self.devicedata = None
+        self.tempconfig = None
+        self.driver = None
+
     def run(self):
         """Multithreading calls this to start the task."""
-        logging.info("Worker for {}:{} ready".format(self.hostname, self.port))
+        logging.info("Worker for %s:%s ready", self.hostname, self.port)
 
         while True:
             # Loop. Wait for work from queue
             try:
                 self.status = "Waiting for work"
-                taskid = self.q.get(timeout=600)
+                taskid = self.this_queue.get(timeout=600)
 
             except queue.Empty:
                 self.status = "Dead"
@@ -100,21 +114,24 @@ class BaseWorker(Thread):
             session.delete(task)
             self.dbrow.dateend = datetime.utcnow()
             session.commit()
-            self.q.task_done()
+            self.this_queue.task_done()
 
     def find_model(self):
-        """Find device type and return appropriate class to deal with upgrading, version checking and else."""
+        """Find device type and return appropriate class to deal with
+        upgrading, version checking and else."""
         device = BaseDevice(**self.devicedata,
                             cservermgmt=self.cservermgmt)
 
         device.checkavailable(300)
 
-        if any(model in device.facts["model"] for model in ("C3650", "C3850")):
+        if any(model in device.facts["model"] for model in
+               ("C3650", "C3850")):
             device.close()
             from stageit.libs.cisco.switch.iosxe import IOSXESwitch
             specific_device = IOSXESwitch(
                 **self.devicedata, cservermgmt=self.cservermgmt)
-        elif any(model in device.facts["model"] for model in ("4221", "4321", "4331", "4351", "4431", "4451", "4461")):
+        elif any(model in device.facts["model"] for model in
+                 ("4221", "4321", "4331", "4351", "4431", "4451", "4461")):
             device.close()
             from stageit.libs.cisco.router.iosxe import IOSXERouter
             specific_device = IOSXERouter(
@@ -122,7 +139,7 @@ class BaseWorker(Thread):
         elif any(model in device.facts["model"] for model in ("2960", "3560CX")):
             device.close()
             from stageit.libs.cisco.switch.ios import IOSSwitch
-            specific_device = IOSXERouter(
+            specific_device = IOSSwitch(
                 **self.devicedata, cservermgmt=self.cservermgmt)
 
         else:

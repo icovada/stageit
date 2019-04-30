@@ -1,16 +1,14 @@
 """Database definition and session generator."""
 
-import os
-import sys
-from sqlalchemy import Column, ForeignKey, Integer, String, BLOB, DATETIME, MetaData, Table
+from sqlalchemy import Column, ForeignKey, String, BLOB, DATETIME
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, session, sessionmaker
-from sqlalchemy import create_engine, MetaData
+from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy import create_engine
 
-Base = declarative_base()
+BASE = declarative_base()
 
 
-class Templates(Base):
+class Templates(BASE):
     """Defines templates table."""
 
     __tablename__ = 'templates'
@@ -26,7 +24,7 @@ class Templates(Base):
     tasks = relationship("Tasks", backref="template")
 
 
-class History(Base):
+class History(BASE):
     """Defines history table."""
 
     __tablename__ = 'history'
@@ -45,7 +43,7 @@ class History(Base):
     vendor = Column(String(30))
 
 
-class Tasks(Base):
+class Tasks(BASE):
     """Defines tasks table."""
 
     __tablename__ = 'tasks'
@@ -56,11 +54,11 @@ class Tasks(Base):
 
 def newsession():
     """Return a new session."""
-    return Session()
+    return SESSION()
 
 # Create an engine that stores data in the local directory's
 # sqlalchemy_example.db file.
-engine = create_engine('sqlite:///stagedb.db', echo=True)
-Session = sessionmaker(bind=engine)
+ENGINE = create_engine('sqlite:///stagedb.db', echo=True)
+SESSION = sessionmaker(bind=ENGINE)
 
-Base.metadata.create_all(engine)
+BASE.metadata.create_all(ENGINE)

@@ -1,11 +1,18 @@
-from stageit.libs.BaseDevice import BaseDevice
+"""
+Manage pure IOS network devices.
+
+To be used with any Cisco device running old-style IOS
+"""
 import re
 import logging
+from stageit.libs.base_device import BaseDevice
 
 
 class IOSSwitch(BaseDevice):
+    """Manage pure IOS devices"""
 
-    def upgrade_software(self, uri, mode='BUNDLE'):
+    def upgrade_software(self, uri, **kwargs):
+        """Upgrade device firmware. IOS only supports BUNDLE mode."""
         self.status = "Checking firmware version"
         logging.info(self.status)
         firmware = (False, None, None)
