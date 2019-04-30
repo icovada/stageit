@@ -69,12 +69,21 @@
 
         <hr class="pt-3">
         <h4 class="mb-3">Software version</h4>
-        <div class="form-group mb-3">
-            <label for="filepath">Firmware file path</label>
-            <input type="url" class="form-control" id="filepath" aria-describedby="filepathHelp">
-            <small id="filepathHelp" class="form-text text-muted">Insert URI to file image. Leave empty to skip
-                image check</small>
-            </dv>
+        <div class="form-row">
+            <div class="form-group mb-3 col-xl-9">
+                <label for="filepath">Firmware file path</label>
+                <input type="url" class="form-control" id="filepath" aria-describedby="filepathHelp">
+                <small id="filepathHelp" class="form-text text-muted">Insert URI to file image. Leave empty to skip
+                    image check</small>
+            </div>
+            <div class="form-group mb-3 col-xl-3">
+                <label for="installmode">Install mode</label>
+                <select class="custom-select d-block w-100" id="installmode" aria-describedby="installmodeHelp">
+                    <option value="INSTALL">Install</option>
+                    <option value="BUNDLE">Bundle</option>
+                </select>
+                <small id="filepathHelp" class="form-text text-muted">Does not apply to IOS. If unsure leave default</small>
+            </div>
         </div>
 
         <hr class="pt-3">
@@ -150,6 +159,7 @@
                 template: $('#template').val(),
                 templatevalues: $('#templatevalues').val(),
                 filepath: $('#filepath').val(),
+                installmode: document.getElementById('installmode').value,
                 poststaging: $('#poststaging').val()
             }
         }).done(function (response) {
