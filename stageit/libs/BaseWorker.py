@@ -10,13 +10,12 @@ from jinja2 import Environment, BaseLoader
 from datetime import datetime
 
 
-
 class BaseWorker(Thread):
     """
     Base class to connect to network device
     """
 
-    def __init__(self, q, **kwargs):
+    def __init__(self, q, cservermgmt, **kwargs):
         Thread.__init__(self)
         self.q = q
         self.hostname = kwargs['hostname']
@@ -25,12 +24,17 @@ class BaseWorker(Thread):
         # TODO: Pass these from template
         self.username = "cisco"
         self.password = "cisco"
-
+        self.line = kwargs['line']
+        self.mode = kwargs['model']
         self.status = "Initializing"
+
+        self.cservermgmt = cservermgmt
 
     def run(self):
         logging.info("Worker for {}:{} ready".format(self.hostname, self.port))
+
         while True:
+            # Loop. Wait for work from queue
             try:
                 self.status = "Waiting for work"
                 taskid = self.q.get(timeout=600)
@@ -39,6 +43,7 @@ class BaseWorker(Thread):
                 self.status = "Dead"
                 return
 
+            # We got work. Create DB session and get data from task pkid
             session = newsession()
 
             task = session.query(Tasks).get(taskid)
@@ -56,6 +61,7 @@ class BaseWorker(Thread):
             self.filepath = template.filepath
             self.installmode = template.installmode
 
+            # Create history DB row
             self.pkid = str(uuid4())
 
             self.dbrow = History(
@@ -67,6 +73,7 @@ class BaseWorker(Thread):
                 template=self.template
             )
 
+            # Data to pass to Worker class
             self.devicedata = {'hostname': self.hostname,
                                'port': self.port,
                                'transport': self.transport,
@@ -74,7 +81,6 @@ class BaseWorker(Thread):
                                'password': self.password,
                                'platform': self.platform,
                                'pkid': self.pkid}
-
 
             self.tempconfig = {"username": "cisco",
                                "password": "cisco"}
@@ -87,10 +93,10 @@ class BaseWorker(Thread):
             self.status = "Working"
             self.stageit()
 
-            session.rundata=pickle.dumps({'Run Log': self.driver.getlog()})
+            session.rundata = pickle.dumps({'Run Log': self.driver.getlog()})
 
             session.delete(task)
-            self.dbrow.dateend=datetime.utcnow()
+            self.dbrow.dateend = datetime.utcnow()
             session.commit()
             self.q.task_done()
 
@@ -100,22 +106,26 @@ class BaseWorker(Thread):
         version checking and else
         """
 
-        device = BaseDevice(**self.devicedata)
+        device = BaseDevice(**self.devicedata,
+                            cservermgmt=self.cservermgmt)
 
         device.checkavailable(300)
 
         if any(model in device.facts["model"] for model in ("C3650", "C3850")):
             device.close()
             from stageit.libs.cisco.switch.iosxe import IOSXESwitch
-            specific_device = IOSXESwitch(**self.devicedata)
+            specific_device = IOSXESwitch(
+                **self.devicedata, cservermgmt=self.cservermgmt)
         elif any(model in device.facts["model"] for model in ("4221", "4321", "4331", "4351", "4431", "4451", "4461")):
             device.close()
             from stageit.libs.cisco.router.iosxe import IOSXERouter
-            specific_device = IOSXERouter(**self.devicedata)
+            specific_device = IOSXERouter(
+                **self.devicedata, cservermgmt=self.cservermgmt)
         elif any(model in device.facts["model"] for model in ("2960", "3560CX")):
             device.close()
             from stageit.libs.cisco.switch.ios import IOSSwitch
-            specific_device = IOSXERouter(**self.devicedata)
+            specific_device = IOSXERouter(
+                **self.devicedata, cservermgmt=self.cservermgmt)
 
         else:
             raise ValueError("Unrecognised model")
@@ -144,5 +154,3 @@ class BaseWorker(Thread):
                                              mode=self.installmode)
 
         self.driver.load_final_config(self.template, **self.templatevalues)
-                
-                

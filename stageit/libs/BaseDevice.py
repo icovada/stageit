@@ -8,7 +8,7 @@ from time import sleep
 
 
 class BaseDevice():
-    def __init__(self, hostname, port, transport, platform, username, password, pkid, **kwargs):
+    def __init__(self, hostname, port, transport, platform, username, password, pkid, cservermgmt, **kwargs):
         self.status = 'Init'
         logging.info(self.status)
         self._has_connectivity = False
@@ -28,7 +28,8 @@ class BaseDevice():
                                               'transport': transport,
                                               'session_log': self.logbuffer}}
 
-        self.pkid = pkid
+        self.pkid=pkid
+        self.cservermgmt=cservermgmt
 
     def checkavailable(self, retries):
         self.status = 'Waiting for connection'
@@ -41,10 +42,14 @@ class BaseDevice():
                 logging.info(self.status)
                 try:
                     self.getfacts()
-                except (netmiko.ssh_exception.NetMikoAuthenticationException, ValueError) as e: #ConnectionRefusedError) as e:
+                except (netmiko.ssh_exception.NetMikoAuthenticationException, ValueError) as e:
                     if retries > 100:
                         # Chill. Still booting.
                         sleep(10)
+                except ConnectionRefusedError:
+                    logging.info("Connection refused, resetting line")
+                    self.cservermgmt.reset()
+
             else:
                 raise IOError("Device unavailable")
 
@@ -72,7 +77,6 @@ class BaseDevice():
             kwargs['ip'] = 'dhcp'
 
         with self.driver(**self.sessiondata) as session:
-            templateargs = kwargs.copy()
             # Ignore warnings and worry later
             session.auto_rollback_on_error = False
             session.load_template(template_name="upgrade_template",
