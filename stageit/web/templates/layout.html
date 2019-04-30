@@ -26,12 +26,10 @@
 
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-                {% block navbar %}
-                <a class="nav-item nav-link" href="/workers">Workers</a>
-                <a class="nav-item nav-link" href="/tasks">Tasks</a>
-                <a class="nav-item nav-link" href="/templates">Templates</a>
-                <a class="nav-item nav-link" href="/history">History</a>
-                {% endblock %}
+                <a class="nav-item nav-link {% if navbar == 'worker' %}active{% endif %}" href="/workers">Workers</a>
+                <a class="nav-item nav-link {% if navbar == 'task' %}active{% endif %}" href="/tasks">Tasks</a>
+                <a class="nav-item nav-link {% if navbar == 'template' %}active{% endif %}" href="/templates">Templates</a>
+                <a class="nav-item nav-link {% if navbar == 'history' %}active{% endif %}" href="/history">History</a>
             </div>
         </div>
     </nav>

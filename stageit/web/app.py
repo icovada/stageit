@@ -8,7 +8,7 @@ from flask import Flask, request, stream_with_context, Response, render_template
 import yaml
 from jinja2 import Environment, BaseLoader
 import jinja2
-from stageit.libs.db import Templates, History, Tasks, newsession
+from libs.db import Templates, History, Tasks, newsession
 import config
 
 APP_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

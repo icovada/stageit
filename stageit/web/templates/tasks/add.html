@@ -1,13 +1,5 @@
 {% extends "templates/layout.html" %}
 
-{% block navbar %}
-<a class="nav-item nav-link" href="/workers">Workers</a>
-<a class="nav-item nav-link" href="/tasks">Tasks</a>
-<a class="nav-item nav-link" href="/templates">Templates</a>
-<a class="nav-item nav-link" href="/history">History</a>
-{% endblock %}
-
-
 {% block body %}>
 <h1 class="row justify-content-center py-4 col no-gutters">Create task from {{fktemplate[:5]}}</h1>
 <div class="container col col-xl-8 justify-content-center pb-5">
