@@ -144,7 +144,7 @@ class BaseDevice():
         elif "bytes copied" in out:
             return
 
-    def upgrade_software(self, version, uri, mode_install):
+    def upgrade_software(self, uri, mode_install):
         """Not implemented."""
         raise NotImplementedError
 
