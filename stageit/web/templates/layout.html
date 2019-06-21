@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Home | Style Guide</title>
+    <title>StageIT | {% block title %}{% endblock %}</title>
     <!-- meta name="description" content="Description of the page less than 150 characters" -->
     <!-- meta description -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,900&display=swap">
@@ -23,8 +23,6 @@
     <link rel="shortcut icon" href="https://basecoat.cdn.dimensiondata.com/2.2.5/img/favicon/favicon.ico">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#ffffff">
-
-    <title>StageIT</title>
 </head>
 
 <body>
@@ -37,12 +35,13 @@
                     <ul class="nav" data-accordion-group>
                         <li><a class="nav-item nav-link {% if navbar == 'worker' %}active{% endif %}"
                                 href="/workers">Workers</a></li>
-                        <li><a class="nav-item nav-link {% if navbar == 'task' %}active{% endif %}"
-                                href="/tasks">Tasks</a></li>
-                        <li><a class="nav-item nav-link {% if navbar == 'template' %}active{% endif %}"
-                                href="/templates">Templates</a></li>
-                        <li><a class="nav-item nav-link {% if navbar == 'history' %}active{% endif %}"
-                                href="/history">History</a></li>
+
+                        <li><a class="next collapsed" data-toggle="collapse">Tasks</a>
+                            <ul class="collapse">
+                                <li><a href="/tasks">Task List</a></li>
+                                <li><a href="/templates">Task Templates</a></li>
+                                <li><a href="/history">Task History</a></li>
+                            </ul>
                         </li>
                     </ul>
                 </nav>
@@ -77,13 +76,17 @@
         </header>
 
         <main class="page-wrapper">
-            {% block body %}
-            <div class="container">
-                <div class="jumbotron">
-                    <h1 class="display-4">StageIT</h1>
-                    <p class="lead">Automate your deploy</p>
+            <header class="jumbotron">
+                <div class="container-lg">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <h2>{% block header %}StageIT</h2>
+                            <p>Automate your deploy</p>{% endblock %}</h2>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </header>
+            {% block body %}
             {% endblock %}
         </main>
     </div>
