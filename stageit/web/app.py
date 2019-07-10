@@ -50,7 +50,7 @@ def handle_invalid_usage(error):
 @APP.route("/")
 def home():
     """Render home page."""
-    return render_template("templates/layout.html")
+    return render_template("templates/home.html")
 
 
 @APP.route("/workers")
@@ -327,6 +327,12 @@ def convertjinja():
     result = {'status': 'OK', 'message': rtemplate.render(
         **yamlvalues).replace("\n", "<br/>")}
     return jsonify(result)
+
+
+@APP.route("/test")
+def test():
+    """Return rendered Jinja2 template."""
+    return render_template('templates/test/modal.html')
 
 
 def run():

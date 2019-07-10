@@ -125,3 +125,5 @@ dmypy.json
 # Vscode stuff
 .vscode/
 stagedb.db
+
+.local/

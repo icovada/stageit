@@ -1,100 +1,115 @@
 {% extends "templates/layout.html" %}
 
 {% block body %}
-<h1 class="row justify-content-center py-4 col no-gutters">Insert new template</h1>
-<div class="container col col-xl-8 justify-content-center pb-5">
-    <form class="needs-validation" action="/api/templates" id="templateform" method="post">
-        <div class="form-row">
-            <div class="form-group col-xl-6 mb-3">
-                <label for="name">Name</label>
-                <input type="text" class="form-control" id="name" required>
-            </div>
-            <div class="form-group col-xl-6 mb-3">
-                <label for="description">Description</label>
-                <input type="text" class="form-control" id="description" required>
-            </div>
-        </div>
-
-        <div class="form-group mb-3">
-            <label for="platform">Platform</label>
-            <select class="custom-select d-block w-100" id="platform" required>
-                <option value="">-- None --</option>
-                <option value="ios">Cisco IOS/IOS-XE</option>
-                <option value="nx-os">Cisco Nexus</option>
-            </select>
-        </div>
-        <hr class="pt-3">
-        <h4 class="mb-3">Final configuration details</h4>
-        <div class="form-row">
-            <div class="form-group col-xl-6 mb-3">
-                <label for="template">Template</label>
-                <textarea class="form-control text-monospace" id="template" rows="6"
-                    aria-describedby="templateHelp"></textarea>
-                <small id="templateHelp" class="form-text text-muted">Leave empty to leave final device config
-                    empty.<br />Pure text or Jinja2 templates accepted</small>
-            </div>
-            <div class="form-group col-xl-6 mb-3">
-                <label for="templatevalues">Template values</label>
-                <textarea class="form-control text-monospace" id="templatevalues" rows="6"
-                    aria-describedby="templatevaluesHelp"></textarea>
-                <small id="templatevaluesHelp" class="form-text text-muted">Insert variables required by your template
-                    in
-                    yaml format</small>
-            </div>
-        </div>
-        <p>
-            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#templaterender"
-                aria-expanded="false" aria-controls="templaterender">Test</button>
-        </p>
-        <div id="renderalertspace"></div>
+<header class="">
+    <div class="container-lg">
         <div class="row">
-            <div class="col">
-                <div class="collapse multi-collapse" id="templaterender">
-                    <div class="card card-body">
-                        <div class="spinner-grow" role="status" , id="templaterenderspinner"></div>
-                        <div class="text-monospace" id="templaterenderview"></div>
+            <div class="col-xs-12">
+                <h2>Insert new template</h2>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div class="content-area">
+    <div class="container-lg">
+        <form class="needs-validation" action="/api/templates" id="templateform" method="post">
+            <div class="form-row">
+                <div class="form-group col-xl-6 mb-3">
+                    <label class="control-label" for="name">Name</label>
+                    <input type="text" class="form-control" id="name" required>
+                </div>
+                <div class="form-group col-xl-6 mb-3">
+                    <label for="description">Description</label>
+                    <input type="text" class="form-control" id="description" required>
+                </div>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="platform">Platform</label>
+                <select class="custom-select d-block w-100" id="platform" required>
+                    <option value="">-- None --</option>
+                    <option value="ios">Cisco IOS/IOS-XE</option>
+                    <option value="nx-os">Cisco Nexus</option>
+                </select>
+            </div>
+            <hr class="pt-3">
+            <h4 class="mb-3">Final configuration details</h4>
+            <div class="form-row">
+                <div class="form-group col-xl-6 mb-3">
+                    <label for="template">Template</label>
+                    <textarea class="form-control text-monospace" id="template" rows="6"
+                        aria-describedby="templateHelp"></textarea>
+                    <small id="templateHelp" class="form-text text-muted">Leave empty to leave final device config
+                        empty.<br />Pure text or Jinja2 templates accepted</small>
+                </div>
+                <div class="form-group col-xl-6 mb-3">
+                    <label for="templatevalues">Template values</label>
+                    <textarea class="form-control text-monospace" id="templatevalues" rows="6"
+                        aria-describedby="templatevaluesHelp"></textarea>
+                    <small id="templatevaluesHelp" class="form-text text-muted">Insert variables required by your
+                        template
+                        in
+                        yaml format</small>
+                </div>
+            </div>
+            <p>
+                <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#templaterender"
+                    aria-expanded="false" aria-controls="templaterender">Test</button>
+            </p>
+            <div id="renderalertspace"></div>
+            <div class="row">
+                <div class="col">
+                    <div class="collapse multi-collapse" id="templaterender">
+                        <div class="card card-body">
+                            <div class="spinner-grow" role="status" , id="templaterenderspinner"></div>
+                            <div class="text-monospace" id="templaterenderview"></div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="form-row col-xl-6 mb-3 text-monospace" id="renderview" style="display: none;"></div>
+            <div class="form-row col-xl-6 mb-3 text-monospace" id="renderview" style="display: none;"></div>
 
-        <hr class="pt-3">
-        <h4 class="mb-3">Software version</h4>
-        <div class="form-row">
-            <div class="form-group mb-3 col-xl-9">
-                <label for="filepath">Firmware file path</label>
-                <input type="url" class="form-control" id="filepath" aria-describedby="filepathHelp">
-                <small id="filepathHelp" class="form-text text-muted">Insert URI to file image. Leave empty to skip
-                    image check</small>
+            <hr class="pt-3">
+            <h4 class="mb-3">Software version</h4>
+            <div class="form-row">
+                <div class="form-group mb-3 col-xl-9">
+                    <label for="filepath">Firmware file path</label>
+                    <input type="url" class="form-control" id="filepath" aria-describedby="filepathHelp">
+                    <small id="filepathHelp" class="form-text text-muted">Insert URI to file image. Leave empty to skip
+                        image check</small>
+                </div>
+                <div class="form-group mb-3 col-xl-3">
+                    <label for="installmode">Install mode</label>
+                    <select class="custom-select d-block w-100" id="installmode" aria-describedby="installmodeHelp">
+                        <option value="INSTALL">Install</option>
+                        <option value="BUNDLE">Bundle</option>
+                    </select>
+                    <small id="filepathHelp" class="form-text text-muted">Does not apply to IOS. If unsure leave
+                        default</small>
+                </div>
             </div>
-            <div class="form-group mb-3 col-xl-3">
-                <label for="installmode">Install mode</label>
-                <select class="custom-select d-block w-100" id="installmode" aria-describedby="installmodeHelp">
-                    <option value="INSTALL">Install</option>
-                    <option value="BUNDLE">Bundle</option>
-                </select>
-                <small id="filepathHelp" class="form-text text-muted">Does not apply to IOS. If unsure leave default</small>
+
+            <hr class="pt-3">
+            <h4 class="mb-3">Post-staging actions</h4>
+            <div class="form-group mb-3">
+                <label for="poststaging">Post-staging</label>
+                <textarea class="form-control text-monospace" id="poststaging" rows="5"
+                    aria-describedby="poststagingHelp"></textarea>
+                <small id="poststagingHelp" class="form-text text-muted">Insert commands to be run after previous tasks
+                    are finished. Enter one per line</small>
             </div>
-        </div>
-
-        <hr class="pt-3">
-        <h4 class="mb-3">Post-staging actions</h4>
-        <div class="form-group mb-3">
-            <label for="poststaging">Post-staging</label>
-            <textarea class="form-control text-monospace" id="poststaging" rows="5"
-                aria-describedby="poststagingHelp"></textarea>
-            <small id="poststagingHelp" class="form-text text-muted">Insert commands to be run after previous tasks
-                are finished. Enter one per line</small>
-        </div>
 
 
 
-        <hr class="mb-4">
-        <button class="btn btn-primary btn-lg btn-block" type="submit">Save template</button>
-        <div id="submitalertspace" class="my-3"></div>
-    </form>
+            <hr class="mb-4">
+            <button class="btn btn-primary btn-lg btn-block" type="submit">Save template</button>
+            <div id="submitalertspace" class="my-3"></div>
+        </form>
+    </div>
 </div>
+
 
 {% endblock %}
 

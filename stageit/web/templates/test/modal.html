@@ -1,72 +1,2400 @@
-{% extends "layout.html" %}
+<!DOCTYPE html>
+<html class="desktop-menu-open" lang="en">
 
-{% block navbar %}
-<a class="nav-item nav-link" href="/workers">Workers</a>
-<a class="nav-item nav-link" href="/tasks">Tasks</a>
-<a class="nav-item nav-link" href="/templates">Templates</a>
-{% endblock %}
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Forms | Style Guide</title>
+    <link rel="apple-touch-icon" sizes="180x180"
+        href="https://basecoat.cdn.dimensiondata.com/2.2.5/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32"
+        href="https://basecoat.cdn.dimensiondata.com/2.2.5/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16"
+        href="https://basecoat.cdn.dimensiondata.com/2.2.5/img/favicon/favicon-16x16.png">
+    <link rel="mask-icon" href="https://basecoat.cdn.dimensiondata.com/2.2.5/img/favicon/safari-pinned-tab.svg"
+        color="#72bf44">
+    <link rel="shortcut icon" href="https://basecoat.cdn.dimensiondata.com/2.2.5/img/favicon/favicon.ico">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ffffff">
+    <base target="_parent">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,900&amp;display=swap">
+    <link rel="stylesheet" href="https://basecoat.cdn.dimensiondata.com/2.2.5/css/ntt.basecoat.min.css">
+    <link rel="stylesheet" href="https://basecoat.cdn.dimensiondata.com/2.2.5/css/ntt.app.min.css" data-theme-css>
+    <link rel="stylesheet" href="https://basecoat.cdn.dimensiondata.com/2.2.5/css/ntt.basecoat.datetime-picker.min.css" data-theme-css>
+    <link rel="stylesheet" href="https://basecoat.cdn.dimensiondata.com/2.2.5/css/ntt.basecoat.datatables.min.css">
+    <script>window.top.document.title = document.title;
+        if (window.top.history.replaceState) window.top.history.replaceState(null, null, document.location.href);
+        if (localStorage.getItem('theme') === 'dark') {
+            var stylesheets = document.querySelectorAll('link[href$=".css"][data-theme-css]');
+            for (var i = 0; i < stylesheets.length; i++) {
+                var tag = stylesheets[i];
+                var href = tag.getAttribute('href').replace(/(-dark)?(\.min)?\.css/i, '-dark$2.css');
+                document.write('<link rel="stylesheet" href="' + href + '" data-theme-css>');
+                tag.parentElement.removeChild(tag);
+            };
+        }
+
+        if (localStorage.getItem('brand')) {
+            var _brand = localStorage.getItem('brand');
+            var stylesheets = document.querySelectorAll('link[href$=".css"][data-theme-css]');
+            for (var i = 0; i < stylesheets.length; i++) {
+                var tag = stylesheets[i];
+                var _hrefParts = tag.getAttribute('href').split('.');
+                _hrefParts[0] = 'css/' + _brand;
+
+                document.write('<link rel="stylesheet" href="' + _hrefParts.join('.') + '" data-theme-css>');
+                tag.parentElement.removeChild(tag);
+            }
+        }
 
 
-{% block body %}
-<form>
-    <div class="form-group mb-3">
-        <label for="templatename">Template Name</label>
-        <textarea type="text" class="form-control" id="templatename" rows="5"></textarea>
-    </div>
-    <div class="form-group mb-3">
-        <label for="templateyaml">Template values</label>
-        <textarea class="form-control text-monospace" id="templateyaml" rows="5"
-            aria-describedby="templateyamlHelp"></textarea>
-        <small id="templateyamlHelp" class="form-text text-muted">Insert variables required by your template in
-            yaml format</small>
-    </div>
-    <hr class="mb-4">
-    <button class="btn btn-primary btn-lg btn-block" type="button" data-toggle="modal" data-target="#exampleModal"
-        data-whatever="@getbootstrap">Save template</button>
-</form>
+    </script>
+</head>
 
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">New message</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">Recipient:</label>
-                        <input type="text" class="form-control" id="recipient-name">
-                    </div>
-                    <div class="form-group">
-                        <label for="message-text" class="col-form-label">Message:</label>
-                        <textarea class="form-control" id="message-text"></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Send message</button>
+<body>
+    <div class="desktop-menu-layout mobile-menu-layout sticky-footer-layout">
+        <div id="pageTop"></div>
+        <div class="desktop-menu">
+            <div class="accordion-menu">
+                <nav class="scrollbars scrollbars-light">
+                    <ul class="nav" data-accordion-group>
+                        <li><a href="home.html">Home</a></li>
+                        <li><a class="next collapsed" data-toggle="collapse">Templates and branding</a>
+                            <ul class="collapse">
+                                <li><a href="branding.logo.html">Logo</a></li>
+                                <li><a href="branding.colourSwatches.html">Colour swatches</a></li>
+                                <li><a href="branding.fonts.html">Fonts</a></li>
+                            </ul>
+                        </li>
+                        <li><a class="next collapsed" data-toggle="collapse">Before you start</a>
+                            <ul class="collapse">
+                                <li><a href="intro.howToUseThisGuide.html">How to use this guide</a></li>
+                                <li><a href="intro.firstSteps.html">First steps</a></li>
+                                <li><a href="intro.getTheCode.html">Get the code</a></li>
+                            </ul>
+                        </li>
+                        <li><a class="next collapsed" data-toggle="collapse">Principles</a>
+                            <ul class="collapse">
+                                <li><a href="principles.grid.html">Grid</a></li>
+                                <li><a href="principles.responsiveBehaviour.html">Responsive Behaviour</a></li>
+                                <li><a href="principles.themes.html">Themes</a></li>
+                            </ul>
+                        </li>
+                        <li><a class="next active" data-toggle="collapse">Components</a>
+                            <ul class="collapse in">
+                                <li><a href="components.colours.html">Colours</a></li>
+                                <li><a href="components.typography.html">Typography</a></li>
+                                <li><a href="components.iconography.html">Iconography</a></li>
+                                <li><a href="components.buttonsAndLinks.html">Buttons &amp; Links</a></li>
+                                <li><a href="components.navigation.html">Navigation</a></li>
+                                <li><a href="components.search.html">Search</a></li>
+                                <li class="active"><a href="components.forms.html">Forms</a></li>
+                                <li><a href="components.dividers.html">Dividers</a></li>
+                                <li><a href="components.tables.html">Tables</a></li>
+                                <li><a href="components.lists.html">Lists</a></li>
+                                <li><a href="components.dialogs.html">Dialogs &amp; Modal windows</a></li>
+                                <li><a href="components.interactiveElements.html">Interactive elements</a></li>
+                                <li><a href="components.loadersAndProgressIndicators.html">Loaders &amp; Progress
+                                        Indicators</a></li>
+                                <li><a href="components.notificationsAndToasts.html">Notifications, Toasts &amp;
+                                        Badges</a></li>
+                                <li><a href="components.tooltips.html">Tooltips &amp; Popovers</a></li>
+                                <li><a href="components.utilities.html">Utilities</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="plugins.html">Plugins</a></li>
+                        <li><a class="next collapsed" data-toggle="collapse">Examples</a>
+                            <ul class="collapse">
+                                <li><a href="examples.basecoatInTheWild.html">Basecoat in the wild</a></li>
+                                <li><a href="examples/landingPage.html" target="_blank"
+                                        rel="noopener noreferrer">Example: Landing page</a></li>
+                                <li><a href="examples/loginRegister.html" target="_blank"
+                                        rel="noopener noreferrer">Example: Login/Register</a></li>
+                                <li><a href="examples/registrationProcess.html" target="_blank"
+                                        rel="noopener noreferrer">Example: Registration process</a></li>
+                                <li><a href="examples/dashboard.html" target="_blank" rel="noopener noreferrer">Example:
+                                        Dashboard</a></li>
+                                <li><a href="examples/searchResultsPage.html" target="_blank"
+                                        rel="noopener noreferrer">Example: Search results page</a></li>
+                                <li><a href="examples/defaultLayout.html" target="_blank"
+                                        rel="noopener noreferrer">Example: Default layout</a></li>
+                            </ul>
+                        </li>
+                        <li><a class="next collapsed" data-toggle="collapse">Help &amp; Support</a>
+                            <ul class="collapse">
+                                <li><a href="support.browserSupport.html">Browser support</a></li>
+                                <li><a href="https://sdk.dimensiondata.com/" target="_blank"
+                                        rel="noopener noreferrer">Service Layer SDK</a></li>
+                                <li><a href="support.community.html">Community</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
+        <header class="site-header" data-scrollspy>
+            <div class="site-search"></div>
+            <nav class="navbar navbar-fixed-top">
+                <ul class="nav navbar-nav navbar-left">
+                    <li class="desktop-menu-toggle hidden-mobile"><a href="#" data-toggle="desktop-menu"
+                            title="Desktop menu">
+                            <div class="hidden-closed">Close</div>
+                            <div class="hidden-opened"></div>
+                        </a></li>
+                    <li><a class="horizontal-logo" href="home.html" title="Return home">
+                            <div class="logo-image" title="NTT"></div>
+                            <div class="logo-title"><span>living<br>styleguide</span></div>
+                        </a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-center hidden-mobile">
+                    <li class="dropdown heading" data-anchor-nav-dropdown><a class="dropdown-toggle" href="#"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Forms<span
+                                class="caret"></span></a>
+                        <div class="dropdown-menu">
+                            <div class="scrollbars">
+                                <ul class="dropdown-menu">
+                                    <li><a href="#pageTop">Forms</a></li>
+                                    <li><a href="#textInputs">Text inputs</a></li>
+                                    <li><a href="#textareas">Textareas</a></li>
+                                    <li><a href="#passwordInputs">Password inputs</a></li>
+                                    <li><a href="#checkboxes">Checkboxes</a></li>
+                                    <li><a href="#radios">Radios</a></li>
+                                    <li><a href="#dropdowns">Dropdowns</a></li>
+                                    <li><a href="#tags">Tags</a></li>
+                                    <li><a href="#datePicker">Date picker</a></li>
+                                    <li><a href="#timePicker">Time picker</a></li>
+                                    <li><a href="#filePicker">File picker</a></li>
+                                    <li><a href="#login">Login</a></li>
+                                    <li><a href="#validation">Validation</a></li>
+                                    <li><a href="#errorMessages">Error messages</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="visible-in-iframe hidden">
+                        <div class="btn-group" data-resize-toggle-group><button
+                                class="btn navbar-btn btn-toggle toggle-phone" type="button"
+                                title="Resize to Mobile (420px)" data-resize-iframe="420px"><i class="fa fa-mobile"
+                                    aria-hidden="true"></i></button><button
+                                class="btn navbar-btn btn-toggle toggle-tablet" type="button"
+                                title="Resize to Tablet (1000px)" data-resize-iframe="1000px"><i class="fa fa-tablet"
+                                    aria-hidden="true"></i></button><button
+                                class="btn navbar-btn btn-toggle toggle-desktop" type="button"
+                                title="Resize to Laptop (1366px)" data-resize-iframe="1366px"><i class="fa fa-laptop"
+                                    aria-hidden="true"></i></button><button
+                                class="btn navbar-btn btn-toggle toggle-full hidden-xs" type="button"
+                                title="Resize to Full-width (100%)" data-resize-iframe="100%"><i class="fa fa-desktop"
+                                    aria-hidden="true"></i></button></div>
+                        <p class="navbar-text hidden-mobile">Devices</p>
+                    </li>
+                    <li class="divider visible-in-iframe hidden-mobile" role="separator"></li>
+                    <li class="dropdown"><a class="dropdown-toggle" href="#" data-toggle="dropdown" role="button"
+                            aria-haspopup="true" aria-expanded="false"><i class="fa fa-paint-brush"></i><span
+                                class="hidden-mobile">Brand &nbsp;</span><span class="caret hidden-mobile"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#" onclick="basecoat.switchBrands(&quot;ntt&quot;)">NTT Basecoat</a><a href="#"
+                                    onclick="basecoat.switchBrands(&quot;dd&quot;)">Dimension Data Basecoat</a></li>
+                        </ul>
+                    </li>
+                    <li><button class="btn navbar-btn hidden-light" type="button" data-toggle-theme
+                            title="Light theme"><i class="fa fa-eyedropper"></i><span
+                                class="hidden-mobile">Theme</span></button><button class="btn navbar-btn hidden-dark"
+                            type="button" data-toggle-theme title="Dark theme"><i class="fa fa-eyedropper"></i><span
+                                class="hidden-mobile">Theme</span></button></li>
+                    <li class="divider hidden-mobile" role="separator"></li>
+                    <li><button class="navbar-btn btn" type="button" title="Site search" data-toggle="site-search"><i
+                                class="fa fa-search" aria-hidden="true"></i><span
+                                class="hidden-mobile">Search</span></button></li>
+                    <li class="divider hidden-desktop" role="separator"></li>
+                    <li class="mobile-menu-toggle hidden-desktop" data-toggle="mobile-menu"><button
+                            class="navbar-btn btn" type="button" title="Mobile menu"><i class="fa fa-bars"
+                                aria-hidden="true"></i></button></li>
+                </ul>
+            </nav>
+        </header>
+        <main class="page-wrapper">
+            <header class="jumbotron jumbo">
+                <div class="container-lg">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-9 col-xxl-10">
+                            <h1>Forms</h1>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="content-area">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <p>Forms let users interact with the interface and enter any required information. The
+                                examples below demonstrate any applicable display options and how to use each type of
+                                form control.</p>
+                            <hr>
+                            <section class="dos-and-donts">
+                                <div class="dotted-list do-list">
+                                    <h3>Do's</h3>
+                                    <ul>
+                                        <li>Use only one form per page.</li>
+                                    </ul>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <section id="textInputs">
+                <header class="jumbotron">
+                    <div class="container-lg">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h2>Text inputs</h2>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <div class="content-area">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-6">
+                                <h3>Anatomy</h3>
+                                <h4 class="sub-heading">Labels</h4>
+                                <p>A label helps users understand what type of information they should enter. Use a
+                                    secondary label style to hint an alternative entry.</p>
+                                <h4 class="sub-heading">Placeholder text</h4>
+                                <p>Placeholder text appears within an input field. It should give a hint to users what
+                                    to enter.</p>
+                                <h4 class="sub-heading">Help text <span class="info">(optional)</span></h4>
+                                <p>Help text should appear below the text field and be persistently visible. They can be
+                                    used in addition to the placeholder text. Use help text if the hint requires to be
+                                    visible to users while entering (e.g. a character counter with remaining characters
+                                    if the input fields has a limited character entry).</p>
+                                <h4 class="sub-heading">Tooltip <span class="info">(optional)</span></h4>
+                                <p>Use tooltips to provide context for complex questions that cannot be covered in a
+                                    help text, e.g. they could contain definitions for abbreviations used within the
+                                    label – if the label is <strong><em>GST Number</em></strong> the tooltip could be
+                                    <strong><em>GST stands for Goods and Services Tax Number</em></strong>.</p>
+                            </div>
+                            <div class="col-xs-12 col-md-6"><img src="img/components/forms/forms-inputfield-ntt.png"
+                                    alt="Forms Input Field"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <hr>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h3>Inputs</h3>
+                                <p>The type of text input determines what kind of characters are allowed inside the
+                                    field. For mobiles/tablets keyboards may be optimized for more refined inputs (e.g.
+                                    if user has to input a phone number – number keypad should appear when focused).</p>
+                                <h4>Required fields</h4>
+                                <p>All fields should be considered mandatory or required. Therefore form labels don’t
+                                    need to be marked a required fields.</p>
+                                <h4>Input restrictions</h4>
+                                <p>Restrictions can be applied to text inputs to guide users towards a better
+                                    interaction. Those restrictions have to be made clear to the user (e.g. ‘Max 300
+                                    characters’ for a text input). These restrictions include:</p>
+                                <ul>
+                                    <li><code>disabled</code> – disable a text input to signify something else needs to
+                                        happen first.</li>
+                                    <li><code>max</code> – specify the maximum value for an text input.</li>
+                                    <li><code>maxlength</code> – maximum amount of characters for a text input.</li>
+                                    <li><code>min</code> – minimum value for a text input.</li>
+                                    <li><code>pattern</code> – specifies a certain expression to check against (e.g.
+                                        phone numbers).</li>
+                                    <li><code>readonly</code> – text input cannot be changed.</li>
+                                    <li><code>required</code> – mandatory text input.</li>
+                                    <li><code>value</code> – default value for an text input.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="code-section">
+                                    <div class="accordion-group">
+                                        <div class="accordion">
+                                            <div class="accordion-heading" data-toggle="collapse">
+                                                <h3>Examples</h3>
+                                            </div>
+                                            <div class="accordion-content collapse in">
+                                                <div class="code-demo">
+                                                    <div class="form-group">
+                                                        <label class="control-label" for="exampleTextInput1">Username
+                                                            <span class="info">(or email)</span> <span
+                                                                class="tooltip-info" data-toggle="tooltip"
+                                                                title="Your username will be displayed on all orders, communication, and reciepts - so choose wisely!"></span></label>
+                                                        <input type="text" id="exampleTextInput1" class="form-control"
+                                                            placeholder="Enter your username" maxlength="60" />
+                                                        <p class="help-block">Maximum of 60 characters</p>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="control-label disabled"
+                                                            for="exampleTextInput2">Account number <span
+                                                                class="tooltip-info" data-toggle="tooltip"
+                                                                title="Your account number was assigned to you when you created your account."></span></label>
+                                                        <input type="text" id="exampleTextInput2" class="form-control"
+                                                            value="193844682" disabled />
+                                                    </div>
+                                                </div>
+                                                <div class="code-example"><button type="button"
+                                                        class="btn btn-sq btn-xs btn-info" data-action="clipboard">
+                                                        <i class="fa fa-clipboard"></i>
+                                                    </button>
+                                                    <pre><code class="scrollbars html" data-disable-body-scroll="false">&lt;div class=&quot;form-group&quot;&gt;
+          &lt;label class=&quot;control-label&quot; for=&quot;exampleTextInput1&quot;&gt;Username &lt;span class=&quot;info&quot;&gt;(or email)&lt;/span&gt; &lt;span class=&quot;tooltip-info&quot; data-toggle=&quot;tooltip&quot; title=&quot;Your username will be displayed on all orders, communication, and reciepts - so choose wisely!&quot;&gt;&lt;/span&gt;&lt;/label&gt;
+          &lt;input type=&quot;text&quot; id=&quot;exampleTextInput1&quot; class=&quot;form-control&quot; placeholder=&quot;Enter your username&quot; maxlength=&quot;60&quot; /&gt;
+          &lt;p class=&quot;help-block&quot;&gt;Maximum of 60 characters&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;form-group&quot;&gt;
+          &lt;label class=&quot;control-label disabled&quot; for=&quot;exampleTextInput2&quot;&gt;Account number &lt;span class=&quot;tooltip-info&quot; data-toggle=&quot;tooltip&quot; title=&quot;Your account number was assigned to you when you created your account.&quot;&gt;&lt;/span&gt;&lt;/label&gt;
+          &lt;input type=&quot;text&quot; id=&quot;exampleTextInput2&quot; class=&quot;form-control&quot; value=&quot;193844682&quot; disabled /&gt;
+        &lt;/div&gt;
+        </code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <section class="dos-and-donts">
+                                    <div class="dotted-list do-list">
+                                        <h3>Do's</h3>
+                                        <ul>
+                                            <li>Always add labels. Screen readers will have trouble with your forms if
+                                                you don't include a label for every input.</li>
+                                            <li>Show the appropriate keyboard type.</li>
+                                            <li>Keep text legible.</li>
+                                        </ul>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="textareas">
+                <header class="jumbotron">
+                    <div class="container-lg">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h2>Textareas</h2>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <div class="content-area">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <p>Textareas allow users to input text, select text, and lookup data via
+                                    auto-completion.</p>
+                                <p>Single-line text inputs automatically scroll their content to the left as the cursor
+                                    reaches the right edge of the text input.</p>
+                                <p>Multi-line textareas automatically span multiple lines for overflow text and scroll
+                                    vertically when the cursor reaches the lower edge.</p>
+                                <h3>Auto-Complete</h3>
+                                <p>Use auto-complete text inputs to present real-time suggestions or completions in
+                                    dropdowns, so users can enter information more accurately and efficiently.
+                                    Autocomplete is especially valuable for users with limited text literacy or who have
+                                    difficulty with spelling, especially if they are using a non-native language.</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="code-section">
+                                    <div class="accordion-group">
+                                        <div class="accordion">
+                                            <div class="accordion-heading" data-toggle="collapse">
+                                                <h3>Examples</h3>
+                                            </div>
+                                            <div class="accordion-content collapse in">
+                                                <div class="code-demo">
+                                                    <div class="form-group">
+                                                        <label class="control-label"
+                                                            for="exampleTextarea1">Message</label>
+                                                        <textarea rows="5" id="exampleTextarea1" class="form-control"
+                                                            placeholder="This is a text area"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="code-example"><button type="button"
+                                                        class="btn btn-sq btn-xs btn-info" data-action="clipboard">
+                                                        <i class="fa fa-clipboard"></i>
+                                                    </button>
+                                                    <pre><code class="scrollbars html" data-disable-body-scroll="false">&lt;div class=&quot;form-group&quot;&gt;
+          &lt;label class=&quot;control-label&quot; for=&quot;exampleTextarea1&quot;&gt;Message&lt;/label&gt;
+          &lt;textarea rows=&quot;5&quot; id=&quot;exampleTextarea1&quot; class=&quot;form-control&quot; placeholder=&quot;This is a text area&quot;&gt;&lt;/textarea&gt;
+        &lt;/div&gt;
+        </code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <section class="dos-and-donts">
+                                    <div class="dotted-list do-list">
+                                        <h3>Do's</h3>
+                                        <ul>
+                                            <li>Use a text input to request a small amount of information, such as an
+                                                email address.</li>
+                                            <li>Use a text area to request long or multi-line information, such as a
+                                                postal address.</li>
+                                            <li>Show a hint in text fields to help communicate purpose.</li>
+                                            <li>Use secure form fields when appropriate. Always use a secure fields when
+                                                an app asks for sensitive data, such as a password.</li>
+                                            <li>Use email fields for email addresses.</li>
+                                            <li>Space multiple fields evenly.</li>
+                                        </ul>
+                                    </div>
+                                    <div class="dotted-list dont-list">
+                                        <h3>Dont's</h3>
+                                        <ul>
+                                            <li>Don’t use a separate label to describe a text input on mobiles when
+                                                placeholder text is sufficient.</li>
+                                        </ul>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="passwordInputs">
+                <header class="jumbotron">
+                    <div class="container-lg">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h2>Password inputs</h2>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <div class="content-area">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <p>The text in a password input is disguised by default. Midline ellipses are displayed
+                                    to represent each character of a password entered (such as •••••••).</p>
+                                <h3>Enabling & disabling visibility of passwords</h3>
+                                <p>When the visibility icon is displayed with a text input, it indicates whether or not
+                                    that field’s input is visible. The text input's visibility may be toggled on or off
+                                    using the icon.</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="code-section">
+                                    <div class="accordion-group">
+                                        <div class="accordion">
+                                            <div class="accordion-heading" data-toggle="collapse">
+                                                <h3>Examples</h3>
+                                            </div>
+                                            <div class="accordion-content collapse in">
+                                                <div class="code-demo">
+                                                    <div class="form-group has-password-toggle">
+                                                        <label class="control-label"
+                                                            for="examplePassword1">Password</label>
+                                                        <input type="password" id="examplePassword1"
+                                                            class="form-control" placeholder="Enter a password"
+                                                            value="hunter2" />
+                                                        <span class="password-toggle"></span>
+                                                        <p class="help-block">Minimum of 6 characters including numerics
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div class="code-example"><button type="button"
+                                                        class="btn btn-sq btn-xs btn-info" data-action="clipboard">
+                                                        <i class="fa fa-clipboard"></i>
+                                                    </button>
+                                                    <pre><code class="scrollbars html" data-disable-body-scroll="false">&lt;div class=&quot;form-group has-password-toggle&quot;&gt;
+          &lt;label class=&quot;control-label&quot; for=&quot;examplePassword1&quot;&gt;Password&lt;/label&gt;
+          &lt;input type=&quot;password&quot; id=&quot;examplePassword1&quot; class=&quot;form-control&quot; placeholder=&quot;Enter a password&quot; value=&quot;hunter2&quot; /&gt;
+          &lt;span class=&quot;password-toggle&quot;&gt;&lt;/span&gt;
+          &lt;p class=&quot;help-block&quot;&gt;Minimum of 6 characters including numerics&lt;/p&gt;
+        &lt;/div&gt;
+        </code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="checkboxes">
+                <header class="jumbotron">
+                    <div class="container-lg">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h2>Checkboxes</h2>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <div class="content-area">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <p>Checkboxes are used when you want to let the visitor select one or more options from
+                                    a set of alternatives. If only one option is to be selected at a time you should use
+                                    radio buttons instead.</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="code-section">
+                                    <div class="accordion-group">
+                                        <div class="accordion">
+                                            <div class="accordion-heading" data-toggle="collapse">
+                                                <h3>Examples</h3>
+                                            </div>
+                                            <div class="accordion-content collapse in">
+                                                <div class="code-demo">
+                                                    <div class="form-group">
+                                                        <!-- this example only uses CSS -->
+                                                        <div class="checkbox">
+                                                            <input type="checkbox" id="exampleCheckbox1" checked>
+                                                            <label for="exampleCheckbox1">Selected option <span
+                                                                    class="info">(additional information)</span></label>
+                                                        </div>
+                                                        <!-- these examples require jQuery -->
+                                                        <div class="checkbox">
+                                                            <label>
+                                                                <input type="checkbox"> Non-selected option <span
+                                                                    class="info">(additional information)</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="checkbox">
+                                                            <label>
+                                                                <input type="checkbox" disabled> Disabled option
+                                                            </label>
+                                                        </div>
+                                                        <div class="checkbox">
+                                                            <label>
+                                                                <input type="checkbox" disabled checked> Disabled option
+                                                                <span class="info">(and checked)</span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="code-example"><button type="button"
+                                                        class="btn btn-sq btn-xs btn-info" data-action="clipboard">
+                                                        <i class="fa fa-clipboard"></i>
+                                                    </button>
+                                                    <pre><code class="scrollbars html" data-disable-body-scroll="false">&lt;div class=&quot;form-group&quot;&gt;
+          &lt;!-- this example only uses CSS --&gt;
+          &lt;div class=&quot;checkbox&quot;&gt;
+            &lt;input type=&quot;checkbox&quot; id=&quot;exampleCheckbox1&quot; checked&gt;
+            &lt;label for=&quot;exampleCheckbox1&quot;&gt;Selected option &lt;span class=&quot;info&quot;&gt;(additional information)&lt;/span&gt;&lt;/label&gt;
+          &lt;/div&gt;
+          &lt;!-- these examples require jQuery --&gt;
+          &lt;div class=&quot;checkbox&quot;&gt;
+            &lt;label&gt;
+              &lt;input type=&quot;checkbox&quot;&gt; Non-selected option &lt;span class=&quot;info&quot;&gt;(additional information)&lt;/span&gt;
+            &lt;/label&gt;
+          &lt;/div&gt;
+          &lt;div class=&quot;checkbox&quot;&gt;
+            &lt;label&gt;
+              &lt;input type=&quot;checkbox&quot; disabled&gt; Disabled option
+            &lt;/label&gt;
+          &lt;/div&gt;
+          &lt;div class=&quot;checkbox&quot;&gt;
+            &lt;label&gt;
+              &lt;input type=&quot;checkbox&quot; disabled checked&gt; Disabled option &lt;span class=&quot;info&quot;&gt;(and checked)&lt;/span&gt;
+            &lt;/label&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        </code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <section class="dos-and-donts">
+                                    <div class="dotted-list do-list">
+                                        <h3>Do's</h3>
+                                        <ul>
+                                            <li>Use checkboxes if users have multiple options to choose.</li>
+                                        </ul>
+                                    </div>
+                                    <div class="dotted-list dont-list">
+                                        <h3>Dont's</h3>
+                                        <ul>
+                                            <li>If users have to select only one option, radio buttons have to be used.
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="radios">
+                <header class="jumbotron">
+                    <div class="container-lg">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h2>Radios</h2>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <div class="content-area">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <p>Radio buttons are shown in a group of two or more. The user can only select one radio
+                                    from a radio group at a time.</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="code-section">
+                                    <div class="accordion-group">
+                                        <div class="accordion">
+                                            <div class="accordion-heading" data-toggle="collapse">
+                                                <h3>Examples</h3>
+                                            </div>
+                                            <div class="accordion-content collapse in">
+                                                <div class="code-demo">
+                                                    <div class="form-group">
+                                                        <!-- this example only uses CSS -->
+                                                        <div class="radio">
+                                                            <input type="radio" id="exampleRadio1" name="exampleRadios1"
+                                                                value="1" checked>
+                                                            <label for="exampleRadio1"> Selected option <span
+                                                                    class="info">(additional information)</span></label>
+                                                        </div>
+                                                        <!-- these examples require jQuery -->
+                                                        <div class="radio">
+                                                            <label>
+                                                                <input type="radio" name="exampleRadios1" value="2">
+                                                                Non-selected option <span class="info">(additional
+                                                                    information)</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="radio">
+                                                            <label>
+                                                                <input type="radio" name="exampleRadios1" value="3"
+                                                                    disabled> Disabled option
+                                                            </label>
+                                                        </div>
+                                                        <div class="radio">
+                                                            <label>
+                                                                <input type="radio" name="exampleRadios2" value="4"
+                                                                    disabled checked> Disabled option <span
+                                                                    class="info">(and checked)</span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="code-example"><button type="button"
+                                                        class="btn btn-sq btn-xs btn-info" data-action="clipboard">
+                                                        <i class="fa fa-clipboard"></i>
+                                                    </button>
+                                                    <pre><code class="scrollbars html" data-disable-body-scroll="false">&lt;div class=&quot;form-group&quot;&gt;
+          &lt;!-- this example only uses CSS --&gt;
+          &lt;div class=&quot;radio&quot;&gt;
+            &lt;input type=&quot;radio&quot; id=&quot;exampleRadio1&quot; name=&quot;exampleRadios1&quot; value=&quot;1&quot; checked&gt;
+            &lt;label for=&quot;exampleRadio1&quot;&gt; Selected option &lt;span class=&quot;info&quot;&gt;(additional information)&lt;/span&gt;&lt;/label&gt;
+          &lt;/div&gt;
+          &lt;!-- these examples require jQuery --&gt;
+          &lt;div class=&quot;radio&quot;&gt;
+            &lt;label&gt;
+              &lt;input type=&quot;radio&quot; name=&quot;exampleRadios1&quot; value=&quot;2&quot;&gt; Non-selected option &lt;span class=&quot;info&quot;&gt;(additional information)&lt;/span&gt;
+            &lt;/label&gt;
+          &lt;/div&gt;
+          &lt;div class=&quot;radio&quot;&gt;
+            &lt;label&gt;
+              &lt;input type=&quot;radio&quot; name=&quot;exampleRadios1&quot; value=&quot;3&quot; disabled&gt; Disabled option
+            &lt;/label&gt;
+          &lt;/div&gt;
+          &lt;div class=&quot;radio&quot;&gt;
+            &lt;label&gt;
+              &lt;input type=&quot;radio&quot; name=&quot;exampleRadios2&quot; value=&quot;4&quot; disabled checked&gt; Disabled option &lt;span class=&quot;info&quot;&gt;(and checked)&lt;/span&gt;
+            &lt;/label&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        </code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <section class="dos-and-donts">
+                                    <div class="dotted-list do-list">
+                                        <h3>Do's</h3>
+                                        <ul>
+                                            <li>Use Radio buttons if users have to select one option only.</li>
+                                            <li>Use the same name attribute on all radio buttons in the group.</li>
+                                        </ul>
+                                    </div>
+                                    <div class="dotted-list dont-list">
+                                        <h3>Dont's</h3>
+                                        <ul>
+                                            <li>If users have to or are allowed to use multiple options then checkboxes
+                                                must be used.</li>
+                                        </ul>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="dropdowns">
+                <header class="jumbotron">
+                    <div class="container-lg">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h2>Dropdowns</h2>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <div class="content-area">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <p>A dropdown allows a user to select a value from a series of options. They can be used
+                                    to select between choices or multiple options.</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="code-section">
+                                    <div class="accordion-group">
+                                        <div class="accordion">
+                                            <div class="accordion-heading" data-toggle="collapse">
+                                                <h3>Examples</h3>
+                                            </div>
+                                            <div class="accordion-content collapse in">
+                                                <div class="code-demo">
+                                                    <!-- a fake select created with HTML & CSS (.dropdown .form-control) -->
+                                                    <!-- the data-dropdown attribute is used here to trigger jQuery to match a native select's behavior which will also populate the hidden input -->
+                                                    <!-- .has-icon can be added to the .form-group and then a font-awesome icon class can be used on the .form-control-feedback span to add an icon. This icon will automatically change when validation is applied to the field. -->
+                                                    <div class="form-group has-icon">
+                                                        <label class="control-label" for="exampleCssDropdown1">CSS
+                                                            dropdown with icon</label>
+                                                        <div class="dropdown" data-dropdown>
+                                                            <input type="text" class="hidden"
+                                                                id="exampleCssDropdownValue1">
+                                                            <button type="button" class="form-control dropdown-toggle"
+                                                                id="exampleCssDropdown1" data-toggle="dropdown"
+                                                                aria-haspopup="true" aria-expanded="true">
+                                                                Please select
+                                                                <span class="caret"></span>
+                                                            </button>
+                                                            <ul class="dropdown-menu"
+                                                                aria-labelledby="exampleCssDropdown1">
+                                                                <li>
+                                                                    <a href="#" data-value="1"
+                                                                        data-label="Cape Town, South Africa">
+                                                                        <strong>Cape Town</strong><br>
+                                                                        3 Fir Street,<br>
+                                                                        Observatory,
+                                                                        9725
+                                                                    </a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="#" data-value="2"
+                                                                        data-label="Johannesburg, South Africa">
+                                                                        <strong>Johannesburg</strong><br>
+                                                                        66 Great Avenue,<br>
+                                                                        Rosebank,
+                                                                        1158
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                            <span class="form-control-feedback fa-building-o"></span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group has-icon">
+                                                        <label class="control-label" for="exampleCssDropdown2">CSS
+                                                            dropdown with scrollbar</label>
+                                                        <div class="dropdown" data-dropdown>
+                                                            <input type="text" class="hidden"
+                                                                id="exampleCssDropdownValue2">
+                                                            <button type="button" class="form-control dropdown-toggle"
+                                                                id="exampleCssDropdown2" data-toggle="dropdown"
+                                                                aria-haspopup="true" aria-expanded="true">
+                                                                Please select
+                                                                <span class="caret"></span>
+                                                            </button>
+                                                            <div class="dropdown-menu"
+                                                                aria-labelledby="exampleCssDropdown2">
+                                                                <div class="scrollbars">
+                                                                    <ul class="dropdown-menu">
+                                                                        <li>
+                                                                            <a href="#" data-value="1"
+                                                                                data-label="Cape Town, South Africa">
+                                                                                <strong>Cape Town</strong><br>
+                                                                                66 Great Avenue,<br>
+                                                                                Rosebank,
+                                                                                1158
+                                                                            </a>
+                                                                        </li>
+                                                                        <li>
+                                                                            <a href="#" data-value="2"
+                                                                                data-label="Johannesburg, South Africa">
+                                                                                <strong>Johannesburg</strong><br>
+                                                                                66 Great Avenue,<br>
+                                                                                Rosebank,
+                                                                                1158
+                                                                            </a>
+                                                                        </li>
+                                                                        <li>
+                                                                            <a href="#" data-value="3"
+                                                                                data-label="Sydney, Australia">
+                                                                                <strong>Sydney</strong><br>
+                                                                                66 Great Avenue,<br>
+                                                                                Rosebank,
+                                                                                1158
+                                                                            </a>
+                                                                        </li>
+                                                                        <li>
+                                                                            <a href="#" data-value="4"
+                                                                                data-label="New York, USA">
+                                                                                <strong>New York</strong><br>
+                                                                                66 Great Avenue,<br>
+                                                                                Rosebank,
+                                                                                1158
+                                                                            </a>
+                                                                        </li>
+                                                                        <li>
+                                                                            <a href="#" data-value="5"
+                                                                                data-label="Rio de Janeiro, Brazil">
+                                                                                <strong>Rio de Janeiro</strong><br>
+                                                                                66 Great Avenue,<br>
+                                                                                Rosebank,
+                                                                                1158
+                                                                            </a>
+                                                                        </li>
+                                                                        <li>
+                                                                            <a href="#" data-value="6"
+                                                                                data-label="Chiang Mai, Thailand">
+                                                                                <strong>Chiang Mai</strong><br>
+                                                                                66 Great Avenue,<br>
+                                                                                Rosebank,
+                                                                                1158
+                                                                            </a>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                            <span class="form-control-feedback fa-building-o"></span>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- a normal/native <select> -->
+                                                    <!--
+        <div class="form-group">
+          <label class="control-label" for="exampleDropdownNative">Native select</label>
+          <select class="form-control" id="exampleDropdownNative">
+            <option>Please select</option>
+            <option>Option 1</option>
+            <option>Option 2</option>
+            <option>Option 3</option>
+            <option>Option 4</option>
+            <option>Option 5</option>
+          </select>
+        </div>
+        -->
+
+                                                    <!-- a normal/native <select multiple> -->
+                                                    <!--
+        <div class="form-group">
+          <label class="control-label" for="exampleDropdownMulti">Native multiselect</label>
+          <select class="form-control" id="exampleDropdownMulti" multiple>
+            <option selected>Option 1</option>
+            <option>Option 2</option>
+            <option>Option 3</option>
+            <option selected>Option 4</option>
+            <option selected>Option 5</option>
+          </select>
+        </div>
+        -->
+
+                                                    <!-- native <select> used inside an .input-group -->
+                                                    <!--
+        <div class="form-group has-icon">
+          <label class="control-label" for="exampleNativeInputGroupDropdown">Native select inside input-group, with an icon</label>
+          <div class="control-wrapper">-->
+                                                    <!-- if there is a chance that the label is long enough to wrap onto two lines on smaller screens (320px), then wrap everything after .control-label in .control-wrapper to fix positioning of .form-control-feedback -->
+                                                    <!--
+            <span class="form-control-feedback fa-btc"></span>
+            <div class="input-group">
+              <select class="form-control" id="exampleNativeInputGroupDropdown">
+                <option>Select amount</option>
+                <option>1</option>
+                <option>10</option>
+                <option>100</option>
+                <option>1,000</option>
+                <option>10,000</option>
+              </select>
+              <span class="input-group-addon">.00</span>
+            </div>
+          </div>
+        </div>
+        -->
+
+                                                    <!-- CSS select used inside an .input-group -->
+                                                    <!-- no [data-dropdown] attribute on this one, so this dropdown behaves like a list of links -->
+                                                    <!--
+        <div class="form-group">
+          <label class="control-label" for="exampleCssInputGroupDropdown">Bootstrap CSS dropdown <span class="info">(clicking an option does nothing by default)</span></label>
+          <div class="control-wrapper">
+            <div class="input-group">
+              <span class="input-group-addon"><i class="fa fa-user-circle-o" aria-hidden="true"></i></span>
+              <div class="dropdown">
+                <button type="button" class="btn form-control dropdown-toggle" id="exampleCssInputGroupDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  Account type
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="exampleCssInputGroupDropdown">
+                  <li><a href="#">Admin</a></li>
+                  <li><a href="#">Shopper</a></li>
+                  <li><a href="#">VIP</a></li>
+                  <li role="separator" class="divider"></li>
+                  <li><a href="#">Other</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        -->
+                                                </div>
+                                                <div class="code-example"><button type="button"
+                                                        class="btn btn-sq btn-xs btn-info" data-action="clipboard">
+                                                        <i class="fa fa-clipboard"></i>
+                                                    </button>
+                                                    <pre><code class="scrollbars html" data-disable-body-scroll="false">&lt;!-- a fake select created with HTML &amp; CSS (.dropdown .form-control) --&gt;
+        &lt;!-- the data-dropdown attribute is used here to trigger jQuery to match a native select's behavior which will also populate the hidden input --&gt;
+        &lt;!-- .has-icon can be added to the .form-group and then a font-awesome icon class can be used on the .form-control-feedback span to add an icon. This icon will automatically change when validation is applied to the field. --&gt;
+        &lt;div class=&quot;form-group has-icon&quot;&gt;
+          &lt;label class=&quot;control-label&quot; for=&quot;exampleCssDropdown1&quot;&gt;CSS dropdown with icon&lt;/label&gt;
+          &lt;div class=&quot;dropdown&quot; data-dropdown&gt;
+            &lt;input type=&quot;text&quot; class=&quot;hidden&quot; id=&quot;exampleCssDropdownValue1&quot;&gt;
+            &lt;button type=&quot;button&quot; class=&quot;form-control dropdown-toggle&quot; id=&quot;exampleCssDropdown1&quot; data-toggle=&quot;dropdown&quot; aria-haspopup=&quot;true&quot; aria-expanded=&quot;true&quot;&gt;
+              Please select
+              &lt;span class=&quot;caret&quot;&gt;&lt;/span&gt;
+            &lt;/button&gt;
+            &lt;ul class=&quot;dropdown-menu&quot; aria-labelledby=&quot;exampleCssDropdown1&quot;&gt;
+              &lt;li&gt;
+                &lt;a href=&quot;#&quot; data-value=&quot;1&quot; data-label=&quot;Cape Town, South Africa&quot;&gt;
+                  &lt;strong&gt;Cape Town&lt;/strong&gt;&lt;br&gt;
+                  3 Fir Street,&lt;br&gt;
+                  Observatory,
+                  9725
+                &lt;/a&gt;
+              &lt;/li&gt;
+              &lt;li&gt;
+                &lt;a href=&quot;#&quot; data-value=&quot;2&quot; data-label=&quot;Johannesburg, South Africa&quot;&gt;
+                  &lt;strong&gt;Johannesburg&lt;/strong&gt;&lt;br&gt;
+                  66 Great Avenue,&lt;br&gt;
+                  Rosebank,
+                  1158
+                &lt;/a&gt;
+              &lt;/li&gt;
+            &lt;/ul&gt;
+            &lt;span class=&quot;form-control-feedback fa-building-o&quot;&gt;&lt;/span&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        
+        &lt;div class=&quot;form-group has-icon&quot;&gt;
+          &lt;label class=&quot;control-label&quot; for=&quot;exampleCssDropdown2&quot;&gt;CSS dropdown with scrollbar&lt;/label&gt;
+          &lt;div class=&quot;dropdown&quot; data-dropdown&gt;
+            &lt;input type=&quot;text&quot; class=&quot;hidden&quot; id=&quot;exampleCssDropdownValue2&quot;&gt;
+            &lt;button type=&quot;button&quot; class=&quot;form-control dropdown-toggle&quot; id=&quot;exampleCssDropdown2&quot; data-toggle=&quot;dropdown&quot; aria-haspopup=&quot;true&quot; aria-expanded=&quot;true&quot;&gt;
+              Please select
+              &lt;span class=&quot;caret&quot;&gt;&lt;/span&gt;
+            &lt;/button&gt;
+            &lt;div class=&quot;dropdown-menu&quot; aria-labelledby=&quot;exampleCssDropdown2&quot;&gt;
+              &lt;div class=&quot;scrollbars&quot;&gt;
+                &lt;ul class=&quot;dropdown-menu&quot;&gt;
+                  &lt;li&gt;
+                    &lt;a href=&quot;#&quot; data-value=&quot;1&quot; data-label=&quot;Cape Town, South Africa&quot;&gt;
+                      &lt;strong&gt;Cape Town&lt;/strong&gt;&lt;br&gt;
+                      66 Great Avenue,&lt;br&gt;
+                      Rosebank,
+                      1158
+                    &lt;/a&gt;
+                  &lt;/li&gt;
+                  &lt;li&gt;
+                    &lt;a href=&quot;#&quot; data-value=&quot;2&quot; data-label=&quot;Johannesburg, South Africa&quot;&gt;
+                      &lt;strong&gt;Johannesburg&lt;/strong&gt;&lt;br&gt;
+                      66 Great Avenue,&lt;br&gt;
+                      Rosebank,
+                      1158
+                    &lt;/a&gt;
+                  &lt;/li&gt;
+                  &lt;li&gt;
+                    &lt;a href=&quot;#&quot; data-value=&quot;3&quot; data-label=&quot;Sydney, Australia&quot;&gt;
+                      &lt;strong&gt;Sydney&lt;/strong&gt;&lt;br&gt;
+                      66 Great Avenue,&lt;br&gt;
+                      Rosebank,
+                      1158
+                    &lt;/a&gt;
+                  &lt;/li&gt;
+                  &lt;li&gt;
+                    &lt;a href=&quot;#&quot; data-value=&quot;4&quot; data-label=&quot;New York, USA&quot;&gt;
+                      &lt;strong&gt;New York&lt;/strong&gt;&lt;br&gt;
+                      66 Great Avenue,&lt;br&gt;
+                      Rosebank,
+                      1158
+                    &lt;/a&gt;
+                  &lt;/li&gt;
+                  &lt;li&gt;
+                    &lt;a href=&quot;#&quot; data-value=&quot;5&quot; data-label=&quot;Rio de Janeiro, Brazil&quot;&gt;
+                      &lt;strong&gt;Rio de Janeiro&lt;/strong&gt;&lt;br&gt;
+                      66 Great Avenue,&lt;br&gt;
+                      Rosebank,
+                      1158
+                    &lt;/a&gt;
+                  &lt;/li&gt;
+                  &lt;li&gt;
+                    &lt;a href=&quot;#&quot; data-value=&quot;6&quot; data-label=&quot;Chiang Mai, Thailand&quot;&gt;
+                      &lt;strong&gt;Chiang Mai&lt;/strong&gt;&lt;br&gt;
+                      66 Great Avenue,&lt;br&gt;
+                      Rosebank,
+                      1158
+                    &lt;/a&gt;
+                  &lt;/li&gt;
+                &lt;/ul&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;span class=&quot;form-control-feedback fa-building-o&quot;&gt;&lt;/span&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        
+        &lt;!-- a normal/native &lt;select&gt; --&gt;
+        &lt;!--
+        &lt;div class=&quot;form-group&quot;&gt;
+          &lt;label class=&quot;control-label&quot; for=&quot;exampleDropdownNative&quot;&gt;Native select&lt;/label&gt;
+          &lt;select class=&quot;form-control&quot; id=&quot;exampleDropdownNative&quot;&gt;
+            &lt;option&gt;Please select&lt;/option&gt;
+            &lt;option&gt;Option 1&lt;/option&gt;
+            &lt;option&gt;Option 2&lt;/option&gt;
+            &lt;option&gt;Option 3&lt;/option&gt;
+            &lt;option&gt;Option 4&lt;/option&gt;
+            &lt;option&gt;Option 5&lt;/option&gt;
+          &lt;/select&gt;
+        &lt;/div&gt;
+        --&gt;
+        
+        &lt;!-- a normal/native &lt;select multiple&gt; --&gt;
+        &lt;!--
+        &lt;div class=&quot;form-group&quot;&gt;
+          &lt;label class=&quot;control-label&quot; for=&quot;exampleDropdownMulti&quot;&gt;Native multiselect&lt;/label&gt;
+          &lt;select class=&quot;form-control&quot; id=&quot;exampleDropdownMulti&quot; multiple&gt;
+            &lt;option selected&gt;Option 1&lt;/option&gt;
+            &lt;option&gt;Option 2&lt;/option&gt;
+            &lt;option&gt;Option 3&lt;/option&gt;
+            &lt;option selected&gt;Option 4&lt;/option&gt;
+            &lt;option selected&gt;Option 5&lt;/option&gt;
+          &lt;/select&gt;
+        &lt;/div&gt;
+        --&gt;
+        
+        &lt;!-- native &lt;select&gt; used inside an .input-group --&gt;
+        &lt;!--
+        &lt;div class=&quot;form-group has-icon&quot;&gt;
+          &lt;label class=&quot;control-label&quot; for=&quot;exampleNativeInputGroupDropdown&quot;&gt;Native select inside input-group, with an icon&lt;/label&gt;
+          &lt;div class=&quot;control-wrapper&quot;&gt;--&gt;&lt;!-- if there is a chance that the label is long enough to wrap onto two lines on smaller screens (320px), then wrap everything after .control-label in .control-wrapper to fix positioning of .form-control-feedback --&gt;&lt;!--
+            &lt;span class=&quot;form-control-feedback fa-btc&quot;&gt;&lt;/span&gt;
+            &lt;div class=&quot;input-group&quot;&gt;
+              &lt;select class=&quot;form-control&quot; id=&quot;exampleNativeInputGroupDropdown&quot;&gt;
+                &lt;option&gt;Select amount&lt;/option&gt;
+                &lt;option&gt;1&lt;/option&gt;
+                &lt;option&gt;10&lt;/option&gt;
+                &lt;option&gt;100&lt;/option&gt;
+                &lt;option&gt;1,000&lt;/option&gt;
+                &lt;option&gt;10,000&lt;/option&gt;
+              &lt;/select&gt;
+              &lt;span class=&quot;input-group-addon&quot;&gt;.00&lt;/span&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        --&gt;
+        
+        &lt;!-- CSS select used inside an .input-group --&gt;
+        &lt;!-- no [data-dropdown] attribute on this one, so this dropdown behaves like a list of links --&gt;
+        &lt;!--
+        &lt;div class=&quot;form-group&quot;&gt;
+          &lt;label class=&quot;control-label&quot; for=&quot;exampleCssInputGroupDropdown&quot;&gt;Bootstrap CSS dropdown &lt;span class=&quot;info&quot;&gt;(clicking an option does nothing by default)&lt;/span&gt;&lt;/label&gt;
+          &lt;div class=&quot;control-wrapper&quot;&gt;
+            &lt;div class=&quot;input-group&quot;&gt;
+              &lt;span class=&quot;input-group-addon&quot;&gt;&lt;i class=&quot;fa fa-user-circle-o&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/span&gt;
+              &lt;div class=&quot;dropdown&quot;&gt;
+                &lt;button type=&quot;button&quot; class=&quot;btn form-control dropdown-toggle&quot; id=&quot;exampleCssInputGroupDropdown&quot; data-toggle=&quot;dropdown&quot; aria-haspopup=&quot;true&quot; aria-expanded=&quot;true&quot;&gt;
+                  Account type
+                  &lt;span class=&quot;caret&quot;&gt;&lt;/span&gt;
+                &lt;/button&gt;
+                &lt;ul class=&quot;dropdown-menu&quot; aria-labelledby=&quot;exampleCssInputGroupDropdown&quot;&gt;
+                  &lt;li&gt;&lt;a href=&quot;#&quot;&gt;Admin&lt;/a&gt;&lt;/li&gt;
+                  &lt;li&gt;&lt;a href=&quot;#&quot;&gt;Shopper&lt;/a&gt;&lt;/li&gt;
+                  &lt;li&gt;&lt;a href=&quot;#&quot;&gt;VIP&lt;/a&gt;&lt;/li&gt;
+                  &lt;li role=&quot;separator&quot; class=&quot;divider&quot;&gt;&lt;/li&gt;
+                  &lt;li&gt;&lt;a href=&quot;#&quot;&gt;Other&lt;/a&gt;&lt;/li&gt;
+                &lt;/ul&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        --&gt;
+        </code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <section class="dos-and-donts">
+                                    <div class="dotted-list do-list">
+                                        <h3>Do's</h3>
+                                        <ul>
+                                            <li>Include a scrollbar if the options list exceeds 300px in height.</li>
+                                            <li>Consider using radio buttons or checkboxes if there are only a few
+                                                options to choose from.</li>
+                                            <li>Open the dropdown upwards when select is against the bottom of the
+                                                screen.</li>
+                                            <li>For mobile, trigger the opening of the native select menu.</li>
+                                        </ul>
+                                    </div>
+                                    <div class="dotted-list dont-list">
+                                        <h3>Dont's</h3>
+                                        <ul>
+                                            <li>Don’t break user expected norms (e.g. language selection always as a
+                                                dropdown).</li>
+                                        </ul>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="tags">
+                <header class="jumbotron">
+                    <div class="container-lg">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h2>Tags</h2>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <div class="content-area">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <p>Tags are used to describe content in more detail. They are useful for grouping
+                                    related and making it easier to find information. Tags exist in their own right and
+                                    have no set relationship to anything else.</p>
+                            </div>
+                            <div class="col-xs-12">
+                                <div class="code-section">
+                                    <div class="accordion-group">
+                                        <div class="accordion">
+                                            <div class="accordion-heading" data-toggle="collapse">
+                                                <h3>Examples</h3>
+                                            </div>
+                                            <div class="accordion-content collapse in">
+                                                <div class="code-demo"><span class="label">Location:
+                                                        <strong>France</strong></span>
+                                                    <span class="label">
+                                                        <span class="close"
+                                                            onClick="$(this).closest('.label').hide();">×</span>Default
+                                                    </span>
+                                                    <span class="label label-primary">
+                                                        <span class="close"
+                                                            onClick="$(this).closest('.label').hide();">×</span>Primary
+                                                    </span>
+                                                    <span class="label label-secondary">
+                                                        <span class="close"
+                                                            onClick="$(this).closest('.label').hide();">×</span>Secondary
+                                                    </span>
+                                                    <span class="label label-info">
+                                                        <span class="close"
+                                                            onClick="$(this).closest('.label').hide();">×</span>Info
+                                                    </span>
+                                                    <span class="label label-success">
+                                                        <span class="close"
+                                                            onClick="$(this).closest('.label').hide();">×</span>Success
+                                                    </span>
+                                                    <span class="label label-warning">
+                                                        <span class="close"
+                                                            onClick="$(this).closest('.label').hide();">×</span>Warning
+                                                    </span>
+                                                    <span class="label label-danger">
+                                                        <span class="close"
+                                                            onClick="$(this).closest('.label').hide();">×</span>Danger
+                                                    </span>
+                                                </div>
+                                                <div class="code-example"><button type="button"
+                                                        class="btn btn-sq btn-xs btn-info" data-action="clipboard">
+                                                        <i class="fa fa-clipboard"></i>
+                                                    </button>
+                                                    <pre><code class="scrollbars html" data-disable-body-scroll="false">&lt;span class=&quot;label&quot;&gt;Location: &lt;strong&gt;France&lt;/strong&gt;&lt;/span&gt;
+        &lt;span class=&quot;label&quot;&gt;
+          &lt;span class=&quot;close&quot; onClick=&quot;$(this).closest('.label').hide();&quot;&gt;×&lt;/span&gt;Default
+        &lt;/span&gt;
+        &lt;span class=&quot;label label-primary&quot;&gt;
+          &lt;span class=&quot;close&quot; onClick=&quot;$(this).closest('.label').hide();&quot;&gt;×&lt;/span&gt;Primary
+        &lt;/span&gt;
+        &lt;span class=&quot;label label-secondary&quot;&gt;
+          &lt;span class=&quot;close&quot; onClick=&quot;$(this).closest('.label').hide();&quot;&gt;×&lt;/span&gt;Secondary
+        &lt;/span&gt;
+        &lt;span class=&quot;label label-info&quot;&gt;
+          &lt;span class=&quot;close&quot; onClick=&quot;$(this).closest('.label').hide();&quot;&gt;×&lt;/span&gt;Info
+        &lt;/span&gt;
+        &lt;span class=&quot;label label-success&quot;&gt;
+          &lt;span class=&quot;close&quot; onClick=&quot;$(this).closest('.label').hide();&quot;&gt;×&lt;/span&gt;Success
+        &lt;/span&gt;
+        &lt;span class=&quot;label label-warning&quot;&gt;
+          &lt;span class=&quot;close&quot; onClick=&quot;$(this).closest('.label').hide();&quot;&gt;×&lt;/span&gt;Warning
+        &lt;/span&gt;
+        &lt;span class=&quot;label label-danger&quot;&gt;
+          &lt;span class=&quot;close&quot; onClick=&quot;$(this).closest('.label').hide();&quot;&gt;×&lt;/span&gt;Danger
+        &lt;/span&gt;
+        </code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="datePicker">
+                <header class="jumbotron">
+                    <div class="container-lg">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h2>Date picker</h2>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <div class="content-area">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <p>A date picker is a non-text input form element. You can select a single date from a
+                                    popup calendar or a date range.</p>
+                                <p><a href="https://chmln.github.io/flatpickr/" target="_blank"
+                                        rel="noopener noreferrer">Flatpickr date picker docs</a></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="code-section">
+                                    <div class="accordion-group">
+                                        <div class="accordion">
+                                            <div class="accordion-heading" data-toggle="collapse">
+                                                <h3>Examples</h3>
+                                            </div>
+                                            <div class="accordion-content collapse in">
+                                                <div class="code-demo">
+                                                    <!-- Use the code below for a datepicker. -->
+                                                    <div class="form-group has-icon">
+                                                        <label class="control-label" for="exampleDatePicker">Date
+                                                            picker</label>
+                                                        <input type="text" id="exampleDatePicker" class="form-control"
+                                                            placeholder="Please select date" data-datetime-picker
+                                                            data-alt-format="j M Y">
+                                                        <span class="form-control-feedback fa-calendar"></span>
+                                                    </div>
+                                                    <!-- Use the code below for a date range picker. Note the use of data-mode="range" data attribute to enable this feature. -->
+                                                    <div class="form-group has-icon">
+                                                        <label class="control-label" for="exampleDatePicker">Date range
+                                                            picker</label>
+                                                        <input type="text" id="exampleDatePicker" class="form-control"
+                                                            placeholder="Please select start and end dates"
+                                                            data-datetime-picker data-mode="range"
+                                                            data-alt-format="j M Y">
+                                                        <span class="form-control-feedback fa-calendar"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="code-example"><button type="button"
+                                                        class="btn btn-sq btn-xs btn-info" data-action="clipboard">
+                                                        <i class="fa fa-clipboard"></i>
+                                                    </button>
+                                                    <pre><code class="scrollbars html" data-disable-body-scroll="false">&lt;!-- Use the code below for a datepicker. --&gt;
+        &lt;div class=&quot;form-group has-icon&quot;&gt;
+          &lt;label class=&quot;control-label&quot; for=&quot;exampleDatePicker&quot;&gt;Date picker&lt;/label&gt;
+          &lt;input type=&quot;text&quot; id=&quot;exampleDatePicker&quot; class=&quot;form-control&quot; placeholder=&quot;Please select date&quot; data-datetime-picker data-alt-format=&quot;j M Y&quot;&gt;
+          &lt;span class=&quot;form-control-feedback fa-calendar&quot;&gt;&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;!-- Use the code below for a date range picker. Note the use of data-mode=&quot;range&quot; data attribute to enable this feature. --&gt;
+        &lt;div class=&quot;form-group has-icon&quot;&gt;
+          &lt;label class=&quot;control-label&quot; for=&quot;exampleDatePicker&quot;&gt;Date range picker&lt;/label&gt;
+          &lt;input type=&quot;text&quot; id=&quot;exampleDatePicker&quot; class=&quot;form-control&quot; placeholder=&quot;Please select start and end dates&quot; data-datetime-picker data-mode=&quot;range&quot; data-alt-format=&quot;j M Y&quot;&gt;
+          &lt;span class=&quot;form-control-feedback fa-calendar&quot;&gt;&lt;/span&gt;
+        &lt;/div&gt;
+        </code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <section class="dos-and-donts">
+                                    <div class="dotted-list do-list">
+                                        <h3>Do's</h3>
+                                        <ul>
+                                            <li>For mobile, trigger the opening of the native date field.</li>
+                                        </ul>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="timePicker">
+                <header class="jumbotron">
+                    <div class="container-lg">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h2>Time picker</h2>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <div class="content-area">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <p>Time pickers are simplified counters. Hours should be changed in increments of 1,
+                                    minutes in 15 (unless it is required to have 1 or 5 increments).</p>
+                                <p>Select a time of day in hours and minutes.</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="code-section">
+                                    <div class="accordion-group">
+                                        <div class="accordion">
+                                            <div class="accordion-heading" data-toggle="collapse">
+                                                <h3>Examples</h3>
+                                            </div>
+                                            <div class="accordion-content collapse in">
+                                                <div class="code-demo">
+                                                    <div class="form-group has-icon">
+                                                        <label class="control-label" for="exampleTimePicker">Time
+                                                            picker</label>
+                                                        <input type="text" id="exampleTimePicker" class="form-control"
+                                                            placeholder="Select a time to reboot the server"
+                                                            data-datetime-picker data-enable-time="true"
+                                                            data-no-calendar="true" data-alt-format="h:i K">
+                                                        <span class="form-control-feedback fa-clock-o"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="code-example"><button type="button"
+                                                        class="btn btn-sq btn-xs btn-info" data-action="clipboard">
+                                                        <i class="fa fa-clipboard"></i>
+                                                    </button>
+                                                    <pre><code class="scrollbars html" data-disable-body-scroll="false">&lt;div class=&quot;form-group has-icon&quot;&gt;
+          &lt;label class=&quot;control-label&quot; for=&quot;exampleTimePicker&quot;&gt;Time picker&lt;/label&gt;
+          &lt;input type=&quot;text&quot; id=&quot;exampleTimePicker&quot; class=&quot;form-control&quot; placeholder=&quot;Select a time to reboot the server&quot; data-datetime-picker data-enable-time=&quot;true&quot; data-no-calendar=&quot;true&quot; data-alt-format=&quot;h:i K&quot;&gt;
+          &lt;span class=&quot;form-control-feedback fa-clock-o&quot;&gt;&lt;/span&gt;
+        &lt;/div&gt;
+        </code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <section class="dos-and-donts">
+                                    <div class="dotted-list do-list">
+                                        <h3>Do's</h3>
+                                        <ul>
+                                            <li>For mobile, trigger the opening of the native date/time field.</li>
+                                        </ul>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="filePicker">
+                <header class="jumbotron">
+                    <div class="container-lg">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h2>File Picker</h2>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <div class="content-area">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <p>Attaching files to a form are performed by providing a drop area and alternative link
+                                    for users to choose a source. While a file is being uploaded, the dropzone is
+                                    disabled to prevent multiple uploads and possible errors. A short animation of
+                                    success (a green tick icon where the filesize appears) can be signified to users as
+                                    feedback for a 100% upload. A failed attempt will trigger an error message.</p>
+                                <p>Multiple uploaded attachments are wrapped into an accordion. Revealing those
+                                    attachments allows users to delete individual files.</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="code-section">
+                                    <div class="accordion-group">
+                                        <div class="accordion">
+                                            <div class="accordion-heading" data-toggle="collapse">
+                                                <h3>Examples</h3>
+                                            </div>
+                                            <div class="accordion-content collapse in">
+                                                <div class="code-demo">
+                                                    <h4 class="sub-heading">Simple: File input (click to select files)
+                                                    </h4>
+                                                    <br>
+                                                    <div class="form-group">
+                                                        <label class="control-label">Upload company users &
+                                                            profiles</label>
+                                                        <div class="file-picker" data-file-picker-example="simple">
+                                                            <div class="file-details"></div>
+                                                            <div class="file-dropzone">
+                                                                <input type="file" name="exampleFileField" multiple />
+                                                                <i class="fa fa-paperclip" aria-hidden="true"></i>
+                                                                <span class="hidden-desktop one-line">
+                                                                    <a>Browse files</a>
+                                                                </span>
+                                                                <span class="hidden-mobile">
+                                                                    Choose files to upload<br>
+                                                                    <a>Browse files</a>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <p class="help-block">You can upload a *.CSV or Excel file</p>
+                                                    </div>
+
+                                                    <h4 class="sub-heading">Advanced: File dropzone with immediate
+                                                        upload (drag to upload files)</h4>
+                                                    <br>
+                                                    <div class="form-group">
+                                                        <label class="control-label">Upload company users &
+                                                            profiles</label>
+                                                        <div class="file-picker" data-file-picker-example="advanced">
+                                                            <div class="file-details"></div>
+                                                            <div class="file-uploader"></div>
+                                                            <div class="file-dropzone">
+                                                                <i class="fa fa-paperclip" aria-hidden="true"></i>
+                                                                <span class="hidden-desktop one-line">
+                                                                    <a>Browse files</a>
+                                                                </span>
+                                                                <span class="hidden-mobile">
+                                                                    Drop files here to upload<br>
+                                                                    <a>Browse files</a>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <p class="help-block">You can upload a *.CSV or Excel file</p>
+                                                    </div>
+                                                </div>
+                                                <div class="code-example"><button type="button"
+                                                        class="btn btn-sq btn-xs btn-info" data-action="clipboard">
+                                                        <i class="fa fa-clipboard"></i>
+                                                    </button>
+                                                    <pre><code class="scrollbars html" data-disable-body-scroll="false">&lt;h4 class=&quot;sub-heading&quot;&gt;Simple: File input (click to select files)&lt;/h4&gt;
+        &lt;br&gt;
+        &lt;div class=&quot;form-group&quot;&gt;
+          &lt;label class=&quot;control-label&quot;&gt;Upload company users &amp; profiles&lt;/label&gt;
+          &lt;div class=&quot;file-picker&quot; data-file-picker-example=&quot;simple&quot;&gt;
+            &lt;div class=&quot;file-details&quot;&gt;&lt;/div&gt;
+            &lt;div class=&quot;file-dropzone&quot;&gt;
+              &lt;input type=&quot;file&quot; name=&quot;exampleFileField&quot; multiple /&gt;
+              &lt;i class=&quot;fa fa-paperclip&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;
+              &lt;span class=&quot;hidden-desktop one-line&quot;&gt;
+                &lt;a&gt;Browse files&lt;/a&gt;
+              &lt;/span&gt;
+              &lt;span class=&quot;hidden-mobile&quot;&gt;
+                Choose files to upload&lt;br&gt;
+                &lt;a&gt;Browse files&lt;/a&gt;
+              &lt;/span&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+          &lt;p class=&quot;help-block&quot;&gt;You can upload a *.CSV or Excel file&lt;/p&gt;
+        &lt;/div&gt;
+        
+        &lt;h4 class=&quot;sub-heading&quot;&gt;Advanced: File dropzone with immediate upload (drag to upload files)&lt;/h4&gt;
+        &lt;br&gt;
+        &lt;div class=&quot;form-group&quot;&gt;
+          &lt;label class=&quot;control-label&quot;&gt;Upload company users &amp; profiles&lt;/label&gt;
+          &lt;div class=&quot;file-picker&quot; data-file-picker-example=&quot;advanced&quot;&gt;
+            &lt;div class=&quot;file-details&quot;&gt;&lt;/div&gt;
+            &lt;div class=&quot;file-uploader&quot;&gt;&lt;/div&gt;
+            &lt;div class=&quot;file-dropzone&quot;&gt;
+              &lt;i class=&quot;fa fa-paperclip&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;
+              &lt;span class=&quot;hidden-desktop one-line&quot;&gt;
+                &lt;a&gt;Browse files&lt;/a&gt;
+              &lt;/span&gt;
+              &lt;span class=&quot;hidden-mobile&quot;&gt;
+                Drop files here to upload&lt;br&gt;
+                &lt;a&gt;Browse files&lt;/a&gt;
+              &lt;/span&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+          &lt;p class=&quot;help-block&quot;&gt;You can upload a *.CSV or Excel file&lt;/p&gt;
+        &lt;/div&gt;
+        </code></pre>
+                                                </div>
+                                                <div class="code-example"><button type="button"
+                                                        class="btn btn-sq btn-xs btn-info" data-action="clipboard">
+                                                        <i class="fa fa-clipboard"></i>
+                                                    </button>
+                                                    <pre><code class="scrollbars js" data-disable-body-scroll="false">// simple file field button
+        $('[data-file-picker-example=&quot;simple&quot;]').each(function () {
+          var $picker = $(this);
+          var $input = $picker.find('input[type=&quot;file&quot;]');
+          var $details = $picker.find('.file-details');
+        
+          // update file list on change
+          $input.on('change', function () {
+            var files = $input[0].files;
+            $details.empty();
+            if (files.length &gt; 0) {
+              $details.append('&lt;div class=&quot;collapsed&quot; data-toggle=&quot;collapse&quot;&gt;' + files.length + ' Attachment' + (files.length &gt; 1 ? 's' : '') + '&lt;/div&gt;');
+              $details.append('&lt;div class=&quot;collapse&quot;/&gt;');
+            }
+            for (var i = 0; i &lt; files.length; i++) {
+              $details.find('.collapse').append('&lt;div class=&quot;file-label&quot;&gt;' + files.item(i).name + '&lt;/div&gt;');
+            }
+          });
+        });
+        
+        // The advanced demo uses filedrop.js but it is just demonstrating the on-page interactivity. Each application would have it's own way of handling uploads and you can use whichever plugin you prefer.
+        </code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="login">
+                <header class="jumbotron">
+                    <div class="container-lg">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h2>Login</h2>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <div class="content-area">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <p>An application login screen consists of text inputs (either email, username, account
+                                    number) and a password input. Both components are required fields.</p>
+                                <p>The login screen provides a perfect opportunity to further establish and strengthen
+                                    the NTT brand. The layout should follow the public website design as it is the
+                                    window to the application.</p>
+                                <p><a href="examples/loginRegister.html" target="_blank" rel="noopener noreferrer">Click
+                                        here</a> to open the example template in a new tab.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="validation">
+                <header class="jumbotron">
+                    <div class="container-lg">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h2>Validation</h2>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <div class="content-area">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <p>Form validation is the process of making sure that data supplied by the user using a
+                                    form, meets the criteria set for collecting data from the user.</p>
+                                <p>Bootstrap includes validation styles for error, warning, and success states on form
+                                    controls. To use, add <code>.has-warning</code>, <code>.has-error</code>, or
+                                    <code>.has-success</code> to the parent element. Any <code>.form-control</code>,
+                                    <code>.help-block</code>, and <code>.form-control-feedback</code> within that
+                                    element will receive the validation styles.</p>
+                                <p>Using these validation styles to denote the state of a form control only provides a
+                                    visual, colour-based indication, which will not be conveyed to users of assistive
+                                    technologies - such as screen readers - or to colour-blind users. Ensure that an
+                                    alternative indication of state is also provided. For instance, you can include a
+                                    hint about state in the form control's <code>&lt;label&gt;</code> text itself (as is
+                                    the case in the following code example), include a glyph (with appropriate
+                                    alternative text using the <code>.sr-only</code> class), or by providing an
+                                    additional help text block. Specifically for assistive technologies, invalid form
+                                    controls can also be assigned an <code>aria-invalid=&quot;true&quot;</code>
+                                    attribute.</p>
+                                <p>text inputs can be checked for:</p>
+                                <ul>
+                                    <li>Required fields – check if users has entered something.</li>
+                                    <li>All required letters – if only characters are required.</li>
+                                    <li>All numbers – numeric check.</li>
+                                    <li>Floating numbers – e.g. input of currencies.</li>
+                                    <li>Letters and numbers.</li>
+                                    <li>String length – a specific length that cannot be exceeded.</li>
+                                    <li>Email validation.</li>
+                                    <li>Date validation.</li>
+                                    <li>Phone number validation.</li>
+                                    <li>Credit Card number validation.</li>
+                                    <li>Password.</li>
+                                    <li>IP address.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="code-section">
+                                    <div class="accordion-group">
+                                        <div class="accordion">
+                                            <div class="accordion-heading" data-toggle="collapse">
+                                                <h3>Examples</h3>
+                                            </div>
+                                            <div class="accordion-content collapse in">
+                                                <div class="code-demo">
+                                                    <form data-validation-example>
+
+                                                        <div class="form-group">
+                                                            <label class="control-label"
+                                                                for="validationRequiredDatetimePicker1">Datetime
+                                                                picker</label>
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon">From</span>
+                                                                <span class="form-control-feedback"></span>
+                                                                <input type="text"
+                                                                    id="validationRequiredDatetimePicker1"
+                                                                    class="form-control" data-datetime-picker
+                                                                    data-enable-time="true"
+                                                                    data-alt-format="j M Y, h:i K" required
+                                                                    placeholder="Please select a date and time">
+                                                            </div>
+                                                            <div class="help-block" data-validation-error
+                                                                id="validationRequiredDatetimePicker1Help">A date is
+                                                                required.</div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="control-label"
+                                                                for="validationRequiredSelect1">Select with
+                                                                validation</label>
+                                                            <select class="form-control" id="validationRequiredSelect1"
+                                                                required>
+                                                                <option value="">Please select</option>
+                                                                <option value="1">Option 1</option>
+                                                                <option value="2">Option 2</option>
+                                                                <option value="3">Option 3</option>
+                                                            </select>
+                                                            <span class="form-control-feedback"></span>
+                                                            <div class="help-block" data-validation-error
+                                                                id="validationRequiredSelect1Help">You must select
+                                                                something.</div>
+                                                        </div>
+
+                                                        <div class="form-group has-icon">
+                                                            <label class="control-label" for="validationDropdown1">CSS
+                                                                dropdown with validation</label>
+                                                            <div class="dropdown" data-dropdown>
+                                                                <input type="text" class="hidden"
+                                                                    id="validationDropdown1Value" required>
+                                                                <button type="button"
+                                                                    class="form-control dropdown-toggle"
+                                                                    id="validationDropdown1" data-toggle="dropdown"
+                                                                    aria-haspopup="true" aria-expanded="true">
+                                                                    Please select
+                                                                    <span class="caret"></span>
+                                                                </button>
+                                                                <ul class="dropdown-menu"
+                                                                    aria-labelledby="validationDropdown1">
+                                                                    <li><a href="#" data-value="">Please select</a></li>
+                                                                    <li><a href="#" data-value="1">Cape Town, South
+                                                                            Africa</a></li>
+                                                                    <li><a href="#" data-value="2">Johannesburg, South
+                                                                            Africa</a></li>
+                                                                </ul>
+                                                            </div>
+                                                            <span class="form-control-feedback fa-building-o"></span>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="control-label"
+                                                                for="validationExamplePattern1">Employer ID</label>
+                                                            <input type="text" class="form-control" pattern="^[0-9]{6}$"
+                                                                placeholder="6 numeric digits"
+                                                                id="validationExamplePattern1"
+                                                                aria-describedby="validationExamplePattern1Help"
+                                                                required>
+                                                            <span class="form-control-feedback"></span>
+                                                            <div class="help-block" data-validation-error
+                                                                id="validationExamplePattern1Help">Employer ID should be
+                                                                exactly 6 digits.</div>
+                                                        </div>
+
+                                                        <div class="form-group has-icon">
+                                                            <label class="control-label"
+                                                                for="validationExampleEmail1">Email</label>
+                                                            <input type="email" placeholder="Email address"
+                                                                class="form-control" id="validationExampleEmail1"
+                                                                aria-describedby="validationExampleEmail1Help" required>
+                                                            <span class="form-control-feedback fa-envelope-o"></span>
+                                                            <div class="help-block" id="validationExampleEmail1Help">
+                                                                Email address will also be used for login.</div>
+                                                            <div class="help-block" data-validation-error>Please enter a
+                                                                valid email address.</div>
+                                                        </div>
+
+                                                        <div class="form-group has-icon has-password-toggle">
+                                                            <label class="control-label"
+                                                                for="validationExamplePassword1">Password</label>
+                                                            <input type="password" class="form-control"
+                                                                id="validationExamplePassword1"
+                                                                aria-describedby="validationExamplePassword1Help"
+                                                                placeholder="Password" required>
+                                                            <span class="password-toggle"></span>
+                                                            <span class="form-control-feedback fa-lock"></span>
+                                                            <div class="help-block" id="validationExamplePassword1Help">
+                                                                Passwords must be at least 6 characters long with at
+                                                                least 1 letter, and 1 digit</div>
+                                                        </div>
+
+                                                        <div class="btn-toolbar">
+                                                            <button type="submit"
+                                                                class="btn btn-primary">Validate</button>
+                                                            <button type="reset"
+                                                                class="btn btn-secondary">Reset</button>
+                                                        </div>
+
+                                                    </form>
+                                                </div>
+                                                <div class="code-example"><button type="button"
+                                                        class="btn btn-sq btn-xs btn-info" data-action="clipboard">
+                                                        <i class="fa fa-clipboard"></i>
+                                                    </button>
+                                                    <pre><code class="scrollbars html" data-disable-body-scroll="false">&lt;form data-validation-example&gt;
+        
+          &lt;div class=&quot;form-group&quot;&gt;
+            &lt;label class=&quot;control-label&quot; for=&quot;validationRequiredDatetimePicker1&quot;&gt;Datetime picker&lt;/label&gt;
+            &lt;div class=&quot;input-group&quot;&gt;
+              &lt;span class=&quot;input-group-addon&quot;&gt;From&lt;/span&gt;
+              &lt;span class=&quot;form-control-feedback&quot;&gt;&lt;/span&gt;
+              &lt;input type=&quot;text&quot; id=&quot;validationRequiredDatetimePicker1&quot; class=&quot;form-control&quot; data-datetime-picker data-enable-time=&quot;true&quot; data-alt-format=&quot;j M Y, h:i K&quot; required placeholder=&quot;Please select a date and time&quot;&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;help-block&quot; data-validation-error id=&quot;validationRequiredDatetimePicker1Help&quot;&gt;A date is required.&lt;/div&gt;
+          &lt;/div&gt;
+        
+          &lt;div class=&quot;form-group&quot;&gt;
+            &lt;label class=&quot;control-label&quot; for=&quot;validationRequiredSelect1&quot;&gt;Select with validation&lt;/label&gt;
+            &lt;select class=&quot;form-control&quot; id=&quot;validationRequiredSelect1&quot; required&gt;
+              &lt;option value=&quot;&quot;&gt;Please select&lt;/option&gt;
+              &lt;option value=&quot;1&quot;&gt;Option 1&lt;/option&gt;
+              &lt;option value=&quot;2&quot;&gt;Option 2&lt;/option&gt;
+              &lt;option value=&quot;3&quot;&gt;Option 3&lt;/option&gt;
+            &lt;/select&gt;
+            &lt;span class=&quot;form-control-feedback&quot;&gt;&lt;/span&gt;
+            &lt;div class=&quot;help-block&quot; data-validation-error id=&quot;validationRequiredSelect1Help&quot;&gt;You must select something.&lt;/div&gt;
+          &lt;/div&gt;
+        
+          &lt;div class=&quot;form-group has-icon&quot;&gt;
+            &lt;label class=&quot;control-label&quot; for=&quot;validationDropdown1&quot;&gt;CSS dropdown with validation&lt;/label&gt;
+            &lt;div class=&quot;dropdown&quot; data-dropdown&gt;
+              &lt;input type=&quot;text&quot; class=&quot;hidden&quot; id=&quot;validationDropdown1Value&quot; required&gt;
+              &lt;button type=&quot;button&quot; class=&quot;form-control dropdown-toggle&quot; id=&quot;validationDropdown1&quot; data-toggle=&quot;dropdown&quot; aria-haspopup=&quot;true&quot; aria-expanded=&quot;true&quot;&gt;
+                Please select
+                &lt;span class=&quot;caret&quot;&gt;&lt;/span&gt;
+              &lt;/button&gt;
+              &lt;ul class=&quot;dropdown-menu&quot; aria-labelledby=&quot;validationDropdown1&quot;&gt;
+                &lt;li&gt;&lt;a href=&quot;#&quot; data-value=&quot;&quot;&gt;Please select&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;#&quot; data-value=&quot;1&quot;&gt;Cape Town, South Africa&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;#&quot; data-value=&quot;2&quot;&gt;Johannesburg, South Africa&lt;/a&gt;&lt;/li&gt;
+              &lt;/ul&gt;
+            &lt;/div&gt;
+            &lt;span class=&quot;form-control-feedback fa-building-o&quot;&gt;&lt;/span&gt;
+          &lt;/div&gt;
+        
+          &lt;div class=&quot;form-group&quot;&gt;
+            &lt;label class=&quot;control-label&quot; for=&quot;validationExamplePattern1&quot;&gt;Employer ID&lt;/label&gt;
+            &lt;input type=&quot;text&quot; class=&quot;form-control&quot; pattern=&quot;^[0-9]{6}$&quot; placeholder=&quot;6 numeric digits&quot; id=&quot;validationExamplePattern1&quot; aria-describedby=&quot;validationExamplePattern1Help&quot; required&gt;
+            &lt;span class=&quot;form-control-feedback&quot;&gt;&lt;/span&gt;
+            &lt;div class=&quot;help-block&quot; data-validation-error id=&quot;validationExamplePattern1Help&quot;&gt;Employer ID should be exactly 6 digits.&lt;/div&gt;
+          &lt;/div&gt;
+        
+          &lt;div class=&quot;form-group has-icon&quot;&gt;
+            &lt;label class=&quot;control-label&quot; for=&quot;validationExampleEmail1&quot;&gt;Email&lt;/label&gt;
+            &lt;input type=&quot;email&quot; placeholder=&quot;Email address&quot; class=&quot;form-control&quot; id=&quot;validationExampleEmail1&quot; aria-describedby=&quot;validationExampleEmail1Help&quot; required&gt;
+            &lt;span class=&quot;form-control-feedback fa-envelope-o&quot;&gt;&lt;/span&gt;
+            &lt;div class=&quot;help-block&quot; id=&quot;validationExampleEmail1Help&quot;&gt;Email address will also be used for login.&lt;/div&gt;
+            &lt;div class=&quot;help-block&quot; data-validation-error&gt;Please enter a valid email address.&lt;/div&gt;
+          &lt;/div&gt;
+        
+          &lt;div class=&quot;form-group has-icon has-password-toggle&quot;&gt;
+            &lt;label class=&quot;control-label&quot; for=&quot;validationExamplePassword1&quot;&gt;Password&lt;/label&gt;
+            &lt;input type=&quot;password&quot; class=&quot;form-control&quot; id=&quot;validationExamplePassword1&quot; aria-describedby=&quot;validationExamplePassword1Help&quot; placeholder=&quot;Password&quot; required&gt;
+            &lt;span class=&quot;password-toggle&quot;&gt;&lt;/span&gt;
+            &lt;span class=&quot;form-control-feedback fa-lock&quot;&gt;&lt;/span&gt;
+            &lt;div class=&quot;help-block&quot; id=&quot;validationExamplePassword1Help&quot;&gt;Passwords must be at least 6 characters long with at least 1 letter, and 1 digit&lt;/div&gt;
+          &lt;/div&gt;
+        
+          &lt;div class=&quot;btn-toolbar&quot;&gt;
+            &lt;button type=&quot;submit&quot; class=&quot;btn btn-primary&quot;&gt;Validate&lt;/button&gt;
+            &lt;button type=&quot;reset&quot; class=&quot;btn btn-secondary&quot;&gt;Reset&lt;/button&gt;
+          &lt;/div&gt;
+        
+        &lt;/form&gt;
+        </code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="errorMessages">
+                <header class="jumbotron">
+                    <div class="container-lg">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h2>Error messages</h2>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <div class="content-area">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <p>If validation fails, the system should let the users know it by providing a clear and
+                                    unambiguous message (usually one or two sentences) and ways to correct errors. Since
+                                    users need to notice an error message immediately, it is a good practice to position
+                                    it at the top of a web form, before all the other fields. This will also allow
+                                    screen readers to easily access the message.</p>
+                                <p>The message should be shown in red and contain an appropriate icon in order to get
+                                    more attention. Icon should be globally recognizable, exclamation mark. This will
+                                    also help people with visual impairments identify the meaning of the message. In
+                                    addition to this, users should be informed about which text inputs need to be
+                                    checked.</p>
+                                <p>Apart from the error message and a list of invalid fields, the system should clearly
+                                    mark fields that are invalid. This can be by:</p>
+                                <ul>
+                                    <li>Providing red messages or markers under every invalid field</li>
+                                    <li>Changing the background colour and border colour of invalid fields</li>
+                                    <li>Changing the colour of field labels</li>
+                                </ul>
+                                <p>If you provide error tips or help, be short and informative.</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="code-section">
+                                    <div class="accordion-group">
+                                        <div class="accordion">
+                                            <div class="accordion-heading" data-toggle="collapse">
+                                                <h3>Examples</h3>
+                                            </div>
+                                            <div class="accordion-content collapse in">
+                                                <div class="code-demo">
+                                                    <form data-validation-example>
+
+                                                        <div class="alert alert-success hidden" role="alert">
+                                                            <strong>Well done!</strong> You successfully checked and
+                                                            selected the things.
+                                                        </div>
+                                                        <div class="alert alert-danger hidden" role="alert">
+                                                            Some fields require your attention.
+                                                        </div>
+
+                                                        <div class="row no-gutter">
+                                                            <div class="col-xs-12 col-md-6">
+
+                                                                <div class="form-group">
+                                                                    <label class="control-label sub-heading">Both
+                                                                        checkboxes are required</label>
+                                                                    <!-- this example only uses CSS -->
+                                                                    <div class="checkbox">
+                                                                        <input type="checkbox"
+                                                                            id="validationCheckboxExample1" required>
+                                                                        <label for="validationCheckboxExample1">Checkbox
+                                                                            1 <span class="info">(Additional
+                                                                                information)</span></label>
+                                                                    </div>
+                                                                    <!-- these examples require jQuery -->
+                                                                    <div class="checkbox">
+                                                                        <label>
+                                                                            <input type="checkbox" required> Checkbox 2
+                                                                            <span class="info">(Additional
+                                                                                information)</span>
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="help-block" data-validation-error>Please
+                                                                        check both checkboxes!</div>
+                                                                </div>
+
+                                                            </div>
+                                                            <div class="col-xs-12 col-md-6">
+
+                                                                <div class="form-group">
+                                                                    <label class="control-label sub-heading">Select one
+                                                                        radio</label>
+                                                                    <!-- this example only uses CSS -->
+                                                                    <div class="radio">
+                                                                        <input type="radio" id="validationExampleRadio1"
+                                                                            name="validationExampleRadios" value="1">
+                                                                        <label for="validationExampleRadio1"> Option 1
+                                                                            <span class="info">(Additional
+                                                                                information)</span></label>
+                                                                    </div>
+                                                                    <!-- this example requires jQuery -->
+                                                                    <div class="radio">
+                                                                        <label>
+                                                                            <input type="radio"
+                                                                                name="validationExampleRadios"
+                                                                                value="2"> Option 2 <span
+                                                                                class="info">(Additional
+                                                                                information)</span>
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="help-block" data-validation-error>Please
+                                                                        select one radio!</div>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row no-gutter">
+                                                            <div class="col-xs-12">
+                                                                <div class="btn-toolbar">
+                                                                    <button type="submit"
+                                                                        class="btn btn-primary">Validate</button>
+                                                                    <button type="reset"
+                                                                        class="btn btn-secondary">Reset</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </form>
+                                                </div>
+                                                <div class="code-example"><button type="button"
+                                                        class="btn btn-sq btn-xs btn-info" data-action="clipboard">
+                                                        <i class="fa fa-clipboard"></i>
+                                                    </button>
+                                                    <pre><code class="scrollbars html" data-disable-body-scroll="false">&lt;form data-validation-example&gt;
+        
+          &lt;div class=&quot;alert alert-success hidden&quot; role=&quot;alert&quot;&gt;
+            &lt;strong&gt;Well done!&lt;/strong&gt; You successfully checked and selected the things.
+          &lt;/div&gt;
+          &lt;div class=&quot;alert alert-danger hidden&quot; role=&quot;alert&quot;&gt;
+            Some fields require your attention.
+          &lt;/div&gt;
+        
+          &lt;div class=&quot;row no-gutter&quot;&gt;
+            &lt;div class=&quot;col-xs-12 col-md-6&quot;&gt;
+        
+              &lt;div class=&quot;form-group&quot;&gt;
+                &lt;label class=&quot;control-label sub-heading&quot;&gt;Both checkboxes are required&lt;/label&gt;
+                &lt;!-- this example only uses CSS --&gt;
+                &lt;div class=&quot;checkbox&quot;&gt;
+                  &lt;input type=&quot;checkbox&quot; id=&quot;validationCheckboxExample1&quot; required&gt;
+                  &lt;label for=&quot;validationCheckboxExample1&quot;&gt;Checkbox 1 &lt;span class=&quot;info&quot;&gt;(Additional information)&lt;/span&gt;&lt;/label&gt;
+                &lt;/div&gt;
+                &lt;!-- these examples require jQuery --&gt;
+                &lt;div class=&quot;checkbox&quot;&gt;
+                  &lt;label&gt;
+                    &lt;input type=&quot;checkbox&quot; required&gt; Checkbox 2 &lt;span class=&quot;info&quot;&gt;(Additional information)&lt;/span&gt;
+                  &lt;/label&gt;
+                &lt;/div&gt;
+                &lt;div class=&quot;help-block&quot; data-validation-error&gt;Please check both checkboxes!&lt;/div&gt;
+              &lt;/div&gt;
+        
+            &lt;/div&gt;
+            &lt;div class=&quot;col-xs-12 col-md-6&quot;&gt;
+        
+              &lt;div class=&quot;form-group&quot;&gt;
+                &lt;label class=&quot;control-label sub-heading&quot;&gt;Select one radio&lt;/label&gt;
+                &lt;!-- this example only uses CSS --&gt;
+                &lt;div class=&quot;radio&quot;&gt;
+                  &lt;input type=&quot;radio&quot; id=&quot;validationExampleRadio1&quot; name=&quot;validationExampleRadios&quot; value=&quot;1&quot;&gt;
+                  &lt;label for=&quot;validationExampleRadio1&quot;&gt; Option 1 &lt;span class=&quot;info&quot;&gt;(Additional information)&lt;/span&gt;&lt;/label&gt;
+                &lt;/div&gt;
+                &lt;!-- this example requires jQuery --&gt;
+                &lt;div class=&quot;radio&quot;&gt;
+                  &lt;label&gt;
+                    &lt;input type=&quot;radio&quot; name=&quot;validationExampleRadios&quot; value=&quot;2&quot;&gt; Option 2 &lt;span class=&quot;info&quot;&gt;(Additional information)&lt;/span&gt;
+                  &lt;/label&gt;
+                &lt;/div&gt;
+                &lt;div class=&quot;help-block&quot; data-validation-error&gt;Please select one radio!&lt;/div&gt;
+              &lt;/div&gt;
+        
+            &lt;/div&gt;
+          &lt;/div&gt;
+        
+          &lt;div class=&quot;row no-gutter&quot;&gt;
+            &lt;div class=&quot;col-xs-12&quot;&gt;
+              &lt;div class=&quot;btn-toolbar&quot;&gt;
+                &lt;button type=&quot;submit&quot; class=&quot;btn btn-primary&quot;&gt;Validate&lt;/button&gt;
+                &lt;button type=&quot;reset&quot; class=&quot;btn btn-secondary&quot;&gt;Reset&lt;/button&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        
+        &lt;/form&gt;
+        </code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <section class="dos-and-donts">
+                                    <div class="dotted-list do-list">
+                                        <h3>Do's</h3>
+                                        <ul>
+                                            <li>Remove unnecessary inputs before an error can be made.</li>
+                                            <li>Provide a clear path to solve and complete form.</li>
+                                            <li>Enable smart defaults.</li>
+                                            <li>Provide hints on correcting errors.</li>
+                                            <li>Be flexible and forgiving with the data input.</li>
+                                            <li>Consider inline validation as soon as information is provided and
+                                                disable dependent text inputs.</li>
+                                            <li>Display hints to avoid errors being made.</li>
+                                            <li>Auto-format when possible.</li>
+                                            <li>Report errors early.</li>
+                                            <li>Use <code>role=&quot;alert&quot;</code> with
+                                                <code>aria-live=&quot;assertive&quot;</code> or
+                                                <code>aria-live=&quot;polite&quot;</code>. <strong>Assertive</strong>
+                                                will be pushed immediately to the screen reader as soon as the element
+                                                appears while <strong>Polite</strong> will wait until the screen reader
+                                                is done with its current task. It is a good practice to add it on the
+                                                title of your error summaries.</li>
+                                        </ul>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <div class="mobile-menu">
+            <div class="drilldown-menu">
+                <div class="scrollbars scrollbars-light">
+                    <nav class="drilldown">
+                        <ul class="nav">
+                            <li class="menu-header">
+                                <div class="horizontal-logo" data-toggle="mobile-menu" title="Close menu">
+                                    <div class="logo-image" title="#{brandname}"></div>
+                                    <div class="logo-title"><span>living<br>styleguide</span></div>
+                                </div>
+                            </li>
+                            <li><a href="home.html">Home</a></li>
+                            <li><a href="#">Templates and branding</a>
+                                <ul class="nav">
+                                    <li><a href="branding.logo.html">Logo</a>
+                                        <ul class="nav">
+                                            <li><a href="branding.logo.html">Logo</a></li>
+                                            <li><a href="branding.logo.html#logoUsage">Logo usage guideline</a></li>
+                                            <li><a href="branding.logo.html#supportingAssets">Supporting assets</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="branding.colourSwatches.html">Colour swatches</a></li>
+                                    <li><a href="branding.fonts.html">Fonts</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="#">Before you start</a>
+                                <ul class="nav">
+                                    <li><a href="intro.howToUseThisGuide.html">How to use this guide</a></li>
+                                    <li><a href="intro.firstSteps.html">First steps</a></li>
+                                    <li><a href="intro.getTheCode.html">Get the code</a>
+                                        <ul class="nav">
+                                            <li><a href="intro.getTheCode.html">Get the code</a></li>
+                                            <li><a href="intro.getTheCode.html#htmlTemplate">HTML Template</a></li>
+                                            <li><a href="intro.getTheCode.html#readme">README.md</a></li>
+                                            <li><a href="intro.getTheCode.html#contributing">CONTRIBUTING.md</a></li>
+                                            <li><a href="intro.getTheCode.html#changelog">CHANGELOG.md</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li><a href="#">Principles</a>
+                                <ul class="nav">
+                                    <li><a href="principles.grid.html">Grid</a>
+                                        <ul class="nav">
+                                            <li><a href="principles.grid.html">Grid</a></li>
+                                            <li><a href="principles.grid.html#breakpoints">Breakpoints</a></li>
+                                            <li><a href="principles.grid.html#desktop">Desktop</a></li>
+                                            <li><a href="principles.grid.html#mobile">Mobile</a></li>
+                                            <li><a href="principles.grid.html#baseline">Baseline</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="principles.responsiveBehaviour.html">Responsive Behaviour</a>
+                                        <ul class="nav">
+                                            <li><a href="principles.responsiveBehaviour.html">Responsive Behaviour</a>
+                                            </li>
+                                            <li><a href="principles.responsiveBehaviour.html#userInterfaceRegions">User
+                                                    interface regions</a></li>
+                                            <li><a href="principles.responsiveBehaviour.html#menu">Menu</a></li>
+                                            <li><a href="principles.responsiveBehaviour.html#wrappingBehaviour">Wrapping
+                                                    Behaviour</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="principles.themes.html">Themes</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="#">Components</a>
+                                <ul class="nav">
+                                    <li><a href="components.colours.html">Colours</a>
+                                        <ul class="nav">
+                                            <li><a href="components.colours.html">Colours</a></li>
+                                            <li><a href="components.colours.html#colourPalette">Colour Palette</a></li>
+                                            <li><a href="components.colours.html#textAndBackgroundColours">Text &amp;
+                                                    Background colours</a></li>
+                                            <li><a href="components.colours.html#colourUtilities">Colour Utilities</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="components.typography.html">Typography</a>
+                                        <ul class="nav">
+                                            <li><a href="components.typography.html">Typography</a></li>
+                                            <li><a href="components.typography.html#typefaces">Typefaces</a></li>
+                                            <li><a href="components.typography.html#typographicStyles">Typographic
+                                                    styles</a></li>
+                                            <li><a href="components.typography.html#lineHeight">Line height</a></li>
+                                            <li><a href="components.typography.html#fontColourAndContrast">Font colour
+                                                    &amp; Contrast</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="components.iconography.html">Iconography</a>
+                                        <ul class="nav">
+                                            <li><a href="components.iconography.html">Iconography</a></li>
+                                            <li><a href="components.iconography.html#glyphs">Glyphs</a></li>
+                                            <li><a href="components.iconography.html#standardisedIcons">Standardised
+                                                    Icons</a></li>
+                                            <li><a href="components.iconography.html#stylesAndPrinciples">Styles &amp;
+                                                    Principles</a></li>
+                                            <li><a href="components.iconography.html#mainNavigationIcons">Main
+                                                    navigation icons</a></li>
+                                            <li><a href="components.iconography.html#toolbarIcons">Toolbar icons</a>
+                                            </li>
+                                            <li><a href="components.iconography.html#size">Size</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="components.buttonsAndLinks.html">Buttons &amp; Links</a>
+                                        <ul class="nav">
+                                            <li><a href="components.buttonsAndLinks.html">Buttons &amp; Links</a></li>
+                                            <li><a href="components.buttonsAndLinks.html#buttonAndLinkStates">Button
+                                                    &amp; Link states</a></li>
+                                            <li><a
+                                                    href="components.buttonsAndLinks.html#primarySecondaryAndActionButtons">Primary,
+                                                    Secondary &amp; Action buttons</a></li>
+                                            <li><a href="components.buttonsAndLinks.html#iconAndToggleButtons">Icon
+                                                    &amp; Toggle buttons</a></li>
+                                            <li><a href="components.buttonsAndLinks.html#primaryAndSecondaryLinks">Primary
+                                                    &amp; Secondary links</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="components.navigation.html">Navigation</a>
+                                        <ul class="nav">
+                                            <li><a href="components.navigation.html">Navigation</a></li>
+                                            <li><a href="components.navigation.html#buildingAMainMenu">Building a main
+                                                    menu</a></li>
+                                            <li><a href="components.navigation.html#mainGlobalNavigation">Main/Global
+                                                    navigation</a></li>
+                                            <li><a href="components.navigation.html#utilityNavigation">Utility
+                                                    navigation</a></li>
+                                            <li><a href="components.navigation.html#breadcrumbs">Breadcrumbs</a></li>
+                                            <li><a href="components.navigation.html#pagination">Pagination</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="components.search.html">Search</a>
+                                        <ul class="nav">
+                                            <li><a href="components.search.html">Search</a></li>
+                                            <li><a href="components.search.html#anatomyOfASearchExperience">Anatomy of a
+                                                    search experience</a></li>
+                                            <li><a href="components.search.html#persistentGlobalAndInPageSearch">Persistent/global
+                                                    &amp; in-page search</a></li>
+                                            <li><a href="components.search.html#searchResults">Search results</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="active"
+                                        data-scrollspy="[{&quot;title&quot;:&quot;Text inputs&quot;,&quot;anchor&quot;:&quot;textInputs&quot;,&quot;tags&quot;:[&quot;field&quot;]},{&quot;title&quot;:&quot;Textareas&quot;,&quot;anchor&quot;:&quot;textareas&quot;,&quot;tags&quot;:[&quot;text area&quot;]},{&quot;title&quot;:&quot;Password inputs&quot;,&quot;anchor&quot;:&quot;passwordInputs&quot;,&quot;tags&quot;:[&quot;hidden password&quot;,&quot;password toggle&quot;]},{&quot;title&quot;:&quot;Checkboxes&quot;,&quot;anchor&quot;:&quot;checkboxes&quot;,&quot;tags&quot;:[]},{&quot;title&quot;:&quot;Radios&quot;,&quot;anchor&quot;:&quot;radios&quot;,&quot;tags&quot;:[&quot;radio group&quot;,&quot;option select&quot;]},{&quot;title&quot;:&quot;Dropdowns&quot;,&quot;anchor&quot;:&quot;dropdowns&quot;,&quot;tags&quot;:[&quot;select&quot;,&quot;dropdown menu&quot;,&quot;options&quot;]},{&quot;title&quot;:&quot;Tags&quot;,&quot;anchor&quot;:&quot;tags&quot;,&quot;tags&quot;:[&quot;labels&quot;]},{&quot;title&quot;:&quot;Date picker&quot;,&quot;anchor&quot;:&quot;datePicker&quot;,&quot;tags&quot;:[&quot;date range&quot;,&quot;calendar&quot;]},{&quot;title&quot;:&quot;Time picker&quot;,&quot;anchor&quot;:&quot;timePicker&quot;,&quot;tags&quot;:[&quot;timepicker&quot;]},{&quot;title&quot;:&quot;File picker&quot;,&quot;anchor&quot;:&quot;filePicker&quot;,&quot;tags&quot;:[&quot;filepicker&quot;]},{&quot;title&quot;:&quot;Login&quot;,&quot;anchor&quot;:&quot;login&quot;,&quot;tags&quot;:[&quot;login example&quot;,&quot;login form&quot;]},{&quot;title&quot;:&quot;Validation&quot;,&quot;anchor&quot;:&quot;validation&quot;,&quot;tags&quot;:[&quot;error messages&quot;,&quot;required fields&quot;]},{&quot;title&quot;:&quot;Error messages&quot;,&quot;anchor&quot;:&quot;errorMessages&quot;,&quot;tags&quot;:[&quot;validation&quot;]}]">
+                                        <a href="components.forms.html">Forms</a>
+                                        <ul class="nav">
+                                            <li><a href="#pageTop">Forms</a></li>
+                                            <li><a href="#textInputs">Text inputs</a></li>
+                                            <li><a href="#textareas">Textareas</a></li>
+                                            <li><a href="#passwordInputs">Password inputs</a></li>
+                                            <li><a href="#checkboxes">Checkboxes</a></li>
+                                            <li><a href="#radios">Radios</a></li>
+                                            <li><a href="#dropdowns">Dropdowns</a></li>
+                                            <li><a href="#tags">Tags</a></li>
+                                            <li><a href="#datePicker">Date picker</a></li>
+                                            <li><a href="#timePicker">Time picker</a></li>
+                                            <li><a href="#filePicker">File picker</a></li>
+                                            <li><a href="#login">Login</a></li>
+                                            <li><a href="#validation">Validation</a></li>
+                                            <li><a href="#errorMessages">Error messages</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="components.dividers.html">Dividers</a>
+                                        <ul class="nav">
+                                            <li><a href="components.dividers.html">Dividers</a></li>
+                                            <li><a href="components.dividers.html#specifications">Specifications</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="components.tables.html">Tables</a>
+                                        <ul class="nav">
+                                            <li><a href="components.tables.html">Tables</a></li>
+                                            <li><a href="components.tables.html#widthAndHeightDesktop">Width &amp;
+                                                    Height Desktop</a></li>
+                                            <li><a href="components.tables.html#widthAndHeightMobile">Width &amp; Height
+                                                    Mobile</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="components.lists.html">Lists</a>
+                                        <ul class="nav">
+                                            <li><a href="components.lists.html">Lists</a></li>
+                                            <li><a href="components.lists.html#specifications">Specifications</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="components.dialogs.html">Dialogs &amp; Modal windows</a>
+                                        <ul class="nav">
+                                            <li><a href="components.dialogs.html">Dialogs &amp; Modal windows</a></li>
+                                            <li><a href="components.dialogs.html#alerts">Alerts</a></li>
+                                            <li><a href="components.dialogs.html#simpleDialogs">Simple dialogs</a></li>
+                                            <li><a href="components.dialogs.html#confirmationDialogs">Confirmation
+                                                    dialogs</a></li>
+                                            <li><a href="components.dialogs.html#halfAndFullscreenDialogs">Half &amp;
+                                                    Full-screen dialogs</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="components.interactiveElements.html">Interactive elements</a>
+                                        <ul class="nav">
+                                            <li><a href="components.interactiveElements.html">Interactive elements</a>
+                                            </li>
+                                            <li><a href="components.interactiveElements.html#accordions">Accordions</a>
+                                            </li>
+                                            <li><a href="components.interactiveElements.html#tabbedNavigation">Tabbed
+                                                    Navigation</a></li>
+                                            <li><a href="components.interactiveElements.html#steppedProgress">Stepped
+                                                    Progress</a></li>
+                                            <li><a href="components.interactiveElements.html#cards">Cards</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="components.loadersAndProgressIndicators.html">Loaders &amp; Progress
+                                            Indicators</a>
+                                        <ul class="nav">
+                                            <li><a href="components.loadersAndProgressIndicators.html">Loaders &amp;
+                                                    Progress Indicators</a></li>
+                                            <li><a
+                                                    href="components.loadersAndProgressIndicators.html#progressAndActivity">Progress
+                                                    &amp; Activity</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="components.notificationsAndToasts.html">Notifications, Toasts &amp;
+                                            Badges</a>
+                                        <ul class="nav">
+                                            <li><a href="components.notificationsAndToasts.html">Notifications, Toasts
+                                                    &amp; Badges</a></li>
+                                            <li><a
+                                                    href="components.notificationsAndToasts.html#notifications">Notifications</a>
+                                            </li>
+                                            <li><a href="components.notificationsAndToasts.html#toasts">Toasts</a></li>
+                                            <li><a href="components.notificationsAndToasts.html#badges">Badges</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="components.tooltips.html">Tooltips &amp; Popovers</a>
+                                        <ul class="nav">
+                                            <li><a href="components.tooltips.html">Tooltips &amp; Popovers</a></li>
+                                            <li><a href="components.tooltips.html#tooltips">Tooltips</a></li>
+                                            <li><a href="components.tooltips.html#popovers">Popovers</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="components.utilities.html">Utilities</a>
+                                        <ul class="nav">
+                                            <li><a href="components.utilities.html">Utilities</a></li>
+                                            <li><a href="components.utilities.html#utilitiesColour">Colour</a></li>
+                                            <li><a href="components.utilities.html#utilitiesDisplay">Display</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li><a href="plugins.html">Plugins</a>
+                                <ul class="nav">
+                                    <li><a href="plugins.html">Plugins</a></li>
+                                    <li><a href="plugins.html#datatables">DataTables</a></li>
+                                    <li><a href="plugins.html#datetimePicker">Datetime-picker</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="#">Examples</a>
+                                <ul class="nav">
+                                    <li><a href="examples.basecoatInTheWild.html">Basecoat in the wild</a>
+                                        <ul class="nav">
+                                            <li><a href="examples.basecoatInTheWild.html">Basecoat in the wild</a></li>
+                                            <li><a href="examples.basecoatInTheWild.html#applications">Applications</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="examples/landingPage.html" target="_blank"
+                                            rel="noopener noreferrer">Example: Landing page</a></li>
+                                    <li><a href="examples/loginRegister.html" target="_blank"
+                                            rel="noopener noreferrer">Example: Login/Register</a></li>
+                                    <li><a href="examples/registrationProcess.html" target="_blank"
+                                            rel="noopener noreferrer">Example: Registration process</a></li>
+                                    <li><a href="examples/dashboard.html" target="_blank"
+                                            rel="noopener noreferrer">Example: Dashboard</a></li>
+                                    <li><a href="examples/searchResultsPage.html" target="_blank"
+                                            rel="noopener noreferrer">Example: Search results page</a></li>
+                                    <li><a href="examples/defaultLayout.html" target="_blank"
+                                            rel="noopener noreferrer">Example: Default layout</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="#">Help &amp; Support</a>
+                                <ul class="nav">
+                                    <li><a href="support.browserSupport.html">Browser support</a></li>
+                                    <li><a href="https://sdk.dimensiondata.com/" target="_blank"
+                                            rel="noopener noreferrer">Service Layer SDK</a></li>
+                                    <li><a href="support.community.html">Community</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        <div class="site-footer"><a class="pull-left prev" href="components.search.html"><i
+                    class="fa fa-angle-left"></i><span>Previous</span><strong
+                    class="hidden-xs hidden-sm hidden-md">Search</strong></a><span class="divider"
+                role="separator">|</span><a class="pull-right next" href="components.dividers.html"><strong
+                    class="hidden-xs hidden-sm hidden-md">Dividers</strong><span>Next</span><i
+                    class="fa fa-angle-right"></i></a></div>
     </div>
-</div>
+    <div id="pageBottom"></div>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="js/dd.basecoat.min.js"></script>
+    <script src="js/dd.basecoat.datetime-picker.min.js"></script>
+    <script src="js/dd.basecoat.datatables.min.js"></script>
+    <script src="js/app.min.js"></script>
+    <script defer src="js.siteSearchIndex.html"></script>
+    <script defer src="js/outdated-browser.min.js"></script>
+</body>
 
-{% endblock %}
-
-{% block script %}
-<script>
-    $('#exampleModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget) // Button that triggered the modal
-        var recipient = button.data('whatever') // Extract info from data-* attributes
-        // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-        // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-        var modal = $(this)
-        modal.find('.modal-title').text('New message to ' + recipient)
-        modal.find('.modal-body input').val(recipient)
-    })
-</script>
-{% endblock %}
+</html>

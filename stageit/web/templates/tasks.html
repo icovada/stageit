@@ -1,27 +1,35 @@
 {% extends "templates/layout.html" %}
 
-{% block title %}Tasks{% endblock %}
-{% block header %}Tasks{% endblock %}
 
 {% block body %}
-<div class="container col col-xl-8 justify-content-center pb-5">
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                {% for col in header%}
-                <th scope="col">{{col}}</th>
-                {% endfor %}
-                <th scope="col">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in table %}
-            <tr>
-                <th scope="row"><a href="/tasks/{{row[0]}}">{{row[0][:5]}}</a></th>
-                <td><a href="/tasks/{{row[1]}}">{{row[1][:5]}}</a></td>
-                <td>{{row[2]}}</td>
-                <td>
-                    <div class="row">
+<header class="jumbotron">
+    <div class="container-lg">
+        <div class="row">
+            <div class="col-xs-12">
+                <h2>Tasks</h2>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="container-xl">
+    <div class="table-responsive scrollbars">
+        <table class="table table-hover" id="tasks">
+            <thead>
+                <tr>
+                    {% for col in header%}
+                    <th scope="col">{{col}}</th>
+                    {% endfor %}
+                    <th scope="col">Actions</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in table %}
+                <tr>
+                    <th scope="row"><a href="/tasks/{{row[0]}}">{{row[0][:5]}}</a></th>
+                    <td><a href="/tasks/{{row[1]}}">{{row[1][:5]}}</a></td>
+                    <td>{{row[2]}}</td>
+                    <td>
                         <div class="dropdown">
                             <button class="btn btn-sm btn-success dropdown-toggle" type="button" id="dropdownMenuButton"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -34,13 +42,15 @@
                                 {% endfor %}
                             </div>
                         </div>
+                    </td>
+                    <td>
                         <button id="deletetask" class="btn btn-danger btn-sm" taskid="{{row[0]}}">Delete</button>
-                    </div>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}
 
@@ -74,6 +84,19 @@
             alert("Fail")
         })
     });
+
+    $(document).ready(function() {
+        var table = $('#tasks').DataTable( {       
+            scrollX:        true,
+            scrollCollapse: true,
+            autoWidth:         true,  
+             paging:         true,       
+            columnDefs: [
+            { "width": "300px", "targets": [0,1] },       
+            { "width": "0px", "targets": [4] }
+          ]
+        } );
+    } );
 
 </script>
 {% endblock %}

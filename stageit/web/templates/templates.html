@@ -1,33 +1,48 @@
 {% extends "templates/layout.html" %}
 
-{% block title %}Task Templates{% endblock %}
-{% block header %}Task Templates{% endblock %}
+{% block title %}Templates{% endblock %}
+{% block header %}Templates{% endblock %}
 
 {% block body %}
-<div class="container col col-xl-8 justify-content-center pb-5">
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                {% for col in header%}
-                <th scope="col">{{col}}</th>
-                {% endfor %}
-                <th scope="col">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in table %}
-            <tr>
-                <th scope="row"><a href="/templates/{{row[0]}}">{{row[1]}}</a></th>
-                <td>{{row[1]}}</td>
-                <td><a role="button" class="btn btn-success btn-sm" href="/tasks/add?fktemplate={{row[0]}}">Create
-                        task</a>
-                    <button id="deletetemplate" class="btn btn-danger btn-sm" templateid="{{row[0]}}">Delete</button>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<header class="container-lg">
+    <div class="row h1 main-heading">
+        <div class="col-xs-12">
+            Templates
+        </div>
+    </div>
+</header>
+
+<div class="content-area">
+    <div class="container-lg">
+        <div class="table-responsive scrollbars">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        {% for col in header%}
+                        <th scope="col">{{col}}</th>
+                        {% endfor %}
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in table %}
+                    <tr>
+                        <th scope="row"><a href="/templates/{{row[0]}}">{{row[1]}}</a></th>
+                        <td>{{row[1]}}</td>
+                        <td><a role="button" class="btn btn-success btn-sm"
+                                href="/tasks/add?fktemplate={{row[0]}}">Create
+                                task</a>
+                            <button id="deletetemplate" class="btn btn-danger btn-sm"
+                                templateid="{{row[0]}}">Delete</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
+
 {% endblock %}
 
 {% block script %}
