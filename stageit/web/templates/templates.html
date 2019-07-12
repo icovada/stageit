@@ -4,41 +4,57 @@
 {% block header %}Templates{% endblock %}
 
 {% block body %}
-<header class="container-lg">
-    <div class="row h1 main-heading">
-        <div class="col-xs-12">
-            Templates
+<header class="jumbotron">
+    <div class="container-lg">
+        <div class="row">
+            <div class="col-xs-12">
+                <h2>Templates</h2>
+            </div>
         </div>
     </div>
 </header>
 
 <div class="content-area">
     <div class="container-lg">
-        <div class="table-responsive scrollbars">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        {% for col in header%}
-                        <th scope="col">{{col}}</th>
+        <div class="row">
+            <div class="btn-toolbar">
+                <button type="button" class="btn btn-default" data-popover-text-example>Custom text</button>
+                <button type="button" class="btn btn-default" data-popover-html-example>Custom HTML</button>
+                <button type="button" class="btn btn-default" data-toggle="popover" data-placement="auto bottom"
+                    title="Popover on bottom"
+                    data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">Inline Popover</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="table-responsive scrollbars">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            {% for col in header%}
+                            <th scope="col">{{col}}</th>
+                            {% endfor %}
+                            <th scope="col" style="width: 8%">Actions</th>
+                            <th scope="col" style="width: 8%"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in table %}
+                        <tr>
+                            <th scope="row"><a href="/templates/{{row[0]}}">{{row[1]}}</a></th>
+                            <td>{{row[1]}}</td>
+                            <td><a role="button" class="btn btn-success btn-sm"
+                                    href="/tasks/add?fktemplate={{row[0]}}">Create
+                                    task</a>
+                            </td>
+                            <td>
+                                <button id="deletetemplate" class="btn btn-danger btn-sm"
+                                    templateid="{{row[0]}}">Delete</button>
+                            </td>
+                        </tr>
                         {% endfor %}
-                        <th scope="col">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for row in table %}
-                    <tr>
-                        <th scope="row"><a href="/templates/{{row[0]}}">{{row[1]}}</a></th>
-                        <td>{{row[1]}}</td>
-                        <td><a role="button" class="btn btn-success btn-sm"
-                                href="/tasks/add?fktemplate={{row[0]}}">Create
-                                task</a>
-                            <button id="deletetemplate" class="btn btn-danger btn-sm"
-                                templateid="{{row[0]}}">Delete</button>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

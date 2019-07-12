@@ -11,52 +11,55 @@
         </div>
     </div>
 </header>
-<div class="container-xl">
-    <div class="table-responsive scrollbars">
-        <table class="table table-hover" id="tasks">
-            <thead>
-                <tr>
-                    {% for col in header%}
-                    <th scope="col">{{col}}</th>
-                    {% endfor %}
-                    <th scope="col">Actions</th>
-                    <th scope="col"></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in table %}
-                <tr>
-                    <th scope="row"><a href="/tasks/{{row[0]}}">{{row[0][:5]}}</a></th>
-                    <td><a href="/tasks/{{row[1]}}">{{row[1][:5]}}</a></td>
-                    <td>{{row[2]}}</td>
-                    <td>
-                        <div class="dropdown">
-                            <button class="btn btn-sm btn-success dropdown-toggle" type="button" id="dropdownMenuButton"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Assign
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                {% for worker in workers %}
-                                <a class="dropdown-item" href="#" id="assignworker" worker="{{worker}}"
-                                    taskid="{{row[0]}}">{{worker}}</a>
-                                {% endfor %}
+<div class="content-area">
+    <div class="container-xl">
+        <div class="table-responsive scrollbars">
+            <table class="table table-hover" id="tasks">
+                <thead>
+                    <tr>
+                        {% for col in header%}
+                        <th scope="col">{{col}}</th>
+                        {% endfor %}
+                        <th scope="col" style="width: 8%">Actions</th>
+                        <th scope="col" style="width: 8%"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in table %}
+                    <tr>
+                        <th scope="row"><a href="/tasks/{{row[0]}}">{{row[0][:5]}}</a></th>
+                        <td><a href="/tasks/{{row[1]}}">{{row[1][:5]}}</a></td>
+                        <td>{{row[2]}}</td>
+                        <td>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-success dropdown-toggle" type="button"
+                                    id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
+                                    Assign
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    {% for worker in workers %}
+                                    <a class="dropdown-item assignworker" href="#" worker="{{worker}}"
+                                        taskid="{{row[0]}}">{{worker}}</a>
+                                    {% endfor %}
+                                </div>
                             </div>
-                        </div>
-                    </td>
-                    <td>
-                        <button id="deletetask" class="btn btn-danger btn-sm" taskid="{{row[0]}}">Delete</button>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                        </td>
+                        <td>
+                            <button class="btn btn-danger btn-sm deletetask" taskid="{{row[0]}}">Delete</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}
 
 {% block script %}
 <script>
-    $('#deletetask').on('click', function (event) {
+    $('.deletetask').on('click', function (event) {
         var a = confirm("Confirm deletion");
         if (a == true) {
             $.ajax({
@@ -70,7 +73,7 @@
         }
     });
 
-    $('#assignworker').on('click', function (event) {
+    $('.assignworker').on('click', function (event) {
         $.ajax({
             type: 'POST',
             url: "/api/worker",
@@ -85,18 +88,18 @@
         })
     });
 
-    $(document).ready(function() {
-        var table = $('#tasks').DataTable( {       
-            scrollX:        true,
+    $(document).ready(function () {
+        var table = $('#tasks').DataTable({
+            scrollX: true,
             scrollCollapse: true,
-            autoWidth:         true,  
-             paging:         true,       
+            autoWidth: true,
+            paging: true,
             columnDefs: [
-            { "width": "300px", "targets": [0,1] },       
-            { "width": "0px", "targets": [4] }
-          ]
-        } );
-    } );
+                { "width": "300px", "targets": [0, 1] },
+                { "width": "0px", "targets": [4] }
+            ]
+        });
+    });
 
 </script>
 {% endblock %}
