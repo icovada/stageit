@@ -103,7 +103,7 @@
                             </div>
                             <div class="radio">
                                 <label>
-                                    <input type="radio" name="installmode" value="BUNDLE" 
+                                    <input type="radio" name="installmode" value="BUNDLE"
                                         {% if installmode == 'BUNDLE'%}checked{%endif%}>Bundle
                                 </label>
                             </div>
@@ -199,36 +199,37 @@
             data: {
                 name: $('#name').val(),
                 description: $('#description').val(),
-                platform: document.getElementById('platform').value,
+                platform: $("input[name='platformRadio']:checked").val(),
                 template: $('#template').val(),
                 templatevalues: $('#templatevalues').val(),
                 filepath: $('#filepath').val(),
-                installmode: document.getElementById('installmode').value,
+                installmode: $("input[name='installmode']:checked").val(),
                 poststaging: $('#poststaging').val()
             }
         }).done(function (response) {
-            window.location.href = "/templates";
+            var $toast = basecoat.toast('<span class="fa fa-check"></span>Task submitted', 'success').trigger('show');
+            $toast.trigger('show', [5000]); // show toast for 5s
         }).fail(function (response) {
-            $('#submitalertspace').append('<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
-                '<strong>Error</strong> ' + response.responseJSON.message +
-                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-                '<span aria-hidden="true">&times;</span></button></div>')
+            var $toast = basecoat.toast('<span class="fa fa-fail"></span>There was an error submitting your template', 'warning').trigger('show');
+            $toast.trigger('show', [5000]); // show toast for 5s
         });
     });
 
+    // confirm dialog that goes into an alert dialog
     $('#btndelete').on('click', function (event) {
-        var a = confirm("Confirm deletion");
-        if (a == true) {
-            $.ajax({
-                type: 'DELETE',
-                url: "/api/templates/{{pkid}}",
-            }).done(function (response) {
-                window.location.href = "/templates";
-            }).fail(function (response) {
-                alert(response.responseJSON.message)
+        basecoat.confirm('Are you sure you want to delete this template?', null, 'Yes', 'No')
+            .on('reject', function () {
+                console.log('reject');
             })
-        }
+            .on('accept', function () {
+                $.ajax({
+                    type: 'DELETE',
+                    url: "/api/templates/{{pkid}}"});
+                basecoat.alert('Template deleted')
+                    .on('hide.bs.modal', function () {
+                        window.location.href = "/templates";
+                    });
+            });
     });
-
 </script>
 {% endblock %}
