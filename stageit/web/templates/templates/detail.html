@@ -1,114 +1,152 @@
 {% extends "templates/layout.html" %}
 
 {% block body %}
-<h1 class="row justify-content-center pt-4 col no-gutters">Template details</h1>
-<div class="row justify-content-center mx-auto pb-4">{{pkid}}</div>
+<div class="top-gutter bottom-gutter container-wrapper">
+    <div class="content-area">
+        <div class="container">
 
-<div class="container col col-xl-8 justify-content-center pb-5">
-    <form class="needs-validation" action="/api/templates/{{pkid}}" id="templateform" method="post">
-        <div class="form-row">
-            <div class="form-group col-xl-6 mb-3">
-                <label for="name">Name</label>
-                <input type="text" class="form-control" id="name" value="{{name}}" required>
-            </div>
-            <div class="form-group col-xl-6 mb-3">
-                <label for="description">Description</label>
-                <input type="text" class="form-control" id="description" value="{{description}}" required>
-            </div>
-        </div>
+            <form class="needs-validation" action="/api/templates" id="templateform" method="post">
+                <div class="form-group">
+                    <h1>Edit template</h2>
+                        <p>{{pkid}}</p>
+                </div>
 
-        <div class="form-group mb-3">
-            <label for="platform">Platform</label>
-            <select class="custom-select d-block w-100" id="platform" required>
-                <option value="">-- None --</option>
-                <option {% if platform == 'ios'%}selected="selected" {%endif%}value="ios">Cisco IOS/IOS-XE</option>
-                <option {% if platform == 'nx-os'%}selected="selected" {%endif%}value="nx-os">Cisco Nexus</option>
-            </select>
-        </div>
-        <hr class="pt-3">
-        <h4 class="mb-3">Final configuration details</h4>
-        <div class="form-row">
-            <div class="form-group col-xl-6 mb-3">
-                <label for="template">Template</label>
-                <textarea class="form-control text-monospace" id="template" rows="6"
-                    aria-describedby="templateHelp">{{template}}</textarea>
-                <small id="templateHelp" class="form-text text-muted">Leave empty to leave final device config
-                    empty.<br />Pure text or Jinja2 templates accepted</small>
-            </div>
-            <div class="form-group col-xl-6 mb-3">
-                <label for="templatevalues">Template values</label>
-                <textarea class="form-control text-monospace" id="templatevalues" rows="6"
-                    aria-describedby="templatevaluesHelp">{{templatevalues}}</textarea>
-                <small id="templatevaluesHelp" class="form-text text-muted">Insert variables required by your template
-                    in
-                    yaml format</small>
-            </div>
-        </div>
-        <p>
-            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#templaterender"
-                aria-expanded="false" aria-controls="templaterender">Test</button>
-        </p>
-        <div id="renderalertspace"></div>
-        <div class="row">
-            <div class="col">
-                <div class="collapse multi-collapse" id="templaterender">
-                    <div class="card card-body">
-                        <div class="spinner-grow" role="status" , id="templaterenderspinner"></div>
-                        <div class="text-monospace" id="templaterenderview"></div>
+
+                <div class="form-group">
+                    <div class="form-row">
+                        <div class="form-group col-xl-6 form-left">
+                            <label class="control-label" for="name">Name</label>
+                            <input type="text" class="form-control" id="name" value="{{name}}" required>
+                        </div>
+                        <div class="form-group col-xl-6 form-right">
+                            <label for="description">Description</label>
+                            <input type="text" class="form-control" id="description" value="{{description}}" required>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="form-row col-xl-6 mb-3 text-monospace" id="renderview" style="display: none;"></div>
 
-        <hr class="pt-3">
-        <h4 class="mb-3">Software version</h4>
-        <div class="form-row">
-            <div class="form-group mb-3 col-xl-9">
-                <label for="filepath">Firmware file path</label>
-                <input type="url" class="form-control" id="filepath" aria-describedby="filepathHelp"
-                    value="{{filepath}}">
-                <small id="filepathHelp" class="form-text text-muted">Insert URI to file image. Leave empty to skip
-                    image check</small>
-            </div>
-            <div class="form-group mb-3 col-xl-3">
-                <label for="installmode">Install mode</label>
-                <select class="custom-select d-block w-100" id="installmode" aria-describedby="installmodeHelp">
-                    <option {% if installmode == 'INSTALL'%}selected="selected" {%endif%}value="INSTALL">Install</option>
-                    <option {% if installmode == 'BUNDLE'%}selected="selected" {%endif%}value="BUNDLE">Bundle</option>
-                </select>
-                <small id="filepathHelp" class="form-text text-muted">Does not apply to IOS. If unsure leave
-                    default</small>
-            </div>
-        </div>
 
-        <hr class="pt-3">
-        <h4 class="mb-3">Post-staging actions</h4>
-        <div class="form-group mb-3">
-            <label for="poststaging">Post-staging</label>
-            <textarea class="form-control text-monospace" id="poststaging" rows="5"
-                aria-describedby="poststagingHelp">{{poststaging}}</textarea>
-            <small id="poststagingHelp" class="form-text text-muted">Insert commands to be run after previous tasks
-                are finished. Enter one per line</small>
-        </div>
+                <label for="platformRadio">Platform</label>
+                <div class="form-group" id="platform">
+                    <div class="radio">
+                        <label>
+                            <input type="radio" id="iosRadio" name="platformRadio" value="ios"
+                                {% if platform == 'ios'%}checked{%endif%}>Cisco IOS
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="platformRadio" value="nx-os"
+                                {% if platform == 'nx-os'%}checked{%endif%}>Cisco NX-OS
+                        </label>
+                    </div>
+                </div>
 
-        <hr class="mb-4">
-        <div class="row">
-            <div class="col-md-4 mb-3">
-                <a id="btncreatetask" role="button" class="btn btn-primary btn-lg btn-block btn-success"
-                    href="/tasks/add?fktemplate={{pkid}}">Create task</a>
-            </div>
-            <div class="col-md-4 mb-3">
-                <button id="btnsave" class="btn btn-primary btn-lg btn-block" type="submit">Save</button>
-            </div>
-            <div class="col-md-4 mb-3">
-                <button id="btndelete" class="btn btn-primary btn-lg btn-block btn-danger" type="button">Delete</button>
-            </div>
+
+                <hr class="pt-3">
+                <h4 class="mb-3">Final configuration details</h4>
+                <div class="form-row">
+                    <div class="form-group col-xl-6 form-left">
+                        <label for="template">Template</label>
+                        <textarea class="form-control text-monospace" id="template" rows="6"
+                            aria-describedby="templateHelp">{{template}}</textarea>
+                        <small id="templateHelp" class="form-text text-muted">Leave empty to leave final device
+                            config
+                            empty.<br />Pure text or Jinja2 templates accepted</small>
+                    </div>
+                    <div class="form-group col-xl-6 form-right">
+                        <label for="templatevalues">Template values</label>
+                        <textarea class="form-control text-monospace" id="templatevalues" rows="6"
+                            aria-describedby="templatevaluesHelp">{{templatevalues}}</textarea>
+                        <small id="templatevaluesHelp" class="form-text text-muted">Insert variables required by
+                            your template
+                            in
+                            yaml format</small>
+                    </div>
+                </div>
+                <p>
+                    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#templaterender"
+                        aria-expanded="false" aria-controls="templaterender">Test</button>
+                </p>
+                <div id="renderalertspace"></div>
+                <div class="row">
+                    <div class="col">
+                        <div class="collapse multi-collapse" id="templaterender">
+                            <div class="card card-body">
+                                <div class="spinner-grow" role="status" id="templaterenderspinner"></div>
+                                <div class="text-monospace" id="templaterenderview"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row col-xl-6 mb-3 text-monospace" id="renderview" style="display: none;"></div>
+
+                <hr class="pt-3">
+                <h4 class="mb-3">Software version</h4>
+                <div class="form-row">
+                    <div class="form-group mb-3 col-xl-9 form-left">
+                        <label for="filepath">Firmware file path</label>
+                        <input type="url" class="form-control" id="filepath" aria-describedby="filepathHelp"
+                            value="{{filepath}}">
+                        <small id="filepathHelp" class="form-text text-muted">Insert URI to file image. Leave empty
+                            to skip
+                            image check</small>
+                    </div>
+                    <div class="form-group mb-3 col-xl-3 form-right">
+                        <label for="installmode">Install mode</label>
+                        <div class="form-group" id="installmode" aria-describedby="installmodeHelp">
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="installmode" value="INSTALL"
+                                        {% if installmode == 'INSTALL'%}checked{%endif%}>Install
+                                </label>
+                            </div>
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="installmode" value="BUNDLE" 
+                                        {% if installmode == 'BUNDLE'%}checked{%endif%}>Bundle
+                                </label>
+                            </div>
+                            <small id="installmodeHelp" class="form-text text-muted">Does not apply to IOS. If unsure
+                                leave default</small>
+                        </div>
+
+                    </div>
+                </div>
+
+                <hr class="pt-3">
+                <h4 class="mb-3">Post-staging actions</h4>
+                <div class="form-group mb-3">
+                    <label for="poststaging">Post-staging</label>
+                    <textarea class="form-control text-monospace" id="poststaging" rows="5"
+                        aria-describedby="poststagingHelp">{{poststaging}}</textarea>
+                    <small id="poststagingHelp" class="form-text text-muted">Insert commands to be run after
+                        previous tasks
+                        are finished. Enter one per line</small>
+                </div>
+
+                <hr class="mb-4">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <a id="btncreatetask" role="button" class="btn btn-primary btn-lg btn-block btn-success"
+                            href="/tasks/add?fktemplate={{pkid}}">Create task</a>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <button id="btnsave" class="btn btn-primary btn-lg btn-block" type="submit">Save</button>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <button id="btndelete" class="btn btn-primary btn-lg btn-block btn-danger"
+                            type="button">Delete</button>
+                    </div>
+                </div>
+                <div id="submitalertspace" class="my-3">
+                </div>
+            </form>
         </div>
-        <div id="submitalertspace" class="my-3">
-        </div>
-    </form>
+    </div>
 </div>
+</div>
+
 
 {% endblock %}
 
