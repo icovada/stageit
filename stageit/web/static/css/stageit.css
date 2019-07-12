@@ -646,3 +646,9 @@ html:not(.in-iframe) .visible-in-iframe {
  left:0;
  right:0
 }
+td {
+    vertical-align: middle !important;
+}
+th {
+    vertical-align: middle !important;
+}
