@@ -652,3 +652,22 @@ td {
 th {
     vertical-align: middle !important;
 }
+@media (min-width:1024px){
+    .form-left {
+        padding-left: 0px !important;
+    }
+    .form-right {
+        padding-right: 0px !important;
+    }
+}
+
+@media (max-width:1023px){
+    .form-left {
+        padding-left: 0px !important;
+        padding-right: 0px !important;
+    }
+    .form-right {
+        padding-left: 0px !important;
+        padding-right: 0px !important;
+    }
+}
