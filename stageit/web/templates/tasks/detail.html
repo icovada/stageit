@@ -2,36 +2,41 @@
 
 {% block body %}
 <!--<h1 class="display-4 content-center px-3 py-3 pt-md-4 pb-md-4 mx-auto row justify-content-center">Task details</h1>-->
-<h1 class="row justify-content-center pt-4 col no-gutters">Task details</h1>
-<div class="row justify-content-center mx-auto pb-4">{{pkid}}</div>
-
-<div class="row container justify-content-center px-2 py-3 pt-md-5 pb-md-4 mx-auto">
-    <div class="col-5">
-        <div class="py-2">
-            Model
-            <div class="text-muted">WS-C2960X-24PS-L</div>
-        </div>
-        <div class="py-2">
-            Serial
-            <div class="text-muted">FOC1731V3WF</div>
-        </div>
-    </div>
-    <div class="col-5">
-        <div class="py-2">
-            Status
-            <div class="text-muted">Upgrading IOS-XE in INSTALL mode</div>
-        </div>
-        <div class="py-2">
-            Software
-            <div class="text-muted">C2960X Software (C2960X-UNIVERSALK9-M), Version 15.2(2)E5, RELEASE SOFTWARE
-                (fc2)
+<header class="jumbotron">
+    <div class="container-lg">
+        <div class="row">
+            <div class="col-xs-12">
+                <h2>Task details</h2>
+                <p>{{pkid}}</p>
             </div>
         </div>
     </div>
+</header>
+
+<div class="content-area">
+    <div class="container-lg">
+        <div class="row">
+            <div class="col-xs-12 col-lg-6">
+                <h3 class="h2">Model</h3>
+                <p>WS-C2960X-24PS-L</p>
+                <h3 class="h2">Serial</h3>
+                <p>FOC1731V3WF</p>
+            </div>
+            <div class="col-xs-12 col-lg-6">
+                <h3 class="h2">Status</h3>
+                <p>Upgrading IOS-XE in INSTALL mode</p>
+                <h3 class="h2">Software</h3>
+                <p>C2960X Software (C2960X-UNIVERSALK9-M), Version 15.2(2)E5, RELEASE SOFTWARE (fc2)</p>
+            </div>
+        </div>
+    </div>
+</div>
 </div>
 <div class="container my-4">
     <h4>Log sessione</h4>
     <pre style="max-height: 700px;" class="m-y-3">
     </pre>
 </div>
+</div>
+
 {% endblock %}
