@@ -1,57 +1,89 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html class="desktop-menu-open" lang="en">
 
 <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
-    <title>StageIT</title>
+    <title>Home | Style Guide</title>
+    <!-- meta name="description" content="Description of the page less than 150 characters" -->
+    <!-- meta description -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,900&display=swap">
+    <link rel="stylesheet" href="https://basecoat.cdn.dimensiondata.com/3.0.10/css/ntt.basecoat.min.css">
+    <link rel="stylesheet" href="/static/css/stageit.css"> <!-- your own stylesheet here -->
+    <link rel="apple-touch-icon" sizes="180x180"
+        href="https://basecoat.cdn.dimensiondata.com/3.0.10/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32"
+        href="https://basecoat.cdn.dimensiondata.com/3.0.10/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16"
+        href="https://basecoat.cdn.dimensiondata.com/3.0.10/img/favicon/favicon-16x16.png">
+    <link rel="mask-icon" href="https://basecoat.cdn.dimensiondata.com/3.0.10/img/favicon/safari-pinned-tab.svg"
+        color="#0033cc">
+    <link rel="shortcut icon" href="https://basecoat.cdn.dimensiondata.com/3.0.10/img/favicon/favicon.ico">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ffffff">
 </head>
 
-<body>
-    <nav class="navbar navbar-expand-md navbar-dark py-0" style="background-color: #455565">
-        <a class="navbar-brand row py-2 px-4" href="/" style="background-color: #69be28;">
-            <img src="https://www.dimensiondata.com/Areas/DDCorporate/assets/images/brand/logo-dimension-data.svg"
-                height="26" class="pr-3" alt="">StageIT
-        </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
-            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
 
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-                <a class="nav-item nav-link {% if navbar == 'worker' %}active{% endif %}" href="/workers">Workers</a>
-                <a class="nav-item nav-link {% if navbar == 'task' %}active{% endif %}" href="/tasks">Tasks</a>
-                <a class="nav-item nav-link {% if navbar == 'template' %}active{% endif %}" href="/templates">Templates</a>
-                <a class="nav-item nav-link {% if navbar == 'history' %}active{% endif %}" href="/history">History</a>
+
+
+<body>
+
+    <div class="desktop-menu-layout mobile-menu-layout sticky-footer-layoutt">
+
+        <div class="desktop-menu">
+            <div class="accordion-menu">
+                <nav class="scrollbars scrollbars-light">
+                    <ul class="nav" data-accordion-group>
+                        <li><a class="nav-item nav-link {% if navbar == 'worker' %}active{% endif %}"
+                                href="/workers">Workers</a></li>
+
+                        <li><a class="next collapsed" data-toggle="collapse">Tasks</a>
+                            <ul class="collapse">
+                                <li><a href="/tasks">Task List</a></li>
+                                <li><a href="/templates">Task Templates</a></li>
+                                <li><a href="/history">Task History</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
-    </nav>
 
-    {% block body %}
-    <div class="container">
-        <div class="jumbotron">
-            <h1 class="display-4">StageIT</h1>
-            <p class="lead">Automate your deploy</p>
-        </div>
+        <header class="site-header">
+            <nav class="navbar navbar-fixed-top">
+                <!-- Left utility nav -->
+                <ul class="nav navbar-nav navbar-left">
+                    <!-- Desktop menu toggle -->
+                    <li class="desktop-menu-toggle hidden-mobile">
+                        <a href="#" data-toggle="desktop-menu" title="Desktop menu">
+                            <div class="hidden-closed">Close</div>
+                            <div class="hidden-opened"></div>
+                        </a>
+                    </li>
+                    <li>
+                        <!-- Company logo -->
+                        <a class="horizontal-logo" href="/" title="Return home">
+                            <div class="logo-image" title="NTT"></div>
+                            <div class="logo-title"><span>Stage<br>it!</span></div>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+
+        <main class="page-wrapper">
+            {% block body %}{% endblock %}
+        </main>
+
     </div>
-    {% endblock %}
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-        crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-        crossorigin="anonymous"></script>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://basecoat.cdn.dimensiondata.com/3.0.10/js/dd.basecoat.min.js"></script>
+    <!-- script src="js/app.min.js"></script -->
+    <!-- your own script here -->
+    <script defer src="https://basecoat.cdn.dimensiondata.com/3.0.10/js/outdated-browser.min.js"></script>
     {% block script %}{% endblock %}
 </body>
 
