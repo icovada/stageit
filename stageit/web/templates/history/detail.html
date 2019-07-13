@@ -1,0 +1,43 @@
+{% extends "templates/layout.html" %}
+
+{% block body %}
+<!--<h1 class="display-4 content-center px-3 py-3 pt-md-4 pb-md-4 mx-auto row justify-content-center">Task details</h1>-->
+<h1 class="row justify-content-center pt-4 col no-gutters">Staging details</h1>
+
+<div class="row container justify-content-between px-2 py-3 pt-md-5 pb-md-4 mx-auto">
+    <div class="col-4">
+        <div class="py-2">
+            Model
+            <div class="text-muted">WS-C2960X-24PS-L</div>
+        </div>
+        <div class="py-2">
+            Serial
+            <div class="text-muted">FOC1731V3WF</div>
+        </div>
+    </div>
+    <div class="col-4">
+        <div class="py-2">
+            Status
+            <div class="text-muted">Upgrading IOS-XE in INSTALL mode</div>
+        </div>
+        <div class="py-2">
+            Software
+            <div class="text-muted">C2960X Software (C2960X-UNIVERSALK9-M), Version 15.2(2)E5, RELEASE SOFTWARE
+                (fc2)
+            </div>
+        </div>
+    </div>
+        <div class="card w-25 h-25" >
+            <img src="/static/img/cisco.png" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">Cisco device</h5>
+                <p class="card-text">No picture available</p>
+        </div>
+    </div>
+</div>
+<div class="container my-4">
+    <h4>Log sessione</h4>
+    <pre style="max-height: 700px;" class="m-y-3">
+    </pre>
+</div>
+{% endblock %}

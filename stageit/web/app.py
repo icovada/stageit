@@ -14,7 +14,7 @@ import config
 APP_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATE_PATH = os.path.join(APP_PATH, 'web')
 
-APP = Flask(__name__, template_folder=TEMPLATE_PATH)
+APP = Flask(__name__, template_folder=TEMPLATE_PATH, static_folder='static', static_url_path='/static')
 
 
 class InvalidUsage(Exception):
@@ -103,6 +103,12 @@ def history():
     return render_template("templates/history.html",
                            table=dbtasks.all(),
                            navbar="history")
+
+
+@APP.route("/history/<id>")
+def historydetail(id):
+    """Render history detail."""
+    return render_template("templates/history/detail.html")
 
 
 @APP.route("/templates/<templateid>")
@@ -329,10 +335,7 @@ def convertjinja():
     return jsonify(result)
 
 
-@APP.route("/test")
-def test():
-    """Return rendered Jinja2 template."""
-    return render_template('templates/test/modal.html')
+# Static
 
 
 def run():
