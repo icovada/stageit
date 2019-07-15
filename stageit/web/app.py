@@ -14,7 +14,8 @@ import config
 APP_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATE_PATH = os.path.join(APP_PATH, 'web')
 
-APP = Flask(__name__, template_folder=TEMPLATE_PATH, static_folder='static', static_url_path='/static')
+APP = Flask(__name__, template_folder=TEMPLATE_PATH,
+            static_folder='static', static_url_path='/static')
 
 
 class InvalidUsage(Exception):
@@ -153,7 +154,7 @@ def createtask():
     return render_template("templates/tasks/add.html",
                            fktemplate=fktemplate,
                            navbar="task"
-                           **templatedict)
+                           ** templatedict)
 
 
 @APP.route("/tasks/<taskid>")
@@ -334,6 +335,28 @@ def convertjinja():
         **yamlvalues).replace("\n", "<br/>")}
     return jsonify(result)
 
+
+@APP.route("/api/tables", methods=['GET'])
+def apitabletasks():
+    """"Return Tasks table in JSON format"""
+    table = request.args['table']
+    session = newsession()
+    if table == "tasks":
+        result = session.query(Tasks.pkid,
+                               Tasks.description,
+                               Tasks.fktemplate)
+    elif table == "templates":
+        result = session.query(Templates.pkid,
+                               Templates.name,
+                               Templates.description)
+    elif table == "history":
+        result = session.query(History.pkid,
+                               History.datestart,
+                               History.dateend)
+    else:
+        raise InvalidUsage("Wrong table", 412)
+
+    return jsonify({"data": result.all()})
 
 # Static
 
