@@ -13,28 +13,50 @@
         </div>
     </div>
 </header>
-<div class="container-xl">
-    <div class="table-responsive scrollbars">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Serial</th>
-                    <th scope="col">Model</th>
-                    <th scope="col">Description</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in table %}
-                <tr>
-                    <th scope="row"><a href="/history/{{row[0]}}">{{row[0][:5]}}</a></th>
-                    <td>{{row[1]}}</td>
-                    <td>{{row[2]}}</td>
-                    <td>{{row[3]}}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+<div class="content-area">
+    <div class="container-lg">
+        <div class="row">
+            <div class="col-xs-12">
+                <table id="tasks" class="table" width="100%">
+            </div>
+        </div>
     </div>
 </div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+
+    $(document).ready(function () {
+        var dataSet = $.getJSON({
+            url: '/api/tables?table=history',
+            async: false
+        }).responseJSON.data;
+
+        dataSet.forEach(function (element) {
+            var thisHistory = "<a href='/history/" + element[0] + "'>" + element[0].substring(0, 5) + "</a>"
+            element.splice(1, 0, thisHistory);
+        });
+
+
+        $('#tasks').DataTable({
+            data: dataSet,
+            rowId: 'pkid',
+            columns: [
+                { title: "pkid" },
+                { title: "ID" },
+                { title: "Date Start" },
+                { title: "Date End" }
+            ],
+            columnDefs: [
+                {
+                    "targets": [0],
+                    "visible": false,
+                    "searchable": false
+                }]
+        });
+    });
+
+</script>
 {% endblock %}
