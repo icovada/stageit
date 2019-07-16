@@ -35,13 +35,28 @@
             url: '/api/tables?table=templates',
             async: false
         }).responseJSON.data;
+
+        dataSet.forEach(function (element){
+            var link = "<a href='/templates/" + element[0] + "'>" + element[0].substring(0,5) + "</a>"
+            element.splice(1, 0, link);
+        });
+
+
         $('#templates').DataTable({
             data: dataSet,
+            rowId: 'pkid',
             columns: [
+                { title: "pkid" },
                 { title: "ID" },
                 { title: "Name" },
                 { title: "Description" }
-            ]
+            ],
+            columnDefs: [
+                {
+                    "targets": [0],
+                    "visible": false,
+                    "searchable": false
+                }]
         });
     });
 
