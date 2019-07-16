@@ -12,49 +12,15 @@
     </div>
 </header>
 <div class="content-area">
-    <div class="container-xl">
-        <div class="table-responsive scrollbars">
-            <table class="table table-hover" id="tasks">
-                <thead>
-                    <tr>
-                        {% for col in header%}
-                        <th scope="col">{{col}}</th>
-                        {% endfor %}
-                        <th scope="col" style="width: 8%">Actions</th>
-                        <th scope="col" style="width: 8%"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for row in table %}
-                    <tr>
-                        <th scope="row"><a href="/tasks/{{row[0]}}">{{row[0][:5]}}</a></th>
-                        <td><a href="/tasks/{{row[1]}}">{{row[1][:5]}}</a></td>
-                        <td>{{row[2]}}</td>
-                        <td>
-                            <div class="dropdown">
-                                <button class="btn btn-sm btn-success dropdown-toggle" type="button"
-                                    id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
-                                    aria-expanded="false">
-                                    Assign
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    {% for worker in workers %}
-                                    <a class="dropdown-item assignworker" href="#" worker="{{worker}}"
-                                        taskid="{{row[0]}}">{{worker}}</a>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <button class="btn btn-danger btn-sm deletetask" taskid="{{row[0]}}">Delete</button>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+    <div class="container-lg">
+        <div class="row">
+            <div class="col-xs-12">
+                <table id="tasks" class="table" width="100%">
+            </div>
         </div>
     </div>
 </div>
+
 {% endblock %}
 
 {% block script %}
@@ -89,15 +55,34 @@
     });
 
     $(document).ready(function () {
-        var table = $('#tasks').DataTable({
-            scrollX: true,
-            scrollCollapse: true,
-            autoWidth: true,
-            paging: true,
+        var dataSet = $.getJSON({
+            url: '/api/tables?table=tasks',
+            async: false
+        }).responseJSON.data;
+
+        dataSet.forEach(function (element) {
+            var thisTask = "<a href='/tasks/" + element[0] + "'>" + element[0].substring(0, 5) + "</a>"
+            var thisTemplate = "<a href='/templates/" + element[2] + "'>" + element[2].substring(0, 5) + "</a>"
+            element[2] = thisTemplate;
+            element.splice(1, 0, thisTask);
+        });
+
+
+        $('#tasks').DataTable({
+            data: dataSet,
+            rowId: 'pkid',
+            columns: [
+                { title: "pkid" },
+                { title: "ID" },
+                { title: "Description" },
+                { title: "Template" }
+            ],
             columnDefs: [
-                { "width": "300px", "targets": [0, 1] },
-                { "width": "0px", "targets": [4] }
-            ]
+                {
+                    "targets": [0],
+                    "visible": false,
+                    "searchable": false
+                }]
         });
     });
 
