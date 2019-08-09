@@ -9,8 +9,8 @@ class Templates(models.Model):
     installmode = models.TextField(max_length=20)
     name = models.TextField(max_length=50, unique=True, null=False)
     platform = models.TextField(max_length=30, null=False)
-    poststaging = models.TextField
-    template = models.TextField
+    poststaging = models.TextField(max_length=1000)
+    template = models.TextField(max_length=500000)
     templatevalues = models.BinaryField(editable=True)
 
 class History(models.Model):

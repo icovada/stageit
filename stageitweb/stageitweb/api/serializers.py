@@ -1,6 +1,17 @@
 from rest_framework import serializers
 from stageitweb.stageit.models import Templates
 
+import pickle
+
+class PickledData(serializers.Field):
+    """
+    Turn pickled data to original and back
+    """
+    def to_representation(self, value):
+        return pickle.loads(value)
+
+    def to_internal_value(self, value):
+        return pickle.dumps(value)
 
 class TemplatesSerializer(serializers.Serializer):
     """Defines templates table."""
@@ -10,9 +21,9 @@ class TemplatesSerializer(serializers.Serializer):
     installmode = serializers.CharField(max_length=20)
     name = serializers.CharField(max_length=50)
     platform = serializers.CharField(max_length=30)
-    poststaging = serializers.CharField
-    template = serializers.CharField
-    templatevalues = serializers.Field
+    poststaging = serializers.CharField(max_length=1000)
+    template = serializers.CharField(max_length=500000)
+    templatevalues = PickledData(read_only=False)
 
     def create(self, validated_data):
         from uuid import uuid4
