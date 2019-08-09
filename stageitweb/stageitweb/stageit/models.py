@@ -11,7 +11,7 @@ class Templates(models.Model):
     platform = models.TextField(max_length=30, null=False)
     poststaging = models.TextField
     template = models.TextField
-    templatevalues = models.BinaryField
+    templatevalues = models.BinaryField(editable=True)
 
 class History(models.Model):
     """Defines history table."""
@@ -22,11 +22,11 @@ class History(models.Model):
     installmode = models.TextField(max_length=20)
     model = models.TextField(max_length=50)
     os_version = models.TextField(max_length=300)
-    rundata = models.BinaryField(max_length=1024000)
+    rundata = models.BinaryField(max_length=1024000, editable=True)
     serial = models.TextField(max_length=20)
     serial_number = models.TextField(max_length=50)
     template = models.TextField(max_length=20000)
-    templatevalues = models.BinaryField(max_length=4096)
+    templatevalues = models.BinaryField(max_length=4096, editable=True)
     vendor = models.TextField(max_length=30)
 
 class Tasks(models.Model):
