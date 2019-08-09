@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from stageitweb.stageit.models import Templates
+from stageitweb.stageit.models import Templates, History, Tasks
 
 import pickle
 
@@ -33,14 +33,58 @@ class TemplatesSerializer(serializers.Serializer):
         return Templates.objects.create(**data)
 
     def update(self, instance, validated_data):
-        instance.description = validated_data.get('description', instance.description)
-        instance.filepath = validated_data.get('filepath', instance.filepath)
-        instance.installmode = validated_data.get('installmode', instance.installmode)
-        instance.name = validated_data.get('name', instance.name)
-        instance.platform = validated_data.get('platform', instance.platform)
-        instance.poststaging = validated_data.get('poststaging', instance.poststaging)
-        instance.template = validated_data.get('template', instance.template)
-        instance.templatevalues = validated_data.get('templatevalues', instance.templatevalues)
+        instance.__dict__ = {**instance.__dict__, **validated_data}
+        instance.save()
+
+        return instance
+
+class HistorySerializer(serializers.Serializer):
+    """Defines history table."""
+    pkid = serializers.UUIDField(format='hex_verbose')
+    dateend = serializers.DateTimeField
+    datestart = serializers.DateTimeField
+    description = serializers.CharField(max_length=50)
+    installmode = serializers.CharField(max_length=20)
+    model = serializers.CharField(max_length=50)
+    os_version = serializers.CharField(max_length=300)
+    rundata = PickledData()
+    serial = serializers.CharField(max_length=20)
+    serial_number = serializers.CharField(max_length=50)
+    template = serializers.CharField(max_length=20000)
+    templatevalues = PickledData()
+    vendor = serializers.CharField(max_length=30)
+
+    def create(self, validated_data):
+        from uuid import uuid4
+        pkid = uuid4()
+        data = {'pkid': pkid, **validated_data}
+
+        return History.objects.create(**data)
+
+    def update(self, instance, validated_data):
+        instance.__dict__ = {**instance.__dict__, **validated_data}
+        instance.save()
+
+        return instance
+
+
+    
+class TasksSerializer(serializers.Serializer):
+    """Defines tasks table."""
+    pkid = serializers.UUIDField(format='hex_verbose')
+    description = serializers.CharField(max_length=50)
+    fktemplate = serializers.UUIDField(format='hex_verbose')
+    taskvalues = PickledData()
+    
+    def create(self, validated_data):
+        from uuid import uuid4
+        pkid = uuid4()
+        data = {'pkid': pkid, **validated_data}
+
+        return Tasks.objects.create(**data)
+
+    def update(self, instance, validated_data):
+        instance.__dict__ = {**instance.__dict__, **validated_data}
         instance.save()
 
         return instance
