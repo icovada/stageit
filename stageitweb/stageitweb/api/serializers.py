@@ -15,7 +15,7 @@ class PickledData(serializers.Field):
 
 class TemplatesSerializer(serializers.Serializer):
     """Defines templates table."""
-    pkid = serializers.UUIDField
+    pkid = serializers.UUIDField(format='hex_verbose')
     description = serializers.CharField(max_length=50)
     filepath = serializers.CharField(max_length=256)
     installmode = serializers.CharField(max_length=20)
