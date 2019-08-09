@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 class Templates(models.Model):
     """Defines templates table."""
-    pkid = models.UUIDField(primary_key=True, )
+    pkid = models.UUIDField(primary_key=True)
     description = models.TextField(max_length=50)
     filepath = models.TextField(max_length=256)
     installmode = models.TextField(max_length=20)
@@ -26,7 +26,7 @@ class History(models.Model):
     serial = models.TextField(max_length=20)
     serial_number = models.TextField(max_length=50)
     template = models.TextField(max_length=20000)
-    templatevalues = models.BinaryField(max_length=4096, editable=True)
+    templatevalues = models.BinaryField(editable=True)
     vendor = models.TextField(max_length=30)
 
 class Tasks(models.Model):
@@ -34,4 +34,4 @@ class Tasks(models.Model):
     pkid = models.UUIDField(primary_key=True)
     description = models.TextField(max_length=50)
     fktemplate = models.ForeignKey(Templates, on_delete=models.CASCADE)
-    taskvalues = models.BinaryField(max_length=4096)
+    taskvalues = models.BinaryField(editable=True)
