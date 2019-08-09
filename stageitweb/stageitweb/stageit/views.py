@@ -1,5 +1,4 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 
 # Create your views here.
 def index(request):
@@ -8,8 +7,17 @@ def index(request):
 def templates(request):
     return render(request, 'stageit/templates.html')
 
+def templatesdetail(request, uuid):
+    return render(request, 'stageit/templates/detail.html')
+
 def history(request):
     return render(request, 'stageit/history.html')
 
+def historydetail(request, uuid):
+    return render(request, 'stageit/history/detail.html')
+
 def tasks(request):
     return render(request, 'stageit/tasks.html')
+
+def tasksdetail(request, uuid):
+    return render(request, 'stageit/tasks/detail.html')
