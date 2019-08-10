@@ -13,6 +13,17 @@ class PickledData(serializers.Field):
     def to_internal_value(self, value):
         return pickle.dumps(value)
 
+class FkTemplateSerializer(serializers.Field):
+    """
+    Serialize template pkid to string
+    """
+    def to_representation(self, value):
+        return value.pkid
+
+    def to_internal_value(self, value):
+        return Templates.objects.get(pkid=value)
+
+
 class TemplatesSerializer(serializers.Serializer):
     """Defines templates table."""
     pkid = serializers.UUIDField(format='hex_verbose', required=False)
@@ -73,13 +84,19 @@ class TasksSerializer(serializers.Serializer):
     """Defines tasks table."""
     pkid = serializers.UUIDField(format='hex_verbose', required=False)
     description = serializers.CharField(max_length=50)
-    fktemplate = serializers.UUIDField(format='hex_verbose')
+    fktemplate = FkTemplateSerializer()
     taskvalues = PickledData()
     
     def create(self, validated_data):
         from uuid import uuid4
-        pkid = uuid4()
+        pkid = str(uuid4())
         data = {**validated_data, 'pkid': pkid}
+
+        #templatedata = data['fktemplate'].__dict__
+
+        #data = {**data, **templatedata}
+
+        #data['fktemplate'] = Templates.objects.get(pkid=data['fktemplate'])
 
         return Tasks.objects.create(**data)
 
@@ -88,3 +105,4 @@ class TasksSerializer(serializers.Serializer):
         instance.save()
 
         return instance
+
