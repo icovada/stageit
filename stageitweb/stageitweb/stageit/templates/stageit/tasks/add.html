@@ -3,7 +3,7 @@
 {% block body %}>
 <h1 class="row justify-content-center py-4 col no-gutters">Create task from {{fktemplate[:5]}}</h1>
 <div class="container col col-xl-8 justify-content-center pb-5">
-    <form class="needs-validation" action="/api/tasks" id="taskform" method="post">
+    <form class="needs-validation" action="/api/tasks/" id="taskform" method="post">
         <div class="form-group mb-3">
             <label for="description">Description</label>
             <input type="text" class="form-control" name="description" id="description" required>
