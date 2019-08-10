@@ -1,11 +1,11 @@
-{% extends "templates/layout.html" %}
+{% extends "stageit/layout.html" %}
 
 {% block body %}
 <div class="top-gutter bottom-gutter container-wrapper">
     <div class="content-area">
         <div class="container">
 
-            <form class="needs-validation" action="/api/templates" id="templateform" method="post">
+            <form class="needs-validation" action="/api/templates/" id="templateform" method="post">
                 <div class="form-group">
                     <h1>Edit template</h2>
                         <p>{{pkid}}</p>
@@ -134,7 +134,7 @@
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <a id="btncreatetask" role="button" class="btn btn-primary btn-lg btn-block btn-success"
-                            href="/tasks/add?fktemplate={{pkid}}">Create task</a>
+                            href="/tasks/new/{{pkid}}">Create task</a>
                     </div>
                     <div class="col-md-4 mb-3">
                         <button id="btnsave" class="btn btn-primary btn-lg btn-block" type="submit">Save</button>
@@ -182,7 +182,7 @@
         event.preventDefault();
         $.ajax({
             type: 'PUT',
-            url: "/api/templates/{{pkid}}",
+            url: "/api/templates/{{pkid}}/",
             data: {
                 name: $('#name').val(),
                 description: $('#description').val(),
@@ -211,7 +211,7 @@
             .on('accept', function () {
                 $.ajax({
                     type: 'DELETE',
-                    url: "/api/templates/{{pkid}}"});
+                    url: "/api/templates/{{pkid}}/"});
                 basecoat.alert('Template deleted')
                     .on('hide.bs.modal', function () {
                         window.location.href = "/templates";

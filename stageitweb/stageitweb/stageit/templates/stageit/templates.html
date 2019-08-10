@@ -1,4 +1,4 @@
-{% extends "templates/layout.html" %}
+{% extends "stageit/layout.html" %}
 
 {% block title %}Templates{% endblock %}
 {% block header %}Templates{% endblock %}
@@ -31,14 +31,14 @@
 <script>
 
     $(document).ready(function () {
-        var dataSet = $.getJSON({
-            url: '/api/tables?table=templates',
+        dataSet = $.getJSON({
+            url: '/api/templates/?format=json',
             async: false
-        }).responseJSON.data;
+        }).responseJSON;
 
         dataSet.forEach(function (element){
-            var link = "<a href='/templates/" + element[0] + "'>" + element[0].substring(0,5) + "</a>"
-            element.splice(1, 0, link);
+            var link = "<a href='/templates/" + element['pkid'] + "'>" + element['pkid'].substring(0,5) + "</a>"
+            element['ID'] = link
         });
 
 
@@ -46,10 +46,10 @@
             data: dataSet,
             rowId: 'pkid',
             columns: [
-                { title: "pkid" },
-                { title: "ID" },
-                { title: "Name" },
-                { title: "Description" }
+                { title: "pkid", data: 'pkid' },
+                { title: "ID", data: 'ID' },
+                { title: "Name", data: 'name' },
+                { title: "Description", data: 'description' }
             ],
             columnDefs: [
                 {

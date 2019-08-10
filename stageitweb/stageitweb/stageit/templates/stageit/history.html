@@ -1,4 +1,4 @@
-{% extends "templates/layout.html" %}
+{% extends "stageit/layout.html" %}
 
 {% block title %}Task History{% endblock %}
 {% block header %}Task History{% endblock %}
@@ -30,13 +30,13 @@
 
     $(document).ready(function () {
         var dataSet = $.getJSON({
-            url: '/api/tables?table=history',
+            url: '/api/history?format=json',
             async: false
-        }).responseJSON.data;
+        }).responseJSON;
 
         dataSet.forEach(function (element) {
             var thisHistory = "<a href='/history/" + element[0] + "'>" + element[0].substring(0, 5) + "</a>"
-            element.splice(1, 0, thisHistory);
+            element['ID'] = link
         });
 
 
@@ -44,10 +44,10 @@
             data: dataSet,
             rowId: 'pkid',
             columns: [
-                { title: "pkid" },
-                { title: "ID" },
-                { title: "Date Start" },
-                { title: "Date End" }
+                { title: "pkid", data: 'pkid' },
+                { title: "ID", data: 'ID' },
+                { title: "Date Start", data: 'datestart' },
+                { title: "Date End", data: 'dateend' }
             ],
             columnDefs: [
                 {
