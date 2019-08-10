@@ -14,15 +14,19 @@
     </div>
 </header>
 
-<div class="content-area">
-    <div class="container-lg">
-        <div class="row">
-            <div class="col-xs-12">
-                <table id="templates" class="table" width="100%">
-            </div>
+<div class="container-lg top-gutter">
+    <div class="col-xs-12 col-md-6 col-lg-4 text-center">
+        <a type="button" class="btn btn-primary btn-block bottom-gutter" href="/templates/add">Add</a>
+    </div>
+</div>
+<div class="container-lg">
+    <div class="row">
+        <div class="col-xs-12">
+            <table id="templates" class="table" width="100%">
         </div>
     </div>
 </div>
+
 
 
 {% endblock %}
@@ -36,8 +40,8 @@
             async: false
         }).responseJSON;
 
-        dataSet.forEach(function (element){
-            var link = "<a href='/templates/" + element['pkid'] + "'>" + element['pkid'].substring(0,5) + "</a>"
+        dataSet.forEach(function (element) {
+            var link = "<a href='/templates/" + element['pkid'] + "'>" + element['pkid'].substring(0, 5) + "</a>"
             element['ID'] = link
         });
 
