@@ -8,5 +8,6 @@ router.register(r'tasks', views.TasksViewSet)
 router.register(r'history', views.HistoryViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('convertjinja', views.convertjinja, name='convertjinja'),
+    path('', include(router.urls))
 ]
