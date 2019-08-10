@@ -10,5 +10,6 @@ urlpatterns = [
     path('history/<uuid:uuid>', views.historydetail, name='historydetail'),
     path('tasks', views.tasks, name='tasks'),
     path('tasks/<uuid:uuid>', views.tasksdetail, name='tasksdetail'),
+    path('tasks/new/<uuid:uuid>', views.tasksadd, name='tasksadd'),
     path('', views.index, name='index'),
 ]
