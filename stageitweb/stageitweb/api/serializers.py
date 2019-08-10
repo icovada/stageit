@@ -15,7 +15,7 @@ class PickledData(serializers.Field):
 
 class TemplatesSerializer(serializers.Serializer):
     """Defines templates table."""
-    pkid = serializers.UUIDField(format='hex_verbose')
+    pkid = serializers.UUIDField(format='hex_verbose', required=False)
     description = serializers.CharField(max_length=50)
     filepath = serializers.CharField(max_length=256)
     installmode = serializers.CharField(max_length=20)
@@ -28,7 +28,7 @@ class TemplatesSerializer(serializers.Serializer):
     def create(self, validated_data):
         from uuid import uuid4
         pkid = uuid4()
-        data = {'pkid': pkid, **validated_data}
+        data = {**validated_data, 'pkid': pkid}
 
         return Templates.objects.create(**data)
 
@@ -40,7 +40,7 @@ class TemplatesSerializer(serializers.Serializer):
 
 class HistorySerializer(serializers.Serializer):
     """Defines history table."""
-    pkid = serializers.UUIDField(format='hex_verbose')
+    pkid = serializers.UUIDField(format='hex_verbose', required=False)
     dateend = serializers.DateTimeField
     datestart = serializers.DateTimeField
     description = serializers.CharField(max_length=50)
@@ -57,9 +57,9 @@ class HistorySerializer(serializers.Serializer):
     def create(self, validated_data):
         from uuid import uuid4
         pkid = uuid4()
-        data = {'pkid': pkid, **validated_data}
+        data = {**validated_data, 'pkid': pkid}
 
-        return History.objects.create(**data)
+        return History.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
         instance.__dict__ = {**instance.__dict__, **validated_data}
@@ -71,7 +71,7 @@ class HistorySerializer(serializers.Serializer):
     
 class TasksSerializer(serializers.Serializer):
     """Defines tasks table."""
-    pkid = serializers.UUIDField(format='hex_verbose')
+    pkid = serializers.UUIDField(format='hex_verbose', required=False)
     description = serializers.CharField(max_length=50)
     fktemplate = serializers.UUIDField(format='hex_verbose')
     taskvalues = PickledData()
@@ -79,7 +79,7 @@ class TasksSerializer(serializers.Serializer):
     def create(self, validated_data):
         from uuid import uuid4
         pkid = uuid4()
-        data = {'pkid': pkid, **validated_data}
+        data = {**validated_data, 'pkid': pkid}
 
         return Tasks.objects.create(**data)
 
