@@ -56,15 +56,13 @@
 
     $(document).ready(function () {
         var dataSet = $.getJSON({
-            url: '/api/tables?table=tasks',
+            url: '/api/tasks/?format=json',
             async: false
-        }).responseJSON.data;
+        }).responseJSON;
 
         dataSet.forEach(function (element) {
-            var thisTask = "<a href='/tasks/" + element[0] + "'>" + element[0].substring(0, 5) + "</a>"
-            var thisTemplate = "<a href='/templates/" + element[2] + "'>" + element[2].substring(0, 5) + "</a>"
-            element[2] = thisTemplate;
-            element.splice(1, 0, thisTask);
+            element['thisTask'] = "<a href='/tasks/" + element[0] + "'>" + element[0].substring(0, 5) + "</a>"
+            element['thisTemplate'] = "<a href='/templates/" + element[2] + "'>" + element[2].substring(0, 5) + "</a>"
         });
 
 
@@ -72,10 +70,10 @@
             data: dataSet,
             rowId: 'pkid',
             columns: [
-                { title: "pkid" },
-                { title: "ID" },
-                { title: "Description" },
-                { title: "Template" }
+                { title: "pkid", data: 'pkid' },
+                { title: "ID", data: 'thisTask' },
+                { title: "Description", data: 'description' },
+                { title: "Template", data: 'thisTemplate' }
             ],
             columnDefs: [
                 {
