@@ -61,8 +61,8 @@
         }).responseJSON;
 
         dataSet.forEach(function (element) {
-            element['thisTask'] = "<a href='/tasks/" + element[0] + "'>" + element[0].substring(0, 5) + "</a>"
-            element['thisTemplate'] = "<a href='/templates/" + element[2] + "'>" + element[2].substring(0, 5) + "</a>"
+            element['thisTask'] = "<a href='/tasks/" + element['pkid'] + "'>" + element['pkid'].substring(0, 5) + "</a>"
+            element['thisTemplate'] = "<a href='/templates/" + element['fktemplate'] + "'>" + element['fktemplate'].substring(0, 5) + "</a>"
         });
 
 
