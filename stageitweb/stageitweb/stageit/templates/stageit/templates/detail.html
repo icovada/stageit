@@ -182,7 +182,7 @@
         event.preventDefault();
         $.ajax({
             type: 'PUT',
-            url: "/api/templates/{{pkid}}",
+            url: "/api/templates/{{pkid}}/",
             data: {
                 name: $('#name').val(),
                 description: $('#description').val(),
@@ -211,7 +211,7 @@
             .on('accept', function () {
                 $.ajax({
                     type: 'DELETE',
-                    url: "/api/templates/{{pkid}}"});
+                    url: "/api/templates/{{pkid}}/"});
                 basecoat.alert('Template deleted')
                     .on('hide.bs.modal', function () {
                         window.location.href = "/templates";
