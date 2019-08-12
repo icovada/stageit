@@ -1,25 +1,24 @@
 """Fake worker returning Sim City 4 loading screen messages"""
 
-from threading import Thread
-import queue
 from time import sleep
-import logging
 import random
 import io
-from uuid import uuid4
+#from uuid import uuid4
 import pickle
-from stageit.libs.db import History, newsession
+#from stageit.libs.db import History, newsession
+import logging
 
+from stageit.celeryapp import app
 
-class FakeWorker(Thread):
+class FakeWorker(app.Task):
     """
     Fake for test
     """
+    name = 'stageit.libs.fake_worker'
 
-    def __init__(self, q, **kwargs):
-        Thread.__init__(self)
-        self.this_queue = q
+    def __init__(self, **kwargs):
         self.status = "Initializing"
+
 
         # Adapted from Sim City 4 loading screen to fit network
         self.statuses = ["Adding Hidden Config",
@@ -103,26 +102,13 @@ class FakeWorker(Thread):
         self.dbrow = None
         self.log = None
 
-    def run(self):
+    def run(self, work):
         logging.info("Fake Worker ready")
-        while True:
-            try:
-                self.status = "Waiting for work"
-                self.work = self.this_queue.get(timeout=600)
+        
+        self.work = work
 
-            except queue.Empty:
-                self.status = "Dead"
-                return
-
-            self.session = newsession()
-            self.dbrow = History(pkid=str(uuid4()))
-            self.session.add(self.dbrow)
-            self.session.commit()
-            self.log = io.BytesIO()
-
-            self.stageit()
-
-            self.this_queue.task_done()
+        self.log = io.BytesIO()
+        return self.stageit()
 
     def getstatus(self):
         """Return status of running task"""
@@ -139,13 +125,16 @@ class FakeWorker(Thread):
 
     def stageit(self):
         """Choose random status"""
-        self.dbrow.serial = "FOCTHIS"
-        self.session.commit()
         for i in range(random.randint(5, 10)):
             self.status = self.statuses[random.randint(0, len(self.statuses)-1)]
             self.log.write(self.status.encode('utf-8'))
             self.log.write("\n".encode('utf-8'))
+            self.update_state(state='PROGRESS', meta={'task': self.status})
+            logging.info(self.status)
             sleep(random.randint(1, 10))
+        return True
 
-        self.dbrow.rundata = pickle.dumps({"runlog":self.log.getvalue()})
-        self.session.commit()
+@app.task()
+def fakeworker(**kwargs):
+    worker = FakeWorker()
+    return worker.run(work=kwargs.get('work'))
