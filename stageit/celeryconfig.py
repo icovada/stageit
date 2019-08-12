@@ -1,9 +1,9 @@
 broker_url = 'amqp://'
 result_backend = 'amqp://'
 
-task_serializer = 'json'
-result_serializer = 'json'
-accept_content = ['json']
+task_serializer = 'pickle'
+result_serializer = 'pickle'
+accept_content = ['pickle']
 timezone = 'Europe/Rome'
 enable_utc = True
 
