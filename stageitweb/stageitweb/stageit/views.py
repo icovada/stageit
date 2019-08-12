@@ -36,4 +36,5 @@ def tasksadd(request, uuid):
     data = Templates.objects.get(pkid=uuid).__dict__
     data['templatevalues'] = pickle.loads(data['templatevalues'])
     data['fktemplate'] = str(uuid)
+    data['slug'] = str(uuid)[:5]
     return render(request, 'stageit/tasks/add.html', data)
