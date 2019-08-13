@@ -49,7 +49,7 @@ class FakeIO(BytesIO):
     def write(self, text):
         row = Log()
         row.fkhistory = self.fkhistory
-        row.log = text
+        row.log = text.decode()
         row.sequence = self.sequence
         self.sequence += self.sequence
         row.save()
