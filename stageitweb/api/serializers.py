@@ -95,7 +95,7 @@ class TasksSerializer(serializers.Serializer):
     """Defines tasks table."""
     pkid = serializers.UUIDField(format='hex_verbose', required=False)
     description = serializers.CharField(max_length=50)
-    fktemplate = FkTemplateSerializer()
+    fktemplate = FkTemplateSerializer(required=False)
     taskvalues = serializers.JSONField()
     
     def create(self, validated_data):

@@ -99,17 +99,17 @@
                     </div>
                     <div class="form-group mb-3 col-xl-3 form-right">
                         <label for="installmode">Install mode</label>
-                        <div class="form-group" id="installmode" aria-describedby="installmodeHelp" disabled>
+                        <div class="form-group" id="installmode" aria-describedby="installmodeHelp">
                             <div class="radio">
                                 <label>
                                     <input type="radio" name="installmode" value="INSTALL"
-                                        {% if installmode == 'INSTALL'%}checked{%endif%}>Install
+                                        {% if installmode == 'INSTALL'%}checked{%endif%} disabled>Install
                                 </label>
                             </div>
                             <div class="radio">
                                 <label>
                                     <input type="radio" name="installmode" value="BUNDLE"
-                                        {% if installmode == 'BUNDLE'%}checked{%endif%}>Bundle
+                                        {% if installmode == 'BUNDLE'%}checked{%endif%} disabled>Bundle
                                 </label>
                             </div>
                             <small id="installmodeHelp" class="form-text text-muted">Does not apply to IOS. If unsure

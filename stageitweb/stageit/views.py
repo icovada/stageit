@@ -33,7 +33,7 @@ def tasksdetail(request, uuid):
     task = Tasks.objects.get(pkid=uuid)
     data = Tasks.objects.get(pkid=uuid).__dict__.copy()
 
-    data['taskvalues'] = pickle.loads(data['taskvalues'])
+    data['taskvalues'] = json.dumps(data['taskvalues'], indent=4, sort_keys=True)
     data['filepath'] = task.fktemplate.filepath
     data['installmode'] = task.fktemplate.installmode
     data['platform'] = task.fktemplate.platform
@@ -43,9 +43,12 @@ def tasksdetail(request, uuid):
 
     return render(request, 'stageit/tasks/detail.html', data)
 
+# TODO COMPLETELY
 def tasksadd(request, uuid):
-    data = Templates.objects.get(pkid=uuid).__dict__
-    data['templatevalues'] = json.dumps(data['templatevalues'], indent=4, sort_keys=True)
+    data = Tasks.objects.get(pkid=uuid)
+    template = data.fktemplate.__dict__
+    data = data.__dict__
+    data['templatevalues'] = json.dumps(template['templatevalues'], indent=4, sort_keys=True)
     data['fktemplate'] = str(uuid)
     data['slug'] = str(uuid)[:5]
     return render(request, 'stageit/tasks/add.html', data)
