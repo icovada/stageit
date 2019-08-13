@@ -3,10 +3,13 @@ from django.shortcuts import render
 # Create your views here.
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+import django_filters.rest_framework
 from rest_framework.parsers import JSONParser
 from rest_framework import viewsets
-from stageitweb.stageit.models import Templates, Tasks, History
-from stageitweb.api.serializers import TemplatesSerializer, TasksSerializer, HistorySerializer
+from stageitweb.stageit.models import Templates, Tasks, History, Log
+from stageitweb.api.serializers import TemplatesSerializer, TasksSerializer, HistorySerializer, LogSerializer
+from rest_framework import generics
+
 
 import yaml
 from jinja2 import Environment, BaseLoader
@@ -24,6 +27,16 @@ class TasksViewSet(viewsets.ModelViewSet):
 class HistoryViewSet(viewsets.ModelViewSet):
     queryset = History.objects.all()
     serializer_class = HistorySerializer
+
+class LogViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Log.objects.all()
+    serializer_class = LogSerializer
+    filter_fields = {
+        'sequence': ['gte', 'lte'],
+        'fkhistory': ['exact']
+    }
+
+
 
 @csrf_exempt
 def convertjinja(request):

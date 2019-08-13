@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'stageitweb.stageit',
     'stageitweb.api',
     'rest_framework',
+    'django_filters',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

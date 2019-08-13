@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from stageitweb.stageit.models import Templates, History, Tasks
+from stageitweb.stageit.models import Templates, History, Tasks, Log
+from rest_framework import generics
 
 import pickle
 
@@ -22,6 +23,16 @@ class FkTemplateSerializer(serializers.Field):
 
     def to_internal_value(self, value):
         return Templates.objects.get(pkid=value)
+
+class FkHistorySerializer(serializers.Field):
+    """
+    Serialize template pkid to string
+    """
+    def to_representation(self, value):
+        return value.pkid
+
+    def to_internal_value(self, value):
+        return History.objects.get(pkid=value)
 
 
 class TemplatesSerializer(serializers.Serializer):
@@ -106,3 +117,17 @@ class TasksSerializer(serializers.Serializer):
 
         return instance
 
+
+class LogSerializer(serializers.Serializer):
+    """Defines log table"""
+    #fkhistory = FkHistorySerializer(required=False, read_only=True)
+    sequence = serializers.IntegerField(read_only=True)
+    log = serializers.CharField(read_only=True) 
+
+    def get_queryset(self, **kwargs):
+        """
+        List only logs relevant to history row and after line number
+        URL format: /api/logs/<fkhistory>/<lastrow>
+        """
+        fkhistory = self.kwargs.get(self.lookup_url_kwarg)
+        return Log.objects.filter(fkhistory=fkhistory).order_by('sequence', 'asc')
