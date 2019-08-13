@@ -95,18 +95,8 @@ class TasksSerializer(serializers.Serializer):
     """Defines tasks table."""
     pkid = serializers.UUIDField(format='hex_verbose', required=False)
     description = serializers.CharField(max_length=50)
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    fktemplate = FkTemplateSerializer(required=False)
-    taskvalues = PickledData()
-=======
     fktemplate = FkTemplateSerializer()
     taskvalues = serializers.JSONField()
->>>>>>> Stashed changes
-=======
-    fktemplate = FkTemplateSerializer()
-    taskvalues = serializers.JSONField()
->>>>>>> Stashed changes
     
     def create(self, validated_data):
         from uuid import uuid4
