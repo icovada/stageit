@@ -45,7 +45,7 @@ class TemplatesSerializer(serializers.Serializer):
     platform = serializers.CharField(max_length=30)
     poststaging = serializers.CharField(max_length=1000)
     template = serializers.CharField(max_length=500000)
-    templatevalues = PickledData(read_only=False)
+    templatevalues = serializers.JSONField()
 
     def create(self, validated_data):
         from uuid import uuid4
@@ -69,11 +69,11 @@ class HistorySerializer(serializers.Serializer):
     installmode = serializers.CharField(max_length=20)
     model = serializers.CharField(max_length=50)
     os_version = serializers.CharField(max_length=300)
-    rundata = PickledData()
+    rundata = serializers.JSONField()
     serial = serializers.CharField(max_length=20)
     serial_number = serializers.CharField(max_length=50)
     template = serializers.CharField(max_length=20000)
-    templatevalues = PickledData()
+    templatevalues = serializers.JSONField()
     vendor = serializers.CharField(max_length=30)
 
     def create(self, validated_data):
@@ -95,8 +95,18 @@ class TasksSerializer(serializers.Serializer):
     """Defines tasks table."""
     pkid = serializers.UUIDField(format='hex_verbose', required=False)
     description = serializers.CharField(max_length=50)
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     fktemplate = FkTemplateSerializer(required=False)
     taskvalues = PickledData()
+=======
+    fktemplate = FkTemplateSerializer()
+    taskvalues = serializers.JSONField()
+>>>>>>> Stashed changes
+=======
+    fktemplate = FkTemplateSerializer()
+    taskvalues = serializers.JSONField()
+>>>>>>> Stashed changes
     
     def create(self, validated_data):
         from uuid import uuid4

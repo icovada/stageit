@@ -42,15 +42,25 @@
                 <div class="form-row">
                     <div class="form-group col-xl-6 form-left">
                         <label for="template">Template</label>
+                        {% verbatim %}
                         <textarea class="form-control text-monospace" id="template" rows="6"
-                            aria-describedby="templateHelp"></textarea>
+                            aria-describedby="templateHelp">Hello {{name}}!
+
+{% if test -%}
+  How are you?
+{%- endif %}
+                        </textarea>
+                        {% endverbatim %}
                         <small id="templateHelp" class="form-text text-muted">Leave empty to leave final device
                             config empty.<br />Pure text or Jinja2 templates accepted</small>
                     </div>
                     <div class="form-group col-xl-6 form-right">
                         <label for="templatevalues">Template values</label>
                         <textarea class="form-control text-monospace" id="templatevalues" rows="6"
-                            aria-describedby="templatevaluesHelp"></textarea>
+                            aria-describedby="templatevaluesHelp">{
+  "name": "John",
+  "test": true
+}</textarea>
                         <small id="templatevaluesHelp" class="form-text text-muted">Insert variables required by
                             your template in yaml format</small>
                     </div>

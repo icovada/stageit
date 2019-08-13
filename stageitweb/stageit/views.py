@@ -2,6 +2,7 @@ from django.shortcuts import render
 
 from stageitweb.stageit.models import Templates, Tasks, History
 import pickle
+import json
 
 # Create your views here.
 def index(request):
@@ -12,7 +13,7 @@ def templates(request):
 
 def templatesdetail(request, uuid):
     data = Templates.objects.get(pkid=uuid).__dict__
-    data['templatevalues'] = pickle.loads(data['templatevalues'])
+    data['templatevalues'] = json.dumps(data['templatevalues'], indent=4, sort_keys=True)
 
     return render(request, 'stageit/templates/detail.html', data)
 
@@ -44,7 +45,7 @@ def tasksdetail(request, uuid):
 
 def tasksadd(request, uuid):
     data = Templates.objects.get(pkid=uuid).__dict__
-    data['templatevalues'] = pickle.loads(data['templatevalues'])
+    data['templatevalues'] = json.dumps(data['templatevalues'], indent=4, sort_keys=True)
     data['fktemplate'] = str(uuid)
     data['slug'] = str(uuid)[:5]
     return render(request, 'stageit/tasks/add.html', data)

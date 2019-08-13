@@ -1,3 +1,4 @@
+import jsonfield
 from django.db import models
 from uuid import uuid4
 
@@ -12,7 +13,7 @@ class Templates(models.Model):
     platform = models.TextField(max_length=30, null=False)
     poststaging = models.TextField(max_length=1000)
     template = models.TextField(max_length=500000)
-    templatevalues = models.BinaryField(editable=True)
+    templatevalues = jsonfield.JSONField()
 
 class History(models.Model):
     """Defines history table."""
@@ -27,7 +28,7 @@ class History(models.Model):
     serial = models.TextField(max_length=20)
     serial_number = models.TextField(max_length=50)
     template = models.TextField(max_length=20000)
-    templatevalues = models.BinaryField(editable=True)
+    templatevalues = jsonfield.JSONField()
     vendor = models.TextField(max_length=30)
 
 class Tasks(models.Model):
@@ -35,7 +36,7 @@ class Tasks(models.Model):
     pkid = models.UUIDField(primary_key=True, default=None, editable=False)
     description = models.TextField(max_length=50)
     fktemplate = models.ForeignKey(Templates, on_delete=models.CASCADE)
-    taskvalues = models.BinaryField(editable=True)
+    taskvalues = jsonfield.JSONField()
 
 class Log(models.Model):
     """Define staging Log format"""
