@@ -36,3 +36,10 @@ class Tasks(models.Model):
     description = models.TextField(max_length=50)
     fktemplate = models.ForeignKey(Templates, on_delete=models.CASCADE)
     taskvalues = models.BinaryField(editable=True)
+
+class Log(models.Model):
+    """Define staging Log format"""
+    fkhistory = models.ForeignKey(History, on_delete=models.CASCADE)
+    sequence = models.PositiveIntegerField()
+    log = models.TextField()
+    logdate = models.DateTimeField(auto_now_add=True)
