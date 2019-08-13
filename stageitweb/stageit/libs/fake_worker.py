@@ -7,8 +7,9 @@ import io
 import pickle
 #from stageit.libs.db import History, newsession
 import logging
-
-from stageit.celeryapp import app
+from stageit.libs.fakeio import FakeIO
+from stageitweb.stageit.models import History
+from stageit.celery import app
 
 class FakeWorker(app.Task):
     """
@@ -18,6 +19,7 @@ class FakeWorker(app.Task):
 
     def __init__(self, **kwargs):
         self.status = "Initializing"
+        self.fkhistory = History.objects.get(pkid=kwargs.get('fkhistory'))
 
 
         # Adapted from Sim City 4 loading screen to fit network
@@ -107,7 +109,7 @@ class FakeWorker(app.Task):
         
         self.work = work
 
-        self.log = io.BytesIO()
+        self.log = FakeIO(fkhistory=self.fkhistory)
         return self.stageit()
 
     def getstatus(self):
@@ -127,14 +129,12 @@ class FakeWorker(app.Task):
         """Choose random status"""
         for i in range(random.randint(5, 10)):
             self.status = self.statuses[random.randint(0, len(self.statuses)-1)]
-            self.log.write(self.status.encode('utf-8'))
-            self.log.write("\n".encode('utf-8'))
-            self.update_state(state='PROGRESS', meta={'task': self.status})
+            self.log.write(self.status.encode('utf-8') + "\n".encode('utf-8'))
             logging.info(self.status)
             sleep(random.randint(1, 10))
         return True
 
 @app.task()
 def fakeworker(**kwargs):
-    worker = FakeWorker()
+    worker = FakeWorker(fkhistory = kwargs.get('fkhistory'))
     return worker.run(work=kwargs.get('work'))

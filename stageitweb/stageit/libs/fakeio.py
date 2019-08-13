@@ -8,7 +8,7 @@ from stageitweb.stageit.models import History, Log
 class FakeIO(BytesIO):
     def __init__(self, fkhistory):
         self.sequence = 1
-        self.fkhistory = History.objects.get(pkid=fkhistory)
+        self.fkhistory = fkhistory
         self.buffer = BytesIO()
 
     def close(self):
@@ -51,7 +51,7 @@ class FakeIO(BytesIO):
         row.fkhistory = self.fkhistory
         row.log = text.decode()
         row.sequence = self.sequence
-        self.sequence += self.sequence
+        self.sequence += 1
         row.save()
         return self.buffer.write(text)
 
