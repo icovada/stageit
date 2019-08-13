@@ -3,9 +3,12 @@ A class overriding BytesIO to write every line added into a database
 """
 
 from io import BytesIO
+from stageitweb.stageit.models import History, Log
 
 class FakeIO(BytesIO):
-    def __init__(self):
+    def __init__(self, fkhistory):
+        self.sequence = 1
+        self.fkhistory = History.objects.get(pkid=fkhistory)
         self.buffer = BytesIO()
 
     def close(self):
@@ -43,8 +46,14 @@ class FakeIO(BytesIO):
     #def tell
     #def truncate
     #def writable
-    def write(self, *args):
-        return self.buffer.write(*args)
+    def write(self, text):
+        row = Log()
+        row.fkhistory = self.fkhistory
+        row.log = text
+        row.sequence = self.sequence
+        self.sequence += self.sequence
+        row.save()
+        return self.buffer.write(text)
 
     def writelines(self, *args):
         return self.buffer.writelines(*args)
