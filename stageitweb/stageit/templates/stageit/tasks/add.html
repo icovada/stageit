@@ -1,57 +1,71 @@
 {% extends "stageit/layout.html" %}
 
-{% block body %}>
-<h1 class="row justify-content-center py-4 col no-gutters">Create task from {{fktemplate}}</h1>
-<div class="container col col-xl-8 justify-content-center pb-5">
-    <form class="needs-validation" action="/api/tasks/" id="taskform" method="post">
-        <div class="form-group mb-3">
-            <label for="description">Description</label>
-            <input type="text" class="form-control" name="description" id="description" required>
-        </div>
-        <h4 class="mb-3">Final configuration details</h4>
-        <div class="form-row">
-            <div class="form-group col-xl-6 mb-3">
-                <label for="template">Template</label>
-                <textarea class="form-control text-monospace" id="template" rows="6" aria-describedby="templateHelp"
-                    disabled>{{template}}</textarea>
-                <small id="templateHelp" class="form-text text-muted">Modify template to change this</small>
-            </div>
-            <div class="form-group col-xl-6 mb-3">
-                <label for="taskvalues">Template values</label>
-                <textarea class="form-control text-monospace" id="taskvalues" rows="6"
-                    aria-describedby="taskvaluesHelp">{{templatevalues}}</textarea>
-                <small id="taskvaluesHelp" class="form-text text-muted">Insert variables required by your template
-                    in
-                    yaml format</small>
-            </div>
-        </div>
-        <p>
-            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#templaterender"
-                aria-expanded="false" aria-controls="templaterender">Test</button>
-        </p>
-        <div id="renderalertspace"></div>
-        <div class="row">
-            <div class="col">
-                <div class="collapse multi-collapse" id="templaterender">
-                    <div class="card card-body">
-                        <div class="spinner-grow" role="status" , id="templaterenderspinner"></div>
-                        <div class="text-monospace" id="templaterenderview"></div>
+{% block body %}
+<div class="top-gutter bottom-gutter container-wrapper">
+    <div class="content-area">
+        <div class="container">
+
+            <form class="needs-validation" action="/api/tasks/" id="taskform" method="post">
+                <div class="form-group">
+                    <h1>Create task from {{slug}}</h1>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <input type="text" class="form-control" name="description" id="description" required>
+                </div>
+                <h4 class="mb-3">Final configuration details</h4>
+                <div class="form-row">
+                    <div class="form-group col-xl-6 form-left">
+                        <label for="template">Template</label>
+                        <textarea class="form-control text-monospace" id="template" rows="6"
+                            aria-describedby="templateHelp" disabled>{{template}}</textarea>
+                        <small id="templateHelp" class="form-text text-muted">Modify template to change this</small>
+                    </div>
+                    <div class="form-group col-xl-6 form-right">
+                        <label for="taskvalues">Template values</label>
+                        <textarea class="form-control text-monospace" id="taskvalues" rows="6"
+                            aria-describedby="taskvaluesHelp">{{templatevalues}}</textarea>
+                        <small id="taskvaluesHelp" class="form-text text-muted">Insert variables required by your
+                            template
+                            in
+                            yaml format</small>
                     </div>
                 </div>
-            </div>
+                <button class="btn btn-primary" type="button" data-toggle="modal"
+                    data-target="#templaterender">Test</button>
+                <div class="modal fade" tabindex="-1" role="dialog" id="templaterender">
+                    <div class="modal-dialog modal-xl" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Rendered template</h5>
+                            </div>
+                            <div class="modal-body">
+                                <pre><code id="templaterenderview"></code></pre>
+                            </div>
+                            <div class="modal-footer">
+                                <!-- use the .btn-link-toolbar for the correct padding if the footer only contains link buttons -->
+                                <div class="btn-link-toolbar">
+                                    <button type="button" class="btn btn-link" data-dismiss="modal">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr class="mb-4">
+                <button class="btn btn-primary btn-lg btn-block" type="button" , id=createbutton>Create task</button>
+                <div id="submitalertspace" class="my-3"></div>
+            </form>
         </div>
-        <div class="form-row col-xl-6 mb-3 text-monospace" id="renderview" style="display: none;"></div>
-        <hr class="mb-4">
-        <button class="btn btn-primary btn-lg btn-block" type="button" , id=createbutton>Create task</button>
-        <div id="submitalertspace" class="my-3"></div>
-    </form>
+    </div>
 </div>
+
 
 {% endblock %}
 
 {% block script %}
 <script>
-    $("#templaterender").on('shown.bs.collapse', function () {
+    $("#templaterender").on('show.bs.modal', function () {
         $.ajax({
             type: "POST",
             url: "/api/convertjinja",
@@ -61,33 +75,15 @@
             },
             success: function (msg) {
                 if (msg['status'] == 'OK') {
-                    $("#templaterenderspinner").hide()
                     $('#templaterenderview').html(msg['message']);
                 } else {
-                    $('#templaterender').collapse('hide')
-                    $('#templaterenderview').html("");
-                    $("#templaterenderspinner").show()
-                    $('#renderalertspace').append('<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
-                        '<strong>Error</strong> ' + msg['message'] +
-                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-                        '<span aria-hidden="true">&times;</span></button></div>')
+                    // Show error
                 }
             },
             error: function () {
-                $('#templaterender').collapse('hide')
-                $('#templaterenderview').html("");
-                $("#templaterenderspinner").show()
-                $('#renderalertspace').append('<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
-                    '<strong>Error</strong> General error' +
-                    '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-                    '<span aria-hidden="true">&times;</span></button></div>')
+                // Show error
             }
         });
-    })
-
-    $("#templaterender").on('hidden.bs.collapse', function () {
-        $("#templaterenderspinner").show()
-        $('#templaterenderview').html("");
     })
 
     $('#createbutton').on('click', function (event) {
@@ -101,19 +97,12 @@
                 taskvalues: $('#taskvalues').val(),
             }
         }).done(function (response) {
-            $('#submitalertspace').append('<div class="alert alert-success alert-dismissible fade show" role="alert">' +
-                '<strong>Submitted</strong> Task <a href="/tasks/' + response + '">' + response.substring(0, 5) + '</a> was submitted' +
-                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-                '<span aria-hidden="true">&times;</span></button></div>')
+            var $toast = basecoat.toast('<span class="fa fa-check"></span>Task submitted', 'success').trigger('show');
+            $toast.trigger('show', [5000]); // show toast for 5s
         }).fail(function (response) {
-            var descinput = document.getElementById('description')
-            descinput.classList.add("is-invalid");
-            $('#submitalertspace').append('<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
-                '<strong>Error</strong> There was an error submitting the task' +
-                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-                '<span aria-hidden="true">&times;</span></button></div>')
+            var $toast = basecoat.toast('<span class="fa fa-times"></span>There was an error submitting your template', 'warning').trigger('show');
+            $toast.trigger('show', [5000]); // show toast for 5s
         });
     });
-
 </script>
 {% endblock %}

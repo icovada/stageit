@@ -29,11 +29,22 @@ def tasks(request):
     return render(request, 'stageit/tasks.html')
 
 def tasksdetail(request, uuid):
-    data = Tasks.objects.get(pkid=uuid).__dict__
+    task = Tasks.objects.get(pkid=uuid)
+    data = Tasks.objects.get(pkid=uuid).__dict__.copy()
+
+    data['taskvalues'] = pickle.loads(data['taskvalues'])
+    data['filepath'] = task.fktemplate.filepath
+    data['installmode'] = task.fktemplate.installmode
+    data['platform'] = task.fktemplate.platform
+    data['poststaging'] = task.fktemplate.poststaging
+    data['template'] = task.fktemplate.template
+    data['name'] = task.fktemplate.name
+
     return render(request, 'stageit/tasks/detail.html', data)
 
 def tasksadd(request, uuid):
     data = Templates.objects.get(pkid=uuid).__dict__
     data['templatevalues'] = pickle.loads(data['templatevalues'])
     data['fktemplate'] = str(uuid)
+    data['slug'] = str(uuid)[:5]
     return render(request, 'stageit/tasks/add.html', data)

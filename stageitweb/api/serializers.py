@@ -95,19 +95,13 @@ class TasksSerializer(serializers.Serializer):
     """Defines tasks table."""
     pkid = serializers.UUIDField(format='hex_verbose', required=False)
     description = serializers.CharField(max_length=50)
-    fktemplate = FkTemplateSerializer()
+    fktemplate = FkTemplateSerializer(required=False)
     taskvalues = PickledData()
     
     def create(self, validated_data):
         from uuid import uuid4
         pkid = str(uuid4())
         data = {**validated_data, 'pkid': pkid}
-
-        #templatedata = data['fktemplate'].__dict__
-
-        #data = {**data, **templatedata}
-
-        #data['fktemplate'] = Templates.objects.get(pkid=data['fktemplate'])
 
         return Tasks.objects.create(**data)
 
