@@ -104,10 +104,10 @@ class FakeWorker(app.Task):
         self.dbrow = None
         self.log = None
 
-    def run(self, work):
+    def run(self, **kwargs):
         logging.info("Fake Worker ready")
         
-        self.work = work
+        self.work = kwargs.get('work')
 
         self.log = FakeIO(fkhistory=self.fkhistory)
         return self.stageit()

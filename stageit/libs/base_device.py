@@ -1,18 +1,16 @@
 """BaseDevice to be expanded by subclasses."""
 import os
-from io import BytesIO
 import logging
 from time import sleep
 import napalm
 import netmiko
-from stageit.libs.db import History, newsession
 
 
 class BaseDevice():
     """BaseDevice to be expanded by subclasses."""
 
     def __init__(self, hostname, port, transport, platform,
-                 username, password, pkid, cservermgmt, **kwargs):
+                 username, password, cservermgmt, logbuffer, history, **kwargs):
         """Define all class data."""
         self.status = 'Init'
         logging.info(self.status)
@@ -25,7 +23,7 @@ class BaseDevice():
             password = ''
 
         self.driver = napalm.get_network_driver(platform)
-        self.logbuffer = BytesIO()
+        self.logbuffer = logbuffer
         self.sessiondata = {'hostname': hostname,
                             'username': username,
                             'password': password,
@@ -33,7 +31,7 @@ class BaseDevice():
                                               'transport': transport,
                                               'session_log': self.logbuffer}}
 
-        self.pkid = pkid
+        self.history = history
         self.cservermgmt = cservermgmt
 
         self.facts = None
@@ -68,14 +66,11 @@ class BaseDevice():
         with self.driver(**self.sessiondata) as session:
             session.timeout = 10
             self.facts = session.get_facts()
-        session = newsession()
-        dbrow = session.query(History).get(self.pkid)
-        dbrow.vendor = self.facts['vendor']
-        dbrow.serial_number = self.facts['serial_number']
-        dbrow.os_version = self.facts['os_version']
-        dbrow.model = self.facts['model']
-        session.commit()
-        session.close()
+        self.history.vendor = self.facts['vendor']
+        self.history.serial_number = self.facts['serial_number']
+        self.history.os_version = self.facts['os_version']
+        self.history.model = self.facts['model']
+        self.history.save()
 
 
     def load_temp_config(self, **kwargs):

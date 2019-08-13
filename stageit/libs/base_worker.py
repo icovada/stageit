@@ -1,120 +1,105 @@
 """Base Worker thread from which BaseDevice is spawned."""
 
 from threading import Thread
-import queue
 from time import sleep
 import logging
 from uuid import uuid4
 import pickle
 from datetime import datetime
+from stageit.libs.fakeio import FakeIO
+from stageitweb.stageit.models import History, Tasks
+from stageit.celery import app
 from jinja2 import Environment, BaseLoader
 from stageit.libs.base_device import BaseDevice
-from stageit.libs.db import History, Tasks, newsession
 
 
 class BaseWorker(Thread):
     """Base class to connect to network device."""
 
-    def __init__(self, q, cservermgmt, **kwargs):
+    name = "stageit.libs.base_worker"
+
+    def __init__(self, cservermgmt, **kwargs):
         """Init worker thread."""
-        Thread.__init__(self)
-        self.this_queue = q
-        self.hostname = kwargs['hostname']
-        self.port = kwargs['port']
-        self.transport = kwargs['transport']
+        self.hostname = None
+        self.port = None
+        self.transport = None
         # TODO: Pass these from template
-        self.username = "cisco"
-        self.password = "cisco"
-        self.line = kwargs['line']
-        self.mode = kwargs['model']
+        self.username = None
+        self.password = None
+        self.line = None
+        self.pkid = kwargs.get('fktask')
+
         self.status = "Initializing"
+        self.history = History()
+        self.history.pkid = uuid4()
+        self.history.save()
+
+        self.logbuffer = FakeIO(self.history.pkid)
+
+        self.task = Tasks.objects.get(pkid=self.pkid)
+        self.template = self.task.fktemplate
 
         self.cservermgmt = cservermgmt
 
-        self.description = None
-        self.templatevalues = None
-        self.template = None
-        self.finalconfig = None
-        self.platform = None
-        self.poststaging = None
-        self.filepath = None
-        self.installmode = None
-        self.pkid = None
-        self.dbrow = None
-        self.devicedata = None
-        self.tempconfig = None
-        self.driver = None
-
-    def run(self):
+    def run(self, **kwargs):
         """Multithreading calls this to start the task."""
         logging.info("Worker for %s:%s ready", self.hostname, self.port)
 
-        while True:
-            # Loop. Wait for work from queue
-            try:
-                self.status = "Waiting for work"
-                taskid = self.this_queue.get(timeout=600)
+        self.hostname = kwargs.get('hostname')
+        self.port = kwargs.get('port')
+        self.transport = kwargs.get('transport')
+        # TODO: Pass these from template
+        self.username = kwargs.get('username', 'cisco')
+        self.password = kwargs.get('password', 'cisco')
+        self.line = kwargs.get('line')
+        self.status = "Initializing"
 
-            except queue.Empty:
-                self.status = "Dead"
-                return
+        rtemplate = Environment(
+            loader=BaseLoader).from_string(self.template.template)
 
-            # We got work. Create DB session and get data from task pkid
-            session = newsession()
+        self.description = self.task.description
+        self.templatevalues = pickle.loads(self.task.taskvalues)
+        self.template = self.template.template
+        self.finalconfig = rtemplate.render(
+            **pickle.loads(self.task.taskvalues))
+        self.platform = self.template.platform
+        self.poststaging = self.template.poststaging
+        self.filepath = self.template.filepath
+        self.installmode = self.template.installmode
 
-            task = session.query(Tasks).get(taskid)
-            template = task.template
-            rtemplate = Environment(
-                loader=BaseLoader).from_string(template.template)
+        self.history.datestart=datetime.utcnow(),
+        self.history.description=self.description,
+        self.history.installmode=self.installmode,
+        self.history.templatevalues=self.task.taskvalues,
+        self.history.template=self.template
+        self.history.save()
 
-            self.description = task.description
-            self.templatevalues = pickle.loads(task.taskvalues)
-            self.template = template.template
-            self.finalconfig = rtemplate.render(
-                **pickle.loads(task.taskvalues))
-            self.platform = template.platform
-            self.poststaging = template.poststaging
-            self.filepath = template.filepath
-            self.installmode = template.installmode
+        # Data to pass to Worker class
+        self.devicedata = {'hostname': self.hostname,
+                           'port': self.port,
+                           'transport': self.transport,
+                           'username': self.username,
+                           'password': self.password,
+                           'platform': self.platform,
+                           'logbuffer': self.logbuffer,
+                           'history': self.history}
 
-            # Create history DB row
-            self.pkid = str(uuid4())
+        self.tempconfig = {"username": "cisco",
+                            "password": "cisco"}
 
-            self.dbrow = History(
-                pkid=self.pkid,
-                datestart=datetime.utcnow(),
-                description=self.description,
-                installmode=self.installmode,
-                templatevalues=task.taskvalues,
-                template=self.template
-            )
+        self.status = "Discovering platform"
+        self.driver = self.find_model()
 
-            # Data to pass to Worker class
-            self.devicedata = {'hostname': self.hostname,
-                               'port': self.port,
-                               'transport': self.transport,
-                               'username': self.username,
-                               'password': self.password,
-                               'platform': self.platform,
-                               'pkid': self.pkid}
+        self.status = "Working"
+        # Actually do the job (finally!)
+        self.stageit()
 
-            self.tempconfig = {"username": "cisco",
-                               "password": "cisco"}
-            session.add(self.dbrow)
-            session.commit()
+        self.history.rundata = pickle.dumps({'Run Log': self.driver.getlog()})
 
-            self.status = "Discovering platform"
-            self.driver = self.find_model()
+        self.task.delete()
+        self.history.dateend = datetime.utcnow()
+        self.history.save()
 
-            self.status = "Working"
-            self.stageit()
-
-            session.rundata = pickle.dumps({'Run Log': self.driver.getlog()})
-
-            session.delete(task)
-            self.dbrow.dateend = datetime.utcnow()
-            session.commit()
-            self.this_queue.task_done()
 
     def find_model(self):
         """Find device type and return appropriate class to deal with
@@ -171,3 +156,9 @@ class BaseWorker(Thread):
                                              mode=self.installmode)
 
         self.driver.load_final_config(self.template, **self.templatevalues)
+
+
+@app.task()
+def baseworker(**kwargs):
+    worker = BaseWorker(**kwargs)
+    return worker.run(**kwargs)
