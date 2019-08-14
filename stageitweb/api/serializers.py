@@ -79,7 +79,6 @@ class HistorySerializer(serializers.Serializer):
     def create(self, validated_data):
         from uuid import uuid4
         pkid = uuid4()
-        data = {**validated_data, 'pkid': pkid}
 
         return History.objects.create(**validated_data)
 

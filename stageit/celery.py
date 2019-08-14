@@ -1,8 +1,6 @@
 from celery import Celery
 import os
 
-#import stageit.libs.fake_worker
-
 os.environ.setdefault('FORKED_BY_MULTIPROCESSING', '1')
 
 app = Celery()
