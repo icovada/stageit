@@ -129,7 +129,9 @@ pre code {
  display:block;
  overflow-x:auto;
  padding:.5em;
- color:#333
+ color:#333;
+ min-height:36px;
+ background:#eff1f6
 }
 .code-example .hljs-comment,
 .code-example .hljs-quote {
@@ -222,10 +224,6 @@ pre code {
 }
 .code-example pre {
  margin-bottom:30px
-}
-.code-example .hljs {
- min-height:36px;
- background:#eff1f6
 }
 .code-example .btn[data-action=clipboard] {
  position:absolute;
