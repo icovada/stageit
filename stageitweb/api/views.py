@@ -28,7 +28,7 @@ class HistoryViewSet(viewsets.ModelViewSet):
     queryset = History.objects.all()
     serializer_class = HistorySerializer
 
-class LogViewSet(viewsets.ReadOnlyModelViewSet):
+class LogViewSet(viewsets.ModelViewSet):
     queryset = Log.objects.all()
     serializer_class = LogSerializer
     filter_fields = {
