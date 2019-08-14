@@ -65,16 +65,18 @@ class HistorySerializer(serializers.Serializer):
     pkid = serializers.UUIDField(format='hex_verbose', required=False)
     dateend = serializers.DateTimeField
     datestart = serializers.DateTimeField
-    description = serializers.CharField(max_length=50)
-    installmode = serializers.CharField(max_length=20)
-    model = serializers.CharField(max_length=50)
-    os_version = serializers.CharField(max_length=300)
-    rundata = serializers.JSONField()
-    serial = serializers.CharField(max_length=20)
-    serial_number = serializers.CharField(max_length=50)
-    template = serializers.CharField(max_length=20000)
-    templatevalues = serializers.JSONField()
-    vendor = serializers.CharField(max_length=30)
+    description = serializers.CharField(max_length=50, required=False)
+    installmode = serializers.CharField(max_length=20, required=False)
+    model = serializers.CharField(max_length=50, required=False)
+    os_version = serializers.CharField(max_length=300, required=False)
+    rundata = serializers.JSONField(required=False)
+    serial = serializers.CharField(max_length=20, required=False)
+    serial_number = serializers.CharField(max_length=50, required=False)
+    template = serializers.CharField(max_length=20000, required=False)
+    templatevalues = serializers.JSONField(required=False)
+    vendor = serializers.CharField(max_length=30, required=False)
+    status = serializers.CharField(required=False)
+    workerid = serializers.CharField(required=False)
 
     def create(self, validated_data):
         from uuid import uuid4

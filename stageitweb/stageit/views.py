@@ -43,12 +43,9 @@ def tasksdetail(request, uuid):
 
     return render(request, 'stageit/tasks/detail.html', data)
 
-# TODO COMPLETELY
 def tasksadd(request, uuid):
-    data = Tasks.objects.get(pkid=uuid)
-    template = data.fktemplate.__dict__
-    data = data.__dict__
-    data['templatevalues'] = json.dumps(template['templatevalues'], indent=4, sort_keys=True)
+    data = Templates.objects.get(pkid=uuid).__dict__
+    data['templatevalues'] = json.dumps(data['templatevalues'], indent=4, sort_keys=True)
     data['fktemplate'] = str(uuid)
     data['slug'] = str(uuid)[:5]
     return render(request, 'stageit/tasks/add.html', data)

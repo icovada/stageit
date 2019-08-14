@@ -24,12 +24,14 @@ class History(models.Model):
     installmode = models.TextField(max_length=20)
     model = models.TextField(max_length=50)
     os_version = models.TextField(max_length=300)
-    rundata = models.BinaryField(max_length=1024000, editable=True)
+    rundata = models.BinaryField(max_length=1024000, editable=True, null=True)
     serial = models.TextField(max_length=20)
     serial_number = models.TextField(max_length=50)
     template = models.TextField(max_length=20000)
     templatevalues = jsonfield.JSONField()
     vendor = models.TextField(max_length=30)
+    status = models.TextField(null=True)
+    workerid = models.TextField(null=True)
 
 class Tasks(models.Model):
     """Defines tasks table."""
