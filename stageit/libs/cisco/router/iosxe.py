@@ -44,9 +44,8 @@ class IOSXERouter(BaseDevice):
                 oldmajor = int(firmware[1].split(".")[0])
                 newmajor = int(version.split(".")[0])
 
-                if oldmajor < 16:
-                    if newmajor > 15:
-                        upgradestatus = self._upgrade_to_bundle(uri)
+                if oldmajor < 16 and newmajor > 15:
+                    upgradestatus = self._upgrade_to_bundle(uri)
 
                 if mode == "BUNDLE":
                     upgradestatus = self._upgrade_to_bundle(uri)
