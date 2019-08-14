@@ -32,6 +32,7 @@ class History(models.Model):
     vendor = models.TextField(max_length=30)
     status = models.TextField(null=True)
     workerid = models.TextField(null=True)
+    fktask = models.TextField(null=False)
 
 class Tasks(models.Model):
     """Defines tasks table."""

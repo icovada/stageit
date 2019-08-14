@@ -26,6 +26,18 @@ def history(request):
 def historydetail(request, uuid):
     return render(request, 'stageit/history/detail.html')
 
+def historyadd(request, uuid):
+    from uuid import uuid4
+    from stageit.libs import fake_worker
+    history = History()
+    history.pkid = uuid4()
+    history.fktask = uuid
+    history.save()
+
+    w = fake_worker.fakeworker.delay(fkhistory=str(history.pkid))
+
+    return render(request, 'stageit/history/add.html')
+
 def tasks(request):
     return render(request, 'stageit/tasks.html')
 

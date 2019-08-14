@@ -8,6 +8,7 @@ urlpatterns = [
     path('templates/add', views.templatesadd, name='templatesadd'),
     path('history', views.history, name='history'),
     path('history/<uuid:uuid>', views.historydetail, name='historydetail'),
+    path('history/new/<uuid:uuid>', views.historyadd, name='historyadd'),
     path('tasks', views.tasks, name='tasks'),
     path('tasks/<uuid:uuid>', views.tasksdetail, name='tasksdetail'),
     path('tasks/new/<uuid:uuid>', views.tasksadd, name='tasksadd'),

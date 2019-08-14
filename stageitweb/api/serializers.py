@@ -77,6 +77,7 @@ class HistorySerializer(serializers.Serializer):
     vendor = serializers.CharField(max_length=30, required=False)
     status = serializers.CharField(required=False)
     workerid = serializers.CharField(required=False)
+    fktask = serializers.CharField()
 
     def create(self, validated_data):
         from uuid import uuid4
@@ -116,14 +117,14 @@ class TasksSerializer(serializers.Serializer):
 
 class LogSerializer(serializers.Serializer):
     """Defines log table"""
-    #fkhistory = FkHistorySerializer(required=False, read_only=True)
-    sequence = serializers.IntegerField(read_only=True)
-    log = serializers.CharField(read_only=True) 
+    fkhistory = FkHistorySerializer()
+    sequence = serializers.IntegerField()
+    log = serializers.CharField() 
 
     def get_queryset(self, **kwargs):
-        """
-        List only logs relevant to history row and after line number
-        URL format: /api/logs/<fkhistory>/<lastrow>
-        """
+
         fkhistory = self.kwargs.get(self.lookup_url_kwarg)
         return Log.objects.filter(fkhistory=fkhistory).order_by('sequence', 'asc')
+
+    def create(self, validated_data):
+        return Log.objects.create(**validated_data)
