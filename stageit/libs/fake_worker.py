@@ -8,8 +8,8 @@ import pickle
 #from stageit.libs.db import History, newsession
 import logging
 from stageit.libs.fakeio import FakeIO
-from stageitweb.stageit.models import History
 from stageit.celery import app
+import requests
 
 class FakeWorker(app.Task):
     """
@@ -19,8 +19,6 @@ class FakeWorker(app.Task):
 
     def __init__(self, **kwargs):
         self.status = "Initializing"
-        self.fkhistory = History.objects.get(pkid=kwargs.get('fkhistory'))
-
 
         # Adapted from Sim City 4 loading screen to fit network
         self.statuses = ["Adding Hidden Config",
@@ -106,10 +104,21 @@ class FakeWorker(app.Task):
 
     def run(self, **kwargs):
         logging.info("Fake Worker ready")
+        logging.info(kwargs.get('fkhistory'))
+
+        self.historydata = requests.get('http://localhost:8000/api/history/' + kwargs.get('fkhistory') + '/?format=json')
+        self.pkid = self.historydata.json().get('pkid')
+        fktask = self.historydata.json().get('fktask')
+
+        self.task = requests.get('http://localhost:8000/api/tasks/' + fktask + '/?format=json')
+        fktemplate = self.task.json().get('fktemplate')
+        self.template = requests.get('http://localhost:8000/api/templates/' + fktemplate + '/?format=json')
+
+        logging.info(self.template.json().get('template'))
         
         self.work = kwargs.get('work')
 
-        self.log = FakeIO(fkhistory=self.fkhistory)
+        self.log = FakeIO(fkhistory=self.pkid)
         return self.stageit()
 
     def getstatus(self):
@@ -130,11 +139,16 @@ class FakeWorker(app.Task):
         for i in range(random.randint(5, 10)):
             self.status = self.statuses[random.randint(0, len(self.statuses)-1)]
             self.log.write(self.status.encode('utf-8') + "\n".encode('utf-8'))
+            if (i % 2) == 0:
+                self.log.flush()
             logging.info(self.status)
             sleep(random.randint(1, 10))
+        
+        self.log.flush()
         return True
+        
 
 @app.task()
 def fakeworker(**kwargs):
-    worker = FakeWorker(fkhistory = kwargs.get('fkhistory'))
-    return worker.run(work=kwargs.get('work'))
+    worker = FakeWorker()
+    return worker.run(fkhistory = kwargs.get('fkhistory'))

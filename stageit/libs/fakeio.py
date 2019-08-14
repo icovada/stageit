@@ -3,13 +3,14 @@ A class overriding BytesIO to write every line added into a database
 """
 
 from io import BytesIO
-from stageitweb.stageit.models import History, Log
+import requests
 
 class FakeIO(BytesIO):
     def __init__(self, fkhistory):
         self.sequence = 1
         self.fkhistory = fkhistory
         self.buffer = BytesIO()
+        self.lastflush = self.buffer.tell()
 
     def close(self):
         return self.buffer.close()
@@ -18,6 +19,20 @@ class FakeIO(BytesIO):
         return self.buffer.closed()
 
     def flush(self):
+        if self.lastflush == self.buffer.tell():
+            return self.buffer.flush()
+        self.buffer.seek(self.lastflush)
+        postdata = {'fkhistory': self.fkhistory,
+                    'sequence' : self.sequence,
+                    'log': self.buffer.read()}
+
+        log = requests.post('http://localhost:8000/api/log/?format=json',
+                            data = postdata)
+
+        assert log.ok
+
+        self.sequence += 1
+        self.lastflush = self.buffer.tell()
         return self.buffer.flush()
 
     def getbuffer(self):
@@ -47,12 +62,12 @@ class FakeIO(BytesIO):
     #def truncate
     #def writable
     def write(self, text):
-        row = Log()
-        row.fkhistory = self.fkhistory
-        row.log = text.decode()
-        row.sequence = self.sequence
-        self.sequence += 1
-        row.save()
+        #row = Log()
+        #row.fkhistory = self.fkhistory
+        #row.log = text.decode()
+        #row.sequence = self.sequence
+        #self.sequence += 1
+        #row.save()
         return self.buffer.write(text)
 
     def writelines(self, *args):
