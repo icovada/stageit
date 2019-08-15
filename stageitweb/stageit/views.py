@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponseForbidden
 
-from stageitweb.stageit.models import Templates, Tasks, History
+import stageitweb.stageit.models as models
 import pickle
 import json
 
@@ -13,7 +13,7 @@ def templates(request):
     return render(request, 'stageit/templates.html')
 
 def templatesdetail(request, uuid):
-    data = Templates.objects.get(pkid=uuid).__dict__
+    data = models.Templates.objects.get(pkid=uuid).__dict__
     data['templatevalues'] = json.dumps(data['templatevalues'], indent=4, sort_keys=True)
 
     return render(request, 'stageit/templates/detail.html', data)
@@ -28,16 +28,15 @@ def historydetail(request, uuid):
     return render(request, 'stageit/history/detail.html')
 
 def historyadd(request, uuid):
-    from uuid import uuid4
     from stageit.libs.fake_worker import fakeworker as fw
 
     # Check there are no other running workers for this task
-    if History.objects.filter(fktask = uuid, status = "In progress").count() > 0:
+    if models.History.objects.filter(fktask = uuid, status = "In progress").count() > 0:
         return HttpResponseForbidden("A worker is already running for this task")
     
-    history = History()
-    history.pkid = uuid4()
+    history = models.History()
     history.fktask = uuid
+    history.fkserialport = "249936ac-4957-4367-9506-5dceb90aab9c"
     history.save()
 
     fw.delay(fkhistory=str(history.pkid))
@@ -48,8 +47,8 @@ def tasks(request):
     return render(request, 'stageit/tasks.html')
 
 def tasksdetail(request, uuid):
-    task = Tasks.objects.get(pkid=uuid)
-    data = Tasks.objects.get(pkid=uuid).__dict__.copy()
+    task = models.Tasks.objects.get(pkid=uuid)
+    data = task.__dict__.copy()
 
     data['taskvalues'] = json.dumps(data['taskvalues'], indent=4, sort_keys=True)
     data['filepath'] = task.fktemplate.filepath
@@ -62,7 +61,7 @@ def tasksdetail(request, uuid):
     return render(request, 'stageit/tasks/detail.html', data)
 
 def tasksadd(request, uuid):
-    data = Templates.objects.get(pkid=uuid).__dict__
+    data = models.Templates.objects.get(pkid=uuid).__dict__
     data['templatevalues'] = json.dumps(data['templatevalues'], indent=4, sort_keys=True)
     data['fktemplate'] = str(uuid)
     data['slug'] = str(uuid)[:5]
