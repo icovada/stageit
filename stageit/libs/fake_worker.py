@@ -121,9 +121,9 @@ class FakeWorker(Task):
         self.pkid = self.historydata.json().get('pkid')
         fktask = self.historydata.json().get('fktask')
 
-        self.task = requests.get('http://localhost:8000/api/tasks/' + fktask + '/?format=json')
+        self.task = requests.get('http://localhost:8000/api/task/' + fktask + '/?format=json')
         fktemplate = self.task.json().get('fktemplate')
-        self.template = requests.get('http://localhost:8000/api/templates/' + fktemplate + '/?format=json')
+        self.template = requests.get('http://localhost:8000/api/template/' + fktemplate + '/?format=json')
 
         logging.info(self.template.json().get('template'))
         
