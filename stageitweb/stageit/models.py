@@ -33,6 +33,7 @@ class History(models.Model):
     status = models.TextField(null=True)
     workerid = models.TextField(null=True)
     fktask = models.TextField(null=False)
+    fkserialport = models.UUIDField()
 
 class Tasks(models.Model):
     """Defines tasks table."""
