@@ -3,7 +3,7 @@ import stageitweb.stageit.models as models
 from rest_framework import generics
 
 
-class TemplatesSerializer(serializers.Serializer):
+class TemplatesSerializer(serializers.ModelSerializer):
     """Defines templates table."""
     pkid = serializers.UUIDField(format='hex_verbose', required=False)
     description = serializers.CharField(max_length=50)
@@ -15,20 +15,12 @@ class TemplatesSerializer(serializers.Serializer):
     template = serializers.CharField(max_length=500000)
     templatevalues = serializers.JSONField()
 
-    def create(self, validated_data):
-        from uuid import uuid4
-        pkid = uuid4()
-        data = {**validated_data, 'pkid': pkid}
+    class Meta:
+        model = models.Templates
+        fields = '__all__'
 
-        return models.Templates.objects.create(**data)
 
-    def update(self, instance, validated_data):
-        instance.__dict__ = {**instance.__dict__, **validated_data}
-        instance.save()
-
-        return instance
-
-class HistorySerializer(serializers.Serializer):
+class HistorySerializer(serializers.ModelSerializer):
     """Defines history table."""
     pkid = serializers.UUIDField(format='hex_verbose', required=False)
     dateend = serializers.DateTimeField
@@ -47,57 +39,39 @@ class HistorySerializer(serializers.Serializer):
     workerid = serializers.CharField(required=False)
     fktask = serializers.CharField(required=False)
 
-    def create(self, validated_data):
-        from uuid import uuid4
-
-        validated_data['pkid'] = validated_data.get('pkid', uuid4())
-
-        return models.History.objects.create(**validated_data)
-
-    def update(self, instance, validated_data):
-        instance.__dict__ = {**instance.__dict__, **validated_data}
-        instance.save()
-
-        return instance
-
+    class Meta:
+        model = models.History
+        fields = '__all__'
 
     
-class TasksSerializer(serializers.Serializer):
+class TasksSerializer(serializers.ModelSerializer):
     """Defines tasks table."""
     pkid = serializers.UUIDField(format='hex_verbose', required=False)
     description = serializers.CharField(max_length=50)
     fktemplate = serializers.PrimaryKeyRelatedField(queryset=models.Templates.objects, required=False)
     taskvalues = serializers.JSONField(required=False)
+
+    class Meta:
+        model = models.Tasks
+        fields = '__all__'
     
-    def create(self, validated_data):
-        from uuid import uuid4
-        pkid = str(uuid4())
-        data = {**validated_data, 'pkid': pkid}
 
-        return models.Tasks.objects.create(**data)
-
-    def update(self, instance, validated_data):
-        instance.__dict__ = {**instance.__dict__, **validated_data}
-        instance.save()
-
-        return instance
-
-
-class LogSerializer(serializers.Serializer):
+class LogSerializer(serializers.ModelSerializer):
     """Defines log table"""
     fkhistory = serializers.PrimaryKeyRelatedField(queryset=models.History.objects)
     sequence = serializers.IntegerField()
     log = serializers.CharField() 
 
     def get_queryset(self, **kwargs):
-
         fkhistory = self.kwargs.get(self.lookup_url_kwarg)
         return models.Log.objects.filter(fkhistory=fkhistory).order_by('sequence', 'asc')
 
-    def create(self, validated_data):
-        return models.Log.objects.create(**validated_data)
+    class Meta:
+        model = models.Log
+        fields = '__all__'
 
-class TerminalServerSerializer(serializers.Serializer):
+    
+class TerminalServerSerializer(serializers.ModelSerializer):
     pkid = serializers.UUIDField(format='hex_verbose', required=False)
     name = serializers.CharField()
     model = serializers.CharField()
@@ -106,24 +80,17 @@ class TerminalServerSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField()
 
-    def create(self, validated_data):
-        from uuid import uuid4
-        pkid = str(uuid4())
-        data = {**validated_data, 'pkid': pkid}
+    class Meta:
+        model = models.TerminalServer
+        fields = '__all__'
 
-        return models.TerminalServer.objects.create(**data)
-
-
-class SerialPortSerializer(serializers.Serializer):
+class SerialPortSerializer(serializers.ModelSerializer):
     pkid = serializers.UUIDField(format='hex_verbose', required=False)
     fkterminalserver = serializers.PrimaryKeyRelatedField(queryset=models.TerminalServer.objects)
     transport = serializers.CharField()
     port = serializers.IntegerField()
     line = serializers.IntegerField()
 
-    def create(self, validated_data):
-        from uuid import uuid4
-        pkid = str(uuid4())
-        data = {**validated_data, 'pkid': pkid}
-
-        return models.SerialPort.objects.create(**data)
+    class Meta:
+        model = models.SerialPort
+        fields = '__all__'

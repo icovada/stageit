@@ -5,7 +5,7 @@ from uuid import uuid4
 # Create your models here.
 class Templates(models.Model):
     """Defines templates table."""
-    pkid = models.UUIDField(primary_key=True, default=None, editable=False)
+    pkid = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     description = models.TextField(max_length=50)
     filepath = models.TextField(max_length=256)
     installmode = models.TextField(max_length=20)
@@ -17,7 +17,7 @@ class Templates(models.Model):
 
 class History(models.Model):
     """Defines history table."""
-    pkid = models.UUIDField(primary_key=True, default=None, editable=False)
+    pkid = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     dateend = models.DateTimeField
     datestart = models.DateTimeField
     description = models.TextField(max_length=50)
@@ -28,7 +28,7 @@ class History(models.Model):
     serial = models.TextField(max_length=20)
     serial_number = models.TextField(max_length=50)
     template = models.TextField(max_length=20000)
-    templatevalues = jsonfield.JSONField()
+    templatevalues = jsonfield.JSONField(null=True)
     vendor = models.TextField(max_length=30)
     status = models.TextField(null=True)
     workerid = models.TextField(null=True)
@@ -36,10 +36,10 @@ class History(models.Model):
 
 class Tasks(models.Model):
     """Defines tasks table."""
-    pkid = models.UUIDField(primary_key=True, default=None, editable=False)
+    pkid = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     description = models.TextField(max_length=50)
     fktemplate = models.ForeignKey(Templates, on_delete=models.CASCADE)
-    taskvalues = jsonfield.JSONField()
+    taskvalues = jsonfield.JSONField(null=True)
 
 class Log(models.Model):
     """Define staging Log format"""
@@ -49,7 +49,7 @@ class Log(models.Model):
     logdate = models.DateTimeField(auto_now_add=True)
 
 class TerminalServer(models.Model):
-    pkid = models.UUIDField(primary_key=True, editable=False)
+    pkid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
     name = models.TextField()
     model = models.TextField()
     hostname = models.TextField()
@@ -58,7 +58,7 @@ class TerminalServer(models.Model):
     password = models.TextField()
 
 class SerialPort(models.Model):
-    pkid = models.UUIDField(primary_key=True, editable=False)
+    pkid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
     fkterminalserver = models.ForeignKey(TerminalServer, on_delete=models.PROTECT)
     transport = models.TextField()
     port = models.IntegerField()
