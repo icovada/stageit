@@ -30,7 +30,7 @@
         if (a == true) {
             $.ajax({
                 type: 'DELETE',
-                url: "/api/tasks/" + $(this).attr("taskid"),
+                url: "/api/task/" + $(this).attr("taskid"),
             }).done(function (response) {
                 location.reload();
             }).fail(function (response) {
@@ -56,7 +56,7 @@
 
     $(document).ready(function () {
         var dataSet = $.getJSON({
-            url: '/api/tasks/?format=json',
+            url: '/api/task/?format=json',
             async: false
         }).responseJSON;
 

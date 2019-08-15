@@ -5,7 +5,7 @@
     <div class="content-area">
         <div class="container">
 
-            <form class="needs-validation" action="/api/templates/" id="templateform" method="post">
+            <form class="needs-validation" action="/api/template/" id="templateform" method="post">
                 <div class="form-group">
                     <h1>Edit task</h2>
                         <p>{{pkid}}</p>
@@ -183,7 +183,7 @@
         event.preventDefault();
         $.ajax({
             type: 'PUT',
-            url: "/api/tasks/{{pkid}}/",
+            url: "/api/task/{{pkid}}/",
             data: {
                 description: $('#description').val(),
                 taskvalues: $('#taskvalues').val(),
@@ -206,7 +206,7 @@
             .on('accept', function () {
                 $.ajax({
                     type: 'DELETE',
-                    url: "/api/tasks/{{pkid}}/"});
+                    url: "/api/task/{{pkid}}/"});
                 basecoat.alert('Task deleted')
                     .on('hide.bs.modal', function () {
                         window.location.href = "/tasks";
