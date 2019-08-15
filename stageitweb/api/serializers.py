@@ -62,10 +62,6 @@ class LogSerializer(serializers.ModelSerializer):
     sequence = serializers.IntegerField()
     log = serializers.CharField() 
 
-    def get_queryset(self, **kwargs):
-        fkhistory = self.kwargs.get(self.lookup_url_kwarg)
-        return models.Log.objects.filter(fkhistory=fkhistory).order_by('sequence', 'asc')
-
     class Meta:
         model = models.Log
         fields = '__all__'
