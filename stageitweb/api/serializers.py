@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from stageitweb.stageit.models import Templates, History, Tasks, Log
+import stageitweb.stageit.models as models
 from rest_framework import generics
 
 import pickle
@@ -22,7 +22,7 @@ class FkTemplateSerializer(serializers.Field):
         return value.pkid
 
     def to_internal_value(self, value):
-        return Templates.objects.get(pkid=value)
+        return models.Templates.objects.get(pkid=value)
 
 class FkHistorySerializer(serializers.Field):
     """
@@ -32,7 +32,7 @@ class FkHistorySerializer(serializers.Field):
         return value.pkid
 
     def to_internal_value(self, value):
-        return History.objects.get(pkid=value)
+        return models.History.objects.get(pkid=value)
 
 
 class TemplatesSerializer(serializers.Serializer):
@@ -52,7 +52,7 @@ class TemplatesSerializer(serializers.Serializer):
         pkid = uuid4()
         data = {**validated_data, 'pkid': pkid}
 
-        return Templates.objects.create(**data)
+        return models.Templates.objects.create(**data)
 
     def update(self, instance, validated_data):
         instance.__dict__ = {**instance.__dict__, **validated_data}
@@ -84,7 +84,7 @@ class HistorySerializer(serializers.Serializer):
 
         validated_data['pkid'] = validated_data.get('pkid', uuid4())
 
-        return History.objects.create(**validated_data)
+        return models.History.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
         instance.__dict__ = {**instance.__dict__, **validated_data}
@@ -106,7 +106,7 @@ class TasksSerializer(serializers.Serializer):
         pkid = str(uuid4())
         data = {**validated_data, 'pkid': pkid}
 
-        return Tasks.objects.create(**data)
+        return models.Tasks.objects.create(**data)
 
     def update(self, instance, validated_data):
         instance.__dict__ = {**instance.__dict__, **validated_data}
@@ -124,7 +124,38 @@ class LogSerializer(serializers.Serializer):
     def get_queryset(self, **kwargs):
 
         fkhistory = self.kwargs.get(self.lookup_url_kwarg)
-        return Log.objects.filter(fkhistory=fkhistory).order_by('sequence', 'asc')
+        return models.Log.objects.filter(fkhistory=fkhistory).order_by('sequence', 'asc')
 
     def create(self, validated_data):
-        return Log.objects.create(**validated_data)
+        return models.Log.objects.create(**validated_data)
+
+class TerminalServerSerializer(serializers.Serializer):
+    pkid = serializers.UUIDField(format='hex_verbose', required=False)
+    name = serializers.CharField()
+    model = serializers.CharField()
+    hostname = serializers.CharField()
+    transport = serializers.CharField()
+    username = serializers.CharField()
+    password = serializers.CharField()
+
+    def create(self, validated_data):
+        from uuid import uuid4
+        pkid = str(uuid4())
+        data = {**validated_data, 'pkid': pkid}
+
+        return models.TerminalServer.objects.create(**data)
+
+
+class SerialPortSerializer(serializers.Serializer):
+    pkid = serializers.UUIDField(format='hex_verbose', required=False)
+    fkterminalserver = serializers.PrimaryKeyRelatedField(queryset=models.TerminalServer.objects)
+    transport = serializers.CharField()
+    port = serializers.IntegerField()
+    line = serializers.IntegerField()
+
+    def create(self, validated_data):
+        from uuid import uuid4
+        pkid = str(uuid4())
+        data = {**validated_data, 'pkid': pkid}
+
+        return models.SerialPort.objects.create(**data)

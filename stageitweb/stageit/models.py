@@ -47,3 +47,19 @@ class Log(models.Model):
     sequence = models.PositiveIntegerField()
     log = models.TextField()
     logdate = models.DateTimeField(auto_now_add=True)
+
+class TerminalServer(models.Model):
+    pkid = models.UUIDField(primary_key=True, editable=False)
+    name = models.TextField()
+    model = models.TextField()
+    hostname = models.TextField()
+    transport = models.TextField()
+    username = models.TextField()
+    password = models.TextField()
+
+class SerialPort(models.Model):
+    pkid = models.UUIDField(primary_key=True, editable=False)
+    fkterminalserver = models.ForeignKey(TerminalServer, on_delete=models.PROTECT)
+    transport = models.TextField()
+    port = models.IntegerField()
+    line = models.IntegerField()

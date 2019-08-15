@@ -6,8 +6,8 @@ from django.views.decorators.csrf import csrf_exempt
 import django_filters.rest_framework
 from rest_framework.parsers import JSONParser
 from rest_framework import viewsets
-from stageitweb.stageit.models import Templates, Tasks, History, Log
-from stageitweb.api.serializers import TemplatesSerializer, TasksSerializer, HistorySerializer, LogSerializer
+import stageitweb.stageit.models as models
+import stageitweb.api.serializers as serializers
 from rest_framework import generics
 
 
@@ -17,25 +17,32 @@ import jinja2
 
 
 class TemplatesViewSet(viewsets.ModelViewSet):
-    queryset = Templates.objects.all()
-    serializer_class = TemplatesSerializer 
+    queryset = models.Templates.objects.all()
+    serializer_class = serializers.TemplatesSerializer 
 
 class TasksViewSet(viewsets.ModelViewSet):
-    queryset = Tasks.objects.all()
-    serializer_class = TasksSerializer
+    queryset = models.Tasks.objects.all()
+    serializer_class = serializers.TasksSerializer
     
 class HistoryViewSet(viewsets.ModelViewSet):
-    queryset = History.objects.all()
-    serializer_class = HistorySerializer
+    queryset = models.History.objects.all()
+    serializer_class = serializers.HistorySerializer
 
 class LogViewSet(viewsets.ModelViewSet):
-    queryset = Log.objects.all()
-    serializer_class = LogSerializer
+    queryset = models.Log.objects.all()
+    serializer_class = serializers.LogSerializer
     filter_fields = {
         'sequence': ['gte', 'lte'],
         'fkhistory': ['exact']
     }
 
+class TerminalServerViewSet(viewsets.ModelViewSet):
+    queryset = models.TerminalServer.objects.all()
+    serializer_class = serializers.TerminalServerSerializer
+
+class SerialPortViewSet(viewsets.ModelViewSet):
+    queryset = models.SerialPort.objects.all()
+    serializer_class = serializers.SerialPortSerializer
 
 
 @csrf_exempt
