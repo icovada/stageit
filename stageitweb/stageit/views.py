@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.http import HttpResponseForbidden
 
 from stageitweb.stageit.models import Templates, Tasks, History
 import pickle
@@ -29,6 +30,11 @@ def historydetail(request, uuid):
 def historyadd(request, uuid):
     from uuid import uuid4
     from stageit.libs.fake_worker import fakeworker as fw
+
+    # Check there are no other running workers for this task
+    if History.objects.filter(fktask = uuid, status = "In progress").count() > 0:
+        return HttpResponseForbidden("A worker is already running for this task")
+    
     history = History()
     history.pkid = uuid4()
     history.fktask = uuid
