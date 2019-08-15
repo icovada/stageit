@@ -2,38 +2,6 @@ from rest_framework import serializers
 import stageitweb.stageit.models as models
 from rest_framework import generics
 
-import pickle
-
-class PickledData(serializers.Field):
-    """
-    Turn pickled data to original and back
-    """
-    def to_representation(self, value):
-        return pickle.loads(value)
-
-    def to_internal_value(self, value):
-        return pickle.dumps(value)
-
-class FkTemplateSerializer(serializers.Field):
-    """
-    Serialize template pkid to string
-    """
-    def to_representation(self, value):
-        return value.pkid
-
-    def to_internal_value(self, value):
-        return models.Templates.objects.get(pkid=value)
-
-class FkHistorySerializer(serializers.Field):
-    """
-    Serialize template pkid to string
-    """
-    def to_representation(self, value):
-        return value.pkid
-
-    def to_internal_value(self, value):
-        return models.History.objects.get(pkid=value)
-
 
 class TemplatesSerializer(serializers.Serializer):
     """Defines templates table."""
@@ -98,8 +66,8 @@ class TasksSerializer(serializers.Serializer):
     """Defines tasks table."""
     pkid = serializers.UUIDField(format='hex_verbose', required=False)
     description = serializers.CharField(max_length=50)
-    fktemplate = FkTemplateSerializer(required=False)
-    taskvalues = serializers.JSONField()
+    fktemplate = serializers.PrimaryKeyRelatedField(queryset=models.Templates.objects, required=False)
+    taskvalues = serializers.JSONField(required=False)
     
     def create(self, validated_data):
         from uuid import uuid4
@@ -117,7 +85,7 @@ class TasksSerializer(serializers.Serializer):
 
 class LogSerializer(serializers.Serializer):
     """Defines log table"""
-    fkhistory = FkHistorySerializer()
+    fkhistory = serializers.PrimaryKeyRelatedField(queryset=models.History.objects)
     sequence = serializers.IntegerField()
     log = serializers.CharField() 
 
