@@ -77,7 +77,7 @@ class HistorySerializer(serializers.Serializer):
     vendor = serializers.CharField(max_length=30, required=False)
     status = serializers.CharField(required=False)
     workerid = serializers.CharField(required=False)
-    fktask = serializers.CharField()
+    fktask = serializers.CharField(required=False)
 
     def create(self, validated_data):
         from uuid import uuid4

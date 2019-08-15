@@ -9,17 +9,29 @@ import pickle
 import logging
 from stageit.libs.fakeio import FakeIO
 from stageit.celery import app
+from celery import Task
 import requests
 
-class FakeWorker(app.Task):
+#@app.task(bind=True)
+class FakeWorker(Task):
     """
     Fake for test
     """
-    name = 'stageit.libs.fake_worker'
+    name = 'stageit.libs.fake_worker.fakeworker'
 
-    def __init__(self, **kwargs):
+    def on_success(self, retval, task_id, args, kwargs):
+        logging.info("Set task successful")
+        logging.info(retval)
+        logging.info(kwargs)
+        requests.put('http://localhost:8000/api/history/' + kwargs.get('fkhistory') + '/?format=json', data={'status':'Success'})
+
+    def on_failure(self, retval, task_id, args, kwargs):
+        logging.info("EPIC FAIL")
+
+
+    def run(self, *args, **kwargs):
         self.status = "Initializing"
-
+        
         # Adapted from Sim City 4 loading screen to fit network
         self.statuses = ["Adding Hidden Config",
                          "Adjusting Burst Curves",
@@ -97,16 +109,15 @@ class FakeWorker(app.Task):
                          "Unable to Reveal Current Activity",
                          "Zeroing nvram"]
 
-        self.work = None
-        self.session = None
-        self.dbrow = None
-        self.log = None
-
-    def run(self, **kwargs):
         logging.info("Fake Worker ready")
         logging.info(kwargs.get('fkhistory'))
 
         self.historydata = requests.get('http://localhost:8000/api/history/' + kwargs.get('fkhistory') + '/?format=json')
+        if self.historydata.json().get('workerid') is not None:
+            raise AssertionError("Task already being worked on by someone else")
+        
+        requests.put('http://localhost:8000/api/history/' + kwargs.get('fkhistory') + '/?format=json', data={'workerid':kwargs.get('celeryid'), 'status':'In progress'})
+
         self.pkid = self.historydata.json().get('pkid')
         fktask = self.historydata.json().get('fktask')
 
@@ -119,7 +130,7 @@ class FakeWorker(app.Task):
         self.work = kwargs.get('work')
 
         self.log = FakeIO(fkhistory=self.pkid)
-        return self.stageit()
+        self.stageit()
 
     def getstatus(self):
         """Return status of running task"""
@@ -136,19 +147,22 @@ class FakeWorker(app.Task):
 
     def stageit(self):
         """Choose random status"""
-        for i in range(random.randint(5, 10)):
+        for i in range(random.randint(2, 3)):
             self.status = self.statuses[random.randint(0, len(self.statuses)-1)]
             self.log.write(self.status.encode('utf-8') + "\n".encode('utf-8'))
             if (i % 2) == 0:
                 self.log.flush()
             logging.info(self.status)
-            sleep(random.randint(1, 10))
+            sleep(random.randint(1, 2))
         
         self.log.flush()
         return True
         
 
-@app.task()
-def fakeworker(**kwargs):
+app.register_task(FakeWorker())
+
+@app.task(bind=True, base=FakeWorker)
+def fakeworker(self, **kwargs):
+    celeryid = self.request.id.__str__()
     worker = FakeWorker()
-    return worker.run(fkhistory = kwargs.get('fkhistory'))
+    return worker.run(fkhistory = kwargs.get('fkhistory'), celeryid=celeryid)

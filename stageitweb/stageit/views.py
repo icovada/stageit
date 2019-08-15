@@ -28,13 +28,13 @@ def historydetail(request, uuid):
 
 def historyadd(request, uuid):
     from uuid import uuid4
-    from stageit.libs import fake_worker
+    from stageit.libs.fake_worker import fakeworker as fw
     history = History()
     history.pkid = uuid4()
     history.fktask = uuid
     history.save()
 
-    w = fake_worker.fakeworker.delay(fkhistory=str(history.pkid))
+    fw.delay(fkhistory=str(history.pkid))
 
     return render(request, 'stageit/history/add.html')
 
