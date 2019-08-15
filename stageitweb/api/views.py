@@ -40,9 +40,13 @@ class TerminalServerViewSet(viewsets.ModelViewSet):
     queryset = models.TerminalServer.objects.all()
     serializer_class = serializers.TerminalServerSerializer
 
+
 class SerialPortViewSet(viewsets.ModelViewSet):
     queryset = models.SerialPort.objects.all()
     serializer_class = serializers.SerialPortSerializer
+    filter_fields = {
+        'fkterminalserver' : ['exact']
+    }
 
 
 @csrf_exempt
