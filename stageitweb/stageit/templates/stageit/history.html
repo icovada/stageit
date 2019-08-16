@@ -36,6 +36,13 @@
 
         dataSet.forEach(function (element) {
             element['ID'] = "<a href='/history/" + element['pkid'] + "'>" + element['pkid'].substring(0, 5) + "</a>"
+            if (element['status'] == 'In Progress') {
+                element['status'] = '<span class="label label-info">In Progress</strong></span>'
+            } else if (element['status'] == 'Success') {
+                element['status'] = '<span class="label label-success">Success</strong></span>'
+            } else if (element['status'] == 'Fail') {
+                element['status'] = '<span class="label label-danger">Fail</strong></span>'
+            }
         });
 
 
