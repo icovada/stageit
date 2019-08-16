@@ -56,7 +56,7 @@ class BaseWorker(Task):
         else:
             # Mark History row as being worked on by us
             data = {'workerid': kwargs.get('celeryid'),
-                    'status': 'In progress'}
+                    'status': 'Discovering'}
             requests.put(URL_BASE + 'history/' +
                          self.pkid + URL_SUFFIX, data=data)
 
@@ -152,6 +152,10 @@ class BaseWorker(Task):
         else:
             specific_device = BaseDevice
             #raise ValueError("Unrecognised model")
+
+        data = {'status': 'In Progress'}
+        requests.put(URL_BASE + 'history/' +
+                         self.pkid + URL_SUFFIX, data=data)
 
         device.close()
         return specific_device(**self.devicedata, tserver=self.tserver, pkid=self.pkid)
