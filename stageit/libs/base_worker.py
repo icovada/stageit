@@ -21,6 +21,24 @@ class BaseWorker(Task):
 
     name = "stageit.libs.base_worker.baseworker"
 
+    def on_success(self, retval, task_id, *args, **kwargs):
+        logging.info("Set task successful")
+        logging.info(retval)
+        logging.info(kwargs)
+
+        requests.delete(URL_BASE + 'templates/' + self.fktask + URL_SUFFIX)
+        data = {'status': 'Completed',
+                'dateend': datetime.utcnow()
+                }
+        requests.put(URL_BASE + 'history/' + self.pkid + URL_SUFFIX, data=data)
+
+    def on_failure(self, retval, task_id, *args, **kwargs):
+        logging.info("EPIC FAIL")
+        data = {'status': 'Fail',
+                'dateend': datetime.utcnow()
+                }
+        requests.put(URL_BASE + 'history/' + self.pkid + URL_SUFFIX, data=data)
+
     def run(self, *args, **kwargs):
         """Celery calls this to start the task."""
 
@@ -43,9 +61,9 @@ class BaseWorker(Task):
                          self.pkid + URL_SUFFIX, data=data)
 
         # Now we have checked the task is OK to work on and marked it as ours, fetch task data
-        fktask = self.historydata.get('fktask')
+        self.fktask = self.historydata.get('fktask')
         self.taskdata = requests.get(
-            URL_BASE + 'task/' + fktask + URL_SUFFIX).json()
+            URL_BASE + 'task/' + self.fktask + URL_SUFFIX).json()
 
         # From the task we find the template
         fktemplate = self.taskdata.get('fktemplate')
@@ -63,7 +81,7 @@ class BaseWorker(Task):
 
         hostname = self.terminalserverdata.get('hostname')
         port = self.serialportdata.get('port')
-        transport = self.serialportdata.get('port')
+        transport = self.serialportdata.get('transport')
 
         # TODO: Pass these from template
         username = 'cisco'
@@ -72,7 +90,7 @@ class BaseWorker(Task):
         description = self.taskdata.get('description')
         taskvalues = self.taskdata.get('taskvalues')
         self.template = self.templatedata.get('template')
-        rtemplate = Environment(loader=BaseLoader).from_string(template)
+        rtemplate = Environment(loader=BaseLoader).from_string(self.template)
         self.finalconfig = rtemplate.render(taskvalues)
         platform = self.templatedata.get('platform')
         poststaging = self.templatedata.get('poststaging')
@@ -106,7 +124,7 @@ class BaseWorker(Task):
 
         # Instantiate terminal server class
         self.tserver = tserver(
-            {**self.serialportdata, **self.terminalserverdata})
+            **{**self.serialportdata, **self.terminalserverdata})
 
         logging.info('Discovering platform')
         self.driver = self.find_model()
@@ -115,42 +133,29 @@ class BaseWorker(Task):
         # Actually do the job (finally!)
         self.stageit()
 
-        requests.delete(URL_BASE + 'templates/' + fktask + URL_SUFFIX)
-        data = {'status': 'Completed',
-                'dateend': datetime.utcnow()
-                }
-        requests.put(URL_BASE + 'history/' + self.pkid + URL_SUFFIX, data=data)
-
-
     def find_model(self):
         """Find device type and return appropriate class to deal with
         upgrading, version checking and else."""
-        device = BaseDevice(**self.devicedata,
-                            tserver=self.tserver)
+        device = BaseDevice(tserver=self.tserver, **
+                            self.devicedata, pkid=self.pkid)
         device.checkavailable(300)
 
-        if any(model in device.facts["model"] for model in
-               ("C3650", "C3850")):
-            device.close()
-            from stageit.libs.cisco.switch.iosxe import IOSXESwitch
-            specific_device = IOSXESwitch(
-                **self.devicedata, tserver=tserver)
-        elif any(model in device.facts["model"] for model in
-                 ("4221", "4321", "4331", "4351", "4431", "4451", "4461")):
-            device.close()
-            from stageit.libs.cisco.router.iosxe import IOSXERouter
-            specific_device = IOSXERouter(
-                **self.devicedata, tserver=tserver)
+        if any(model in device.facts["model"] for model in ("C3650", "C3850")):
+            from stageit.libs.cisco.switch.iosxe import IOSXESwitch as specific_device
+
+        elif any(model in device.facts["model"] for model in ("4221", "4321", "4331", "4351", "4431", "4451", "4461")):
+            from stageit.libs.cisco.router.iosxe import IOSXERouter as specific_device
+
         elif any(model in device.facts["model"] for model in ("2960", "3560CX")):
-            device.close()
-            from stageit.libs.cisco.switch.ios import IOSSwitch
-            specific_device = IOSSwitch(
-                **self.devicedata, tserver=tserver)
+            from stageit.libs.cisco.switch.ios import IOSSwitch as specific_device
 
         else:
-            raise ValueError("Unrecognised model")
+            specific_device = BaseDevice
+            #raise ValueError("Unrecognised model")
 
-        return specific_device
+        device.close()
+        return specific_device(**self.devicedata, tserver=self.tserver, pkid=self.pkid)
+
 
     def stageit(self):
         """Do the job."""

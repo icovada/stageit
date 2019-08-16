@@ -4,37 +4,34 @@ import logging
 from time import sleep
 import napalm
 import netmiko
+import requests
+
+URL_BASE = "http://localhost:8000/api/"
+URL_SUFFIX = "/?format=json"
 
 
 class BaseDevice():
     """BaseDevice to be expanded by subclasses."""
 
-    def __init__(self, hostname, port, transport, platform,
-                 username, password, cservermgmt, logbuffer, history, **kwargs):
+    def __init__(self, tserver, pkid, **kwargs):
         """Define all class data."""
         self.status = 'Init'
         logging.info(self.status)
         self._has_connectivity = False
-        try:
-            assert username
-            assert password
-        except UnboundLocalError:
-            username = ''
-            password = ''
 
-        self.driver = napalm.get_network_driver(platform)
-        self.logbuffer = logbuffer
-        self.sessiondata = {'hostname': hostname,
-                            'username': username,
-                            'password': password,
-                            'optional_args': {'port': port,
-                                              'transport': transport,
-                                              'session_log': self.logbuffer}}
+        self.driver = napalm.get_network_driver(kwargs.get('platform'))
+        self.logbuffer = kwargs.get('logbuffer')
+        self.sessiondata = {'hostname': kwargs.get('hostname'),
+                            'username': kwargs.get('username'),
+                            'password': kwargs.get('password'),
+                            'optional_args': {'port': kwargs.get('port'),
+                                              'transport': kwargs.get('transport'),
+                                              'session_log': kwargs.get('logbuffer')}}
 
-        self.history = history
-        self.cservermgmt = cservermgmt
+        self.tserver = tserver
 
         self.facts = None
+        self.pkid = pkid
 
     def checkavailable(self, retries):
         """Check if device is available and has booted."""
@@ -54,7 +51,7 @@ class BaseDevice():
                         sleep(10)
                 except ConnectionRefusedError:
                     logging.info("Connection refused, resetting line")
-                    self.cservermgmt.reset()
+                    self.tserver.reset()
 
             else:
                 raise IOError("Device unavailable")
@@ -66,12 +63,12 @@ class BaseDevice():
         with self.driver(**self.sessiondata) as session:
             session.timeout = 10
             self.facts = session.get_facts()
-        self.history.vendor = self.facts['vendor']
-        self.history.serial_number = self.facts['serial_number']
-        self.history.os_version = self.facts['os_version']
-        self.history.model = self.facts['model']
-        self.history.save()
 
+        data = {'vendor': self.facts['vendor'],
+                'serial_number': self.facts['serial_number'],
+                'os_version': self.facts['os_version'],
+                'model': self.facts['model']}
+        requests.put(URL_BASE + 'history/' + self.pkid + URL_SUFFIX, data=data)
 
     def load_temp_config(self, **kwargs):
         """

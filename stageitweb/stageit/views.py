@@ -28,7 +28,8 @@ def historydetail(request, uuid):
     return render(request, 'stageit/history/detail.html')
 
 def historyadd(request, uuid):
-    from stageit.libs.fake_worker import fakeworker as fw
+    #from stageit.libs.fake_worker import fakeworker as fw
+    from stageit.libs.base_worker import baseworker as bw
 
     # Check there are no other running workers for this task
     if models.History.objects.filter(fktask = uuid, status = "In progress").count() > 0:
@@ -39,7 +40,7 @@ def historyadd(request, uuid):
     history.fkserialport = "249936ac-4957-4367-9506-5dceb90aab9c"
     history.save()
 
-    fw.delay(fkhistory=str(history.pkid))
+    bw.delay(fkhistory=str(history.pkid))
 
     return render(request, 'stageit/history/add.html')
 
