@@ -35,8 +35,7 @@
         }).responseJSON;
 
         dataSet.forEach(function (element) {
-            var thisHistory = "<a href='/history/" + element[0] + "'>" + element[0].substring(0, 5) + "</a>"
-            element['ID'] = link
+            element['ID'] = "<a href='/history/" + element['pkid'] + "'>" + element['pkid'].substring(0, 5) + "</a>"
         });
 
 
@@ -46,8 +45,8 @@
             columns: [
                 { title: "pkid", data: 'pkid' },
                 { title: "ID", data: 'ID' },
-                { title: "Date Start", data: 'datestart' },
-                { title: "Date End", data: 'dateend' }
+                { title: "Serial Number", data: 'serial_number' },
+                { title: "Status", data: 'status' }
             ],
             columnDefs: [
                 {
