@@ -72,11 +72,9 @@ def loggenerator(uuid):
     from time import sleep
     logs = models.Log.objects.filter(fkhistory=uuid)
     for log in logs:
-        text = log.log
-        text = text.replace("\n", "<br/>")
         sleep(1)
         try:
-            yield(text)
+            yield(log.log)
         except GeneratorExit:
             # If the client ends the connection
             pass
