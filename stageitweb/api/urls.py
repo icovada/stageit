@@ -12,5 +12,6 @@ router.register(r'serialport', views.SerialPortViewSet)
 
 urlpatterns = [
     path('convertjinja', views.convertjinja, name='convertjinja'),
+    path('streamlogs/<uuid:uuid>', views.streamlogs, name='streamlogs'),
     path('', include(router.urls)),
 ]

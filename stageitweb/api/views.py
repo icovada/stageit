@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 # Create your views here.
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, StreamingHttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import django_filters.rest_framework
 from rest_framework.parsers import JSONParser
@@ -64,3 +64,16 @@ def convertjinja(request):
     result = {'status': 'OK', 'message': rtemplate.render(
         **yamlvalues).replace("\n", "<br/>")}
     return JsonResponse(result)
+
+
+def loggenerator(uuid):
+    from time import sleep
+    logs = models.Log.objects.filter(fkhistory=uuid)
+    for log in logs:
+        text = log.log
+        text = text.replace("\n", "<br/>")
+        sleep(1)
+        yield(text)
+
+def streamlogs(request, uuid):
+    return StreamingHttpResponse(loggenerator(uuid))
