@@ -4,34 +4,87 @@
 <!--<h1 class="display-4 content-center px-3 py-3 pt-md-4 pb-md-4 mx-auto row justify-content-center">Task details</h1>-->
 <div class="top-gutter bottom-gutter container-wrapper">
     <div class="content-area">
-        <div class="container">
+        <div class="container-lg">
 
             <div class="row">
-                <h1>History detail</h2>
+                <div class="col-xl-12">
+                    <h1>History detail</h1>
                     <p>Task run for {{pkid}}</p>
+                </div>
             </div>
 
             <div class="row">
-                <div class="col-xl-6 form-left">
+                <div class="col-xl-12">
+                    <h2>Run data</h2>
+                    <table class="table">
+                        <tr>
+                            <td><strong>Status</strong></td>
+                            <td id="statusfield"></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Task start time</strong></td>
+                            <td id="datestartfield"></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Task finish time</strong></td>
+                            <td id="dateendfield"></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Task description</strong></td>
+                            <td id="descriptionfield"></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-6">
                     <h2>Hardware</h2>
-
-                    <strong>Model: </strong>WS-C2960X-24PS-L
-                    </br>
-                    <strong>Serial Number: </strong>FOC7H1S
+                    <table class="table">
+                        <tr>
+                            <td><strong>Vendor</strong></td>
+                            <td id="vendorfield"></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Model</strong></td>
+                            <td id="modelfield"></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Serial</strong></td>
+                            <td id="serialfield"></td>
+                        </tr>
+                    </table>
                 </div>
-                <div class="col-xl-6 form-right">
+                <div class="col-xl-6">
                     <h2>Software</h2>
+                    <table class="table">
+                        <tr>
+                            <td><strong>Install mode</strong></td>
+                            <td id="installmodefield"></td>
+                        </tr>
+                        <tr>
+                            <td><strong>OS Version</strong></td>
+                            <td id="os_versionfield"></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Serial Number</strong></td>
+                            <td id="serial_numberfield"></td>
+                        </tr>
+                    </table>
                 </div>
             </div>
-            <div class="row col-xl-12">
-                <h2>Log sessione</h2>
-                <textarea class="form-control font-monospace" id="runlog" rows="25"></textarea>
-            </div>
+        </div>
+    </div>
+
+
+
+    <div class="row">
+        <div class="col-xl-12">
+            <h2>Session log</h2>
+            <textarea class="form-control font-monospace" id="runlog" rows="25"></textarea>
         </div>
     </div>
 </div>
 
-</div>
 {% endblock %}
 
 {% block script %}
