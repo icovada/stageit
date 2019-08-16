@@ -37,6 +37,7 @@ def historyadd(request, uuid):
     
     history = models.History()
     history.fktask = uuid
+    history.status = "Queued"
     history.fkserialport = "249936ac-4957-4367-9506-5dceb90aab9c"
     history.save()
 
