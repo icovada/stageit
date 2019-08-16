@@ -5,7 +5,7 @@ from django.http import HttpResponse, JsonResponse, StreamingHttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import django_filters.rest_framework
 from rest_framework.parsers import JSONParser
-from rest_framework import viewsets
+from rest_framework import viewsets, filters
 import stageitweb.stageit.models as models
 import stageitweb.api.serializers as serializers
 from rest_framework import generics
@@ -27,6 +27,8 @@ class TasksViewSet(viewsets.ModelViewSet):
 class HistoryViewSet(viewsets.ModelViewSet):
     queryset = models.History.objects.all()
     serializer_class = serializers.HistorySerializer
+    filter_backends = [filters.OrderingFilter]
+    ordering = ['status']
 
 class LogViewSet(viewsets.ModelViewSet):
     queryset = models.Log.objects.all()
@@ -73,7 +75,11 @@ def loggenerator(uuid):
         text = log.log
         text = text.replace("\n", "<br/>")
         sleep(1)
-        yield(text)
+        try:
+            yield(text)
+        except GeneratorExit:
+            # If the client ends the connection
+            pass
 
 def streamlogs(request, uuid):
     return StreamingHttpResponse(loggenerator(uuid))
