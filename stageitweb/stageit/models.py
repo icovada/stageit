@@ -26,7 +26,6 @@ class History(models.Model):
     os_version = models.TextField(max_length=300)
     rundata = models.BinaryField(max_length=1024000, editable=True, null=True)
     serial = models.TextField(max_length=20)
-    serial_number = models.TextField(max_length=50)
     template = models.TextField(max_length=20000)
     templatevalues = jsonfield.JSONField(null=True)
     vendor = models.TextField(max_length=30)
