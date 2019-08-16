@@ -23,8 +23,8 @@ class TemplatesSerializer(serializers.ModelSerializer):
 class HistorySerializer(serializers.ModelSerializer):
     """Defines history table."""
     pkid = serializers.UUIDField(format='hex_verbose', required=False)
-    dateend = serializers.DateTimeField
-    datestart = serializers.DateTimeField
+    dateend = serializers.DateTimeField()
+    datestart = serializers.DateTimeField()
     description = serializers.CharField(max_length=50, required=False)
     installmode = serializers.CharField(max_length=20, required=False)
     model = serializers.CharField(max_length=50, required=False)
