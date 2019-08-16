@@ -69,15 +69,25 @@ def convertjinja(request):
 
 
 def loggenerator(uuid):
+    """
+    Yield all the logs from a fkhistory
+    """
     from time import sleep
     logs = models.Log.objects.filter(fkhistory=uuid)
+    lastlog = 0
     for log in logs:
-        sleep(1)
-        try:
+        lastlog = log.sequence
+        yield(log.log)
+
+    history_row = models.History.objects.get(pkid=uuid)
+    while history_row.status == "In Progress":
+        logs = models.Log.objects.filter(fkhistory=uuid, sequence__gt=lastlog)
+        for log in logs:
+            lastlog = log.sequence
+            sleep(1)
             yield(log.log)
-        except GeneratorExit:
-            # If the client ends the connection
-            pass
+        history_row.refresh_from_db()
+
 
 def streamlogs(request, uuid):
     return StreamingHttpResponse(loggenerator(uuid))
