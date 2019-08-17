@@ -27,7 +27,7 @@
 <script>
     function jsonsubmit() {
         var frm = $("#templateform");
-        var dat = JSON.stringify(frm.serializeArray()[0]);
+        var dat = serializeFormJSON(frm);
         $.ajax({
             type: 'POST',
             url: $('#templateform').attr('action'),
