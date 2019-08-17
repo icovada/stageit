@@ -52,10 +52,11 @@ class TerminalServer(models.Model):
     pkid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
     name = models.TextField()
     model = models.TextField()
-    hostname = models.TextField()
+    hostname = models.TextField(unique=True)
     transport = models.TextField()
     username = models.TextField()
     password = models.TextField()
+
 
 class SerialPort(models.Model):
     pkid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
@@ -63,3 +64,6 @@ class SerialPort(models.Model):
     transport = models.TextField()
     port = models.IntegerField()
     line = models.IntegerField()
+    
+    class Meta:
+        unique_together = ('fkterminalserver', 'port',)
