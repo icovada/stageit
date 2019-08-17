@@ -186,7 +186,7 @@
             $toast.trigger('show', [5000]); // show toast for 5s
             window.location.href = "/templates/" + response['pkid'];
         }).fail(function (response) {
-            var $toast = basecoat.toast('<span class="fa fa-times"></span>There was an error submitting your template', 'warning');
+            var $toast = basecoat.toast('<span class="fa fa-exclamation-triangle"></span>There was an error submitting your template', 'warning');
             $toast.trigger('show', [5000]); // show toast for 5s
         });
     });
