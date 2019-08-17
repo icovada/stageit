@@ -6,6 +6,7 @@ from crispy_forms.layout import Layout, Div, Submit, Row, Column, Field
 import stageitweb.stageit.models as models
 
 
+
 def TerminalServerMapper():
     out = ()
     for row in models.TerminalServer.objects.all():
