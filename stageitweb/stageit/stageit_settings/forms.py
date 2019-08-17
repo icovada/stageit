@@ -12,7 +12,7 @@ class TerminalServerForm(forms.ModelForm):
     hostname = forms.CharField()
     transport = forms.ChoiceField(choices=(('telnet', 'Telnet'), ('ssh', 'SSH')))
     username = forms.CharField()
-    password = forms.PasswordInput()
+    password = forms.CharField(widget=forms.PasswordInput)
 
     class Meta():
         model = models.TerminalServer
