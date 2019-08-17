@@ -189,10 +189,10 @@
                 taskvalues: $('#taskvalues').val(),
             }
         }).done(function (response) {
-            var $toast = basecoat.toast('<span class="fa fa-check"></span>Task submitted', 'success').trigger('show');
+            var $toast = basecoat.toast('<span class="fa fa-check"></span>Task submitted', 'success');
             $toast.trigger('show', [5000]); // show toast for 5s
         }).fail(function (response) {
-            var $toast = basecoat.toast('<span class="fa fa-fail"></span>There was an error submitting your task', 'warning').trigger('show');
+            var $toast = basecoat.toast('<span class="fa fa-fail"></span>There was an error submitting your task', 'warning');
             $toast.trigger('show', [5000]); // show toast for 5s
         });
     });
