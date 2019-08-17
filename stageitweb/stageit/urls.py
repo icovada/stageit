@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 
 from . import views
 
@@ -12,5 +12,6 @@ urlpatterns = [
     path('tasks', views.tasks, name='tasks'),
     path('tasks/<uuid:uuid>', views.tasksdetail, name='tasksdetail'),
     path('tasks/new/<uuid:uuid>', views.tasksadd, name='tasksadd'),
+    path('settings', include('stageitweb.stageit.stageit_settings.urls')),
     path('', views.index, name='index'),
 ]
