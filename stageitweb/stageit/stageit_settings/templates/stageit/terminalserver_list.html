@@ -1,0 +1,61 @@
+{% extends "stageit/layout.html" %}
+
+{% block title %}Terminal Servers{% endblock %}
+{% block header %}Terminal Servers{% endblock %}
+
+{% block body %}
+<header class="jumbotron">
+    <div class="container-lg">
+        <div class="row">
+            <div class="col-xs-12">
+                <h2>Terminal Servers</h2>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="content-area">
+    <div class="container-lg">
+        <div class="row">
+            <div class="col-xs-12">
+                <table id="maintable" class="table" width="100%">
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+
+    $(document).ready(function () {
+        var dataSet = $.getJSON({
+            url: '/api/terminalserver?format=json',
+            async: false
+        }).responseJSON;
+
+        dataSet.forEach(function (element) {
+            element['ID'] = "<a href='/settings/terminalserver/" + element['pkid'] + "'>" + element['pkid'].substring(0, 5) + "</a>"
+        });
+
+
+        $('#maintable').DataTable({
+            data: dataSet,
+            rowId: 'pkid',
+            columns: [
+                { title: "pkid", data: 'pkid' },
+                { title: "ID", data: 'ID' },
+                { title: "Name", data: 'name' },
+                { title: "Hostname", data: 'hostname' },
+            ],
+            columnDefs: [
+                {
+                    "targets": [0],
+                    "visible": false,
+                    "searchable": false
+                }]
+        });
+    });
+
+</script>
+{% endblock %}

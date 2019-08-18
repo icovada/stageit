@@ -23,3 +23,7 @@ def edit_terminal_server(request, uuid):
         form.save()
         return redirect('next_view')
     return render(request, 'stageit/terminalserver_edit.html', {'form': form})
+
+
+def terminalserver(request):
+    return render(request, 'stageit/terminalserver_list.html')
