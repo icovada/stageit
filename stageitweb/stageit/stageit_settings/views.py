@@ -12,9 +12,8 @@ class TerminalServerFormView(FormView):
     form_class = TerminalServerForm
     template_name = 'stageit/terminalserver_add.html'
 
-class SerialPortFormView(FormView):
-    form_class = SerialPortForm
-    template_name = 'stageit/serialport_add.html'
+def terminalserver(request):
+    return render(request, 'stageit/terminalserver_list.html')
 
 def edit_terminal_server(request, uuid):
     instance = get_object_or_404(models.TerminalServer, pkid=uuid)
@@ -25,5 +24,17 @@ def edit_terminal_server(request, uuid):
     return render(request, 'stageit/terminalserver_edit.html', {'form': form})
 
 
-def terminalserver(request):
-    return render(request, 'stageit/terminalserver_list.html')
+class SerialPortFormView(FormView):
+    form_class = SerialPortForm
+    template_name = 'stageit/serialport_add.html'
+
+def serialport(request):
+    return render(request, 'stageit/serialport_list.html')
+
+def edit_serial_port(request, uuid):
+    instance = get_object_or_404(models.SerialPort, pkid=uuid)
+    form = SerialPortForm(request.POST or None, instance=instance)
+    if form.is_valid():
+        form.save()
+        return redirect('next_view')
+    return render(request, 'stageit/serialport_edit.html', {'form': form})
