@@ -9,4 +9,5 @@ urlpatterns = [
     path('serialport', views.serialport),
     path('serialport/add', views.SerialPortFormView.as_view()),
     path('serialport/<uuid:uuid>', views.edit_serial_port),
+    path('filemanager/upload', views.upload_file)
 ]

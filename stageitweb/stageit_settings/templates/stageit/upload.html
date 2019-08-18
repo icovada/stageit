@@ -1,0 +1,20 @@
+{% extends "stageit/layout.html" %}
+
+{% load crispy_forms_tags %}
+{% load crispy_forms_field %}
+
+{% block body %}
+<div class="top-gutter bottom-gutter container-wrapper">
+    <div class="content-area">
+        <div class="container-lg">
+            <form method="post" form enctype="multipart/form-data">
+                {% csrf_token %}
+                {% crispy form %}
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+

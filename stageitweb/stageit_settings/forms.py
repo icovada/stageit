@@ -29,3 +29,11 @@ class SerialPortForm(forms.ModelForm):
     class Meta():
         model = models.SerialPort
         fields = '__all__'
+
+
+class UploadFileForm(forms.Form):
+    file = forms.FileField()
+
+    helper = FormHelper()
+    helper.add_input(Submit('submit', 'Submit', css_class='btn-primary'))
+    helper.form_method = 'POST'
