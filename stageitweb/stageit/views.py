@@ -13,7 +13,7 @@ def templates(request):
     return render(request, 'stageit/templates.html')
 
 def templatesdetail(request, uuid):
-    data = models.Templates.objects.get(pkid=uuid).__dict__
+    data = models.Template.objects.get(pkid=uuid).__dict__
     data['templatevalues'] = json.dumps(data['templatevalues'], indent=4, sort_keys=True)
 
     return render(request, 'stageit/templates/detail.html', data)
@@ -50,7 +50,7 @@ def tasks(request):
     return render(request, 'stageit/tasks.html')
 
 def tasksdetail(request, uuid):
-    task = models.Tasks.objects.get(pkid=uuid)
+    task = models.Task.objects.get(pkid=uuid)
     data = task.__dict__.copy()
 
     data['taskvalues'] = json.dumps(data['taskvalues'], indent=4, sort_keys=True)
@@ -64,7 +64,7 @@ def tasksdetail(request, uuid):
     return render(request, 'stageit/tasks/detail.html', data)
 
 def tasksadd(request, uuid):
-    data = models.Templates.objects.get(pkid=uuid).__dict__
+    data = models.Template.objects.get(pkid=uuid).__dict__
     data['templatevalues'] = json.dumps(data['templatevalues'], indent=4, sort_keys=True)
     data['fktemplate'] = str(uuid)
     data['slug'] = str(uuid)[:5]

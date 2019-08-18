@@ -3,8 +3,8 @@ from rest_framework import routers
 from stageitweb.api import views
 
 router = routers.DefaultRouter()
-router.register(r'template', views.TemplatesViewSet)
-router.register(r'task', views.TasksViewSet)
+router.register(r'template', views.TemplateViewSet)
+router.register(r'task', views.TaskViewSet)
 router.register(r'history', views.HistoryViewSet)
 router.register(r'log', views.LogViewSet)
 router.register(r'terminalserver', views.TerminalServerViewSet)

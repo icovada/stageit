@@ -4,15 +4,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Submit, Row, Column, Field
 
 import stageitweb.stageit.models as models
-
-
-
-def TerminalServerMapper():
-    out = ()
-    for row in models.TerminalServer.objects.all():
-        out = ((row.pkid, row.name),) + out
-    
-    return out
+from django.db.utils import OperationalError
 
 
 class TerminalServerForm(forms.ModelForm):
@@ -29,7 +21,7 @@ class TerminalServerForm(forms.ModelForm):
 
 
 class SerialPortForm(forms.ModelForm):
-    fkterminalserver = forms.ChoiceField(choices=TerminalServerMapper())
+    fkterminalserver = forms.ModelChoiceField(queryset=models.TerminalServer.objects)
     transport = forms.ChoiceField(choices=(('telnet', 'Telnet'), ('ssh', 'SSH')))
     port = forms.IntegerField(min_value=1, max_value=65535)
     line = forms.IntegerField(min_value=1, max_value=65535)

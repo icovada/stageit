@@ -3,7 +3,7 @@ from django.db import models
 from uuid import uuid4
 
 # Create your models here.
-class Templates(models.Model):
+class Template(models.Model):
     """Defines templates table."""
     pkid = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     description = models.TextField(max_length=50)
@@ -34,11 +34,11 @@ class History(models.Model):
     fktask = models.TextField(null=False)
     fkserialport = models.UUIDField()
 
-class Tasks(models.Model):
+class Task(models.Model):
     """Defines tasks table."""
     pkid = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     description = models.TextField(max_length=50)
-    fktemplate = models.ForeignKey(Templates, on_delete=models.CASCADE)
+    fktemplate = models.ForeignKey(Template, on_delete=models.CASCADE)
     taskvalues = jsonfield.JSONField(null=True)
 
 class Log(models.Model):
@@ -57,6 +57,8 @@ class TerminalServer(models.Model):
     username = models.TextField()
     password = models.TextField()
 
+    def __str__(self):
+        return self.name
 
 class SerialPort(models.Model):
     pkid = models.UUIDField(primary_key=True, editable=False, default=uuid4)

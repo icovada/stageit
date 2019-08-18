@@ -16,13 +16,13 @@ from jinja2 import Environment, BaseLoader
 import jinja2
 
 
-class TemplatesViewSet(viewsets.ModelViewSet):
-    queryset = models.Templates.objects.all()
-    serializer_class = serializers.TemplatesSerializer 
+class TemplateViewSet(viewsets.ModelViewSet):
+    queryset = models.Template.objects.all()
+    serializer_class = serializers.TemplateSerializer 
 
-class TasksViewSet(viewsets.ModelViewSet):
-    queryset = models.Tasks.objects.all()
-    serializer_class = serializers.TasksSerializer
+class TaskViewSet(viewsets.ModelViewSet):
+    queryset = models.Task.objects.all()
+    serializer_class = serializers.TaskSerializer
     
 class HistoryViewSet(viewsets.ModelViewSet):
     queryset = models.History.objects.all()

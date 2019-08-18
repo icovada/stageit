@@ -3,7 +3,7 @@ import stageitweb.stageit.models as models
 from rest_framework import generics
 
 
-class TemplatesSerializer(serializers.ModelSerializer):
+class TemplateSerializer(serializers.ModelSerializer):
     """Defines templates table."""
     pkid = serializers.UUIDField(format='hex_verbose', required=False)
     description = serializers.CharField(max_length=50)
@@ -16,7 +16,7 @@ class TemplatesSerializer(serializers.ModelSerializer):
     templatevalues = serializers.JSONField()
 
     class Meta:
-        model = models.Templates
+        model = models.Template
         fields = '__all__'
 
 
@@ -45,15 +45,15 @@ class HistorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     
-class TasksSerializer(serializers.ModelSerializer):
+class TaskSerializer(serializers.ModelSerializer):
     """Defines tasks table."""
     pkid = serializers.UUIDField(format='hex_verbose', required=False)
     description = serializers.CharField(max_length=50)
-    fktemplate = serializers.PrimaryKeyRelatedField(queryset=models.Templates.objects, required=False)
+    fktemplate = serializers.PrimaryKeyRelatedField(queryset=models.Template.objects, required=False)
     taskvalues = serializers.JSONField(required=False)
 
     class Meta:
-        model = models.Tasks
+        model = models.Task
         fields = '__all__'
     
 
