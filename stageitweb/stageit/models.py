@@ -15,6 +15,9 @@ class Template(models.Model):
     template = models.TextField(max_length=500000)
     templatevalues = jsonfield.JSONField()
 
+    def __str__(self):
+        return('{} - {}'.format(str(self.pkid)[:5], self.name))
+
 class History(models.Model):
     """Defines history table."""
     pkid = models.UUIDField(primary_key=True, default=uuid4, editable=False)
@@ -41,6 +44,9 @@ class Task(models.Model):
     fktemplate = models.ForeignKey(Template, on_delete=models.CASCADE)
     taskvalues = jsonfield.JSONField(null=True)
 
+    def __str__(self):
+        return('{} based on {}'.format(self.description, self.fktemplate))
+
 class Log(models.Model):
     """Define staging Log format"""
     fkhistory = models.ForeignKey(History, on_delete=models.CASCADE)
@@ -58,7 +64,7 @@ class TerminalServer(models.Model):
     password = models.TextField()
 
     def __str__(self):
-        return self.name
+        return('{} - {}'.format(self.name, self.hostname))
 
 class SerialPort(models.Model):
     pkid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
@@ -69,3 +75,12 @@ class SerialPort(models.Model):
     
     class Meta:
         unique_together = ('fkterminalserver', 'port',)
+
+    def __str__(self):
+        return('{} - {}'.format(self.fkterminalserver, self.line))
+
+class Firmware(models.Model):
+    pkid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    filename = models.TextField()
+    md5 = models.TextField()
+    sha256 = models.TextField()
