@@ -19,15 +19,14 @@ class IOSXERouter(BaseDevice):
             raise Warning("Unsupported image file")
 
         if not self._check_rommon():
-            with self.driver(**self.sessiondata) as session:
-                self.copy_file(session,
-                               "http://10.82.135.9/ios-xe/isr4200_4300_rommon_169_1r_SPA.pkg")
-                self.status = "Upgrading ROMMON"
-                logging.info(self.status)
-                session.device.timeout = 600  # Takes at least a good 5 min
-                session.device.write_channel(
+            self._checksession()
+            self.copy_file("http://10.82.135.9/ios-xe/isr4200_4300_rommon_169_1r_SPA.pkg")
+            self.status = "Upgrading ROMMON"
+            logging.info(self.status)
+            self.session.device.timeout = 600  # Takes at least a good 5 min
+            self.session.device.write_channel(
                     "upgrade rom-monitor filename bootflash:isr4200_4300_rommon_169_1r_SPA.pkg all\n")
-                session.device.read_until_prompt_or_pattern(
+            self.session.device.read_until_prompt_or_pattern(
                     "ROMMON upgrade complete")
 
             self.reload_device()
@@ -58,99 +57,99 @@ class IOSXERouter(BaseDevice):
             return upgradestatus
 
     def _firmware_ok(self, version, mode='INSTALL'):
-        with self.driver(**self.sessiondata) as session:
-            self.status = "Checking IOS XE version"
-            logging.info(self.status)
-            showver = session.device.send_command("show version")
+        self._checksession()
+        self.status = "Checking IOS XE version"
+        logging.info(self.status)
+        showver = self.session.device.send_command("show version")
 
-            # This regex parses the following output
-            # System image file is "bootflash:/isr4300-universalk9.03.13.04.S.154-3.S4-ext.SPA.bin"
-            # System image file is "packages.conf"
-            moderegex = r'image file is .*\.(\w*)'
-            curmode = re.findall(moderegex, showver, re.MULTILINE)
-            modemapping = {'bin': 'BUNDLE',
-                           'conf': 'INSTALL'}
+        # This regex parses the following output
+        # System image file is "bootflash:/isr4300-universalk9.03.13.04.S.154-3.S4-ext.SPA.bin"
+        # System image file is "packages.conf"
+        moderegex = r'image file is .*\.(\w*)'
+        curmode = re.findall(moderegex, showver, re.MULTILINE)
+        modemapping = {'bin': 'BUNDLE',
+                       'conf': 'INSTALL'}
 
-            installmode = modemapping[curmode[0]]
+        installmode = modemapping[curmode[0]]
 
-            # This regex parses the following output
-            # Cisco IOS XE Software, Version 03.13.04.S - $(release_mode)
-            # Cisco IOS XE Software, Version 03.13.04a.S - $(release_mode)
+        # This regex parses the following output
+        # Cisco IOS XE Software, Version 03.13.04.S - $(release_mode)
+        # Cisco IOS XE Software, Version 03.13.04a.S - $(release_mode)
 
-            verregex = r'IOS XE Software, Version (\d\d\.\d\d\.\d\d\w*)'
-            curversion = re.findall(verregex, showver, re.MULTILINE)[0]
+        verregex = r'IOS XE Software, Version (\d\d\.\d\d\.\d\d\w*)'
+        curversion = re.findall(verregex, showver, re.MULTILINE)[0]
 
-            verok = True if version == curversion else False
-            modeok = True if installmode == mode else False
+        verok = True if version == curversion else False
+        modeok = True if installmode == mode else False
 
-            if verok and modeok:
-                return (True, curversion, installmode)
-            else:
-                return (False, version, installmode)
+        if verok and modeok:
+            return (True, curversion, installmode)
+        else:
+            return (False, version, installmode)
 
     def _check_rommon(self):
-        with self.driver(**self.sessiondata) as session:
-            self.status = "Checking ROMMON version"
-            logging.info(self.status)
-            command = "show rom-monitor RP active\n"
-            showrommon = session.device.send_command(command)
+        self._checksession()
+        self.status = "Checking ROMMON version"
+        logging.info(self.status)
+        command = "show rom-monitor RP active\n"
+        showrommon = self.session.device.send_command(command)
 
-            # This regex parses this output:
-            # System Bootstrap, Version 16.7(3r), RELEASE SOFTWARE
+        # This regex parses this output:
+        # System Bootstrap, Version 16.7(3r), RELEASE SOFTWARE
 
-            romregex = r'Version (\d*\.\d)'
-            currommon = re.findall(romregex, showrommon, re.MULTILINE)[0]
+        romregex = r'Version (\d*\.\d)'
+        currommon = re.findall(romregex, showrommon, re.MULTILINE)[0]
 
-            return float(currommon) > 16
+        return float(currommon) > 16
 
     def _upgrade_to_install(self, uri):
-        with self.driver(**self.sessiondata) as session:
-            self.status = "Check file exists"
-            logging.info(self.status)
+        self._checksession()
+        self.status = "Check file exists"
+        logging.info(self.status)
 
-            flashuri = session._gen_full_path(uri.split("/")[-1])
-            if not session._check_file_exists(flashuri):
-                self.copy_file(session, uri)
+        flashuri = self.session._gen_full_path(uri.split("/")[-1])
+        if not self.session._check_file_exists(flashuri):
+            self.copy_file(uri)
 
-            self.status = "Upgrading IOS-XE to INSTALL mode"
-            logging.info(self.status)
-            command = "request platform software package expand file {}\n".format(
-                flashuri)
-            session.device.timeout = 1800
-            session.device.write_channel(command)
-            output = session.device.read_until_prompt_or_pattern(
+        self.status = "Upgrading IOS-XE to INSTALL mode"
+        logging.info(self.status)
+        command = "request platform software package expand file {}\n".format(
+            flashuri)
+        self.session.device.timeout = 1800
+        self.session.device.write_channel(command)
+        output = self.session.device.read_until_prompt_or_pattern(
                 "SUCCESS: Finished expanding")
 
-            if "FAILED:" in output:
-                return False
+        if "FAILED:" in output:
+            return False
+        else:
+            if "different version of provisioning file packages.conf already exists" in output:
+                confregex = r'WARNING: (\w*\:.*)'
+                bootvaruri = re.findall(confregex, output)[0]
             else:
-                if "different version of provisioning file packages.conf already exists" in output:
-                    confregex = r'WARNING: (\w*\:.*)'
-                    bootvaruri = re.findall(confregex, output)[0]
-                else:
-                    bootvaruri = "bootflash:packages.conf"
+                bootvaruri = "bootflash:packages.conf"
 
-                confset = ["no boot system",
-                           "boot system {}".format(bootvaruri)]
-                session.device.send_config_set(confset)
-                session.device.send_command("wr\n\n\n\n\n\n\n\n")
+            confset = ["no boot system",
+                        "boot system {}".format(bootvaruri)]
+            self.session.device.send_config_set(confset)
+            self.session.device.send_command("wr\n\n\n\n\n\n\n\n")
 
         self.reload_device()
         return True
 
     def _upgrade_to_bundle(self, uri):
-        with self.driver(**self.sessiondata) as session:
-            self.status = "Check file exists"
-            logging.info(self.status)
+        self._checksession()
+        self.status = "Check file exists"
+        logging.info(self.status)
 
-            flashuri = session._gen_full_path(uri.split("/")[-1])
-            if not session._check_file_exists(flashuri):
-                self.copy_file(session, uri)
+        flashuri = self.session._gen_full_path(uri.split("/")[-1])
+        if not self.session._check_file_exists(flashuri):
+                self.copy_file(uri)
 
-            self.status = "Upgrading IOS-XE to BUNDLE mode"
-            logging.info(self.status)
-            confset = ["no boot system", "boot system {}".format(flashuri)]
-            session.device.send_config_set(confset)
-            session.device.send_command("wr\n\n\n\n\n\n\n\n")
+        self.status = "Upgrading IOS-XE to BUNDLE mode"
+        logging.info(self.status)
+        confset = ["no boot system", "boot system {}".format(flashuri)]
+        self.session.device.send_config_set(confset)
+        self.session.device.send_command("wr\n\n\n\n\n\n\n\n")
         self.reload_device()
         return True
