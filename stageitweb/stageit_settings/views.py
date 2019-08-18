@@ -43,6 +43,8 @@ def edit_serial_port(request, uuid):
         return redirect('next_view')
     return render(request, 'stageit/serialport_edit.html', {'form': form})
 
+def filemanager(request):
+    return render(request, 'stageit/filemanager.html')
 
 def upload_file(request):
     if request.method == 'POST':

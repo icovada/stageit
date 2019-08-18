@@ -3,6 +3,7 @@ from django.shortcuts import render
 # Create your views here.
 from django.http import HttpResponse, JsonResponse, StreamingHttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
 import django_filters.rest_framework
 from rest_framework.parsers import JSONParser
 from rest_framework import viewsets, filters
@@ -10,7 +11,7 @@ import stageitweb.stageit.models as models
 import stageitweb.api.serializers as serializers
 from rest_framework import generics
 
-
+import glob
 import yaml
 from jinja2 import Environment, BaseLoader
 import jinja2
@@ -91,3 +92,9 @@ def loggenerator(uuid):
 
 def streamlogs(request, uuid):
     return StreamingHttpResponse(loggenerator(uuid))
+
+def filemanager_list(request):
+    filelist = []
+    for f in glob.glob(settings.MEDIA_ROOT + '/*'):
+        filelist.append({'name': f[len(settings.MEDIA_ROOT)+1:]})
+    return JsonResponse(filelist, safe=False)

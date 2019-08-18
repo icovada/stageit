@@ -1,0 +1,41 @@
+{% extends "stageit/layout.html" %}
+
+
+{% block body %}
+<header class="jumbotron">
+    <div class="container-lg">
+        <div class="row">
+            <div class="col-xs-12">
+                <h2>Tasks</h2>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="content-area">
+    <div class="container-lg">
+        <div class="row">
+            <div class="col-xs-12">
+                <table id="tasks" class="table" width="100%">
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    $(document).ready(function () {
+        var dataSet = $.getJSON({
+            url: '/api/filemanager',
+            async: false
+        }).responseJSON;
+
+
+        $('#tasks').DataTable({
+            data: dataSet,
+        });
+    });
+
+</script>
+{% endblock %}
