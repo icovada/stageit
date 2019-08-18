@@ -1,0 +1,91 @@
+{% extends "stageit/layout.html" %}
+
+{% block body %}
+<div class="top-gutter bottom-gutter container-wrapper">
+    <div class="content-area">
+        <div class="container-lg">
+            <form class="needs-validation" action="/api/template/" id="templateform" method="post">
+                <div class="form-group">
+                    <h1>Jinja Sandbox</h1>
+                    <p>Freely test Jinja templates</p>
+                    <p>Don't know where to begin? Check out this <a href="https://medium.com/@jasonrigden/jinja2-templating-engine-tutorial-4bd31fb4aea3">tutorial</a></p>
+                </div>
+
+
+                <div class="form-group col-xl-6 form-left">
+                    <label for="template">Template</label>
+                    {% verbatim %}
+                    <textarea class="form-control font-monospace" id="template" rows="30"
+                        aria-describedby="templateHelp">Hello {{name}}!
+
+{% if test -%}
+  How are you?
+{%- endif %}
+                        </textarea>
+                    {% endverbatim %}
+                    <small id="templateHelp" class="form-text text-muted">Insert your template</small>
+                </div>
+                <div class="form-group col-xl-6 form-right">
+                    <label for="templatevalues">Template values</label>
+                    <textarea class="form-control font-monospace" id="templatevalues" rows="30"
+                        aria-describedby="templatevaluesHelp">{
+  "name": "John",
+  "test": true
+}</textarea>
+                    <small id="templatevaluesHelp" class="form-text text-muted">Insert variables required by
+                        your template in yaml format</small>
+                </div>
+
+                <button class="btn btn-primary" type="button" data-toggle="modal"
+                    data-target="#templaterender">Test</button>
+                <div class="modal fade" tabindex="-1" role="dialog" id="templaterender">
+                    <div class="modal-dialog modal-xl" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Rendered template</h5>
+                            </div>
+                            <div class="modal-body">
+                                <pre><code id="templaterenderview"></code></pre>
+                            </div>
+                            <div class="modal-footer">
+                                <!-- use the .btn-link-toolbar for the correct padding if the footer only contains link buttons -->
+                                <div class="btn-link-toolbar">
+                                    <button type="button" class="btn btn-link" data-dismiss="modal">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
+
+
+{% block script %}
+<script>
+    $("#templaterender").on('show.bs.modal', function () {
+        $.ajax({
+            type: "POST",
+            url: "/api/convertjinja",
+            data: {
+                template: $('#template').val(),
+                values: $('#templatevalues').val()
+            },
+            success: function (msg) {
+                if (msg['status'] == 'OK') {
+                    $('#templaterenderview').html(msg['message']);
+                } else {
+                    // Show error
+                }
+            },
+            error: function () {
+                // Show error
+            }
+        });
+    })
+</script>
+{% endblock %}

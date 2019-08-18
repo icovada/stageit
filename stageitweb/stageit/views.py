@@ -69,3 +69,8 @@ def tasksadd(request, uuid):
     data['fktemplate'] = str(uuid)
     data['slug'] = str(uuid)[:5]
     return render(request, 'stageit/tasks/add.html', data)
+
+
+
+def sandbox(request):
+    return render(request, 'stageit/jinja_sandbox.html')
