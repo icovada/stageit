@@ -21,8 +21,8 @@ class Template(models.Model):
 class History(models.Model):
     """Defines history table."""
     pkid = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    dateend = models.DateTimeField()
-    datestart = models.DateTimeField()
+    dateend = models.DateTimeField(null=True)
+    datestart = models.DateTimeField(null=True)
     description = models.TextField(max_length=50)
     installmode = models.TextField(max_length=20)
     model = models.TextField(max_length=50)
