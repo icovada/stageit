@@ -71,7 +71,7 @@ class BaseDevice():
         #self.session.timeout = oldtimeout
 
         data = {'vendor': self.facts['vendor'],
-                'serial_number': self.facts['serial_number'],
+                'serial': self.facts['serial_number'],
                 'os_version': self.facts['os_version'],
                 'model': self.facts['model']}
         requests.put(URL_BASE + 'history/' + self.pkid + URL_SUFFIX, data=data)
