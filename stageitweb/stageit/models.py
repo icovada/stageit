@@ -7,7 +7,7 @@ class Template(models.Model):
     """Defines templates table."""
     pkid = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     description = models.TextField(max_length=50)
-    filepath = models.TextField(max_length=256)
+    filepath = models.TextField(max_length=256, null=True)
     installmode = models.TextField(max_length=20)
     name = models.TextField(max_length=50, unique=True, null=False)
     platform = models.TextField(max_length=30, null=False)
