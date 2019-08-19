@@ -85,8 +85,8 @@ def loggenerator(uuid):
         logs = models.Log.objects.filter(fkhistory=uuid, sequence__gt=lastlog)
         for log in logs:
             lastlog = log.sequence
-            sleep(1)
             yield(log.log)
+        sleep(1)
         history_row.refresh_from_db()
 
 
