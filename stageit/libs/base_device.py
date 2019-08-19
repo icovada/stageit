@@ -176,5 +176,10 @@ class BaseDevice():
         self.session.close()
 
     def _checksession(self):
-        if self.session.is_alive()['is_alive'] is False:
+        try: 
+            connstatus = self.session.is_alive()['is_alive']
+        except AttributeError:
+            connstatus = False
+        if not connstatus:
             self.session = self.driver(**self.sessiondata)
+            self.session.open()
