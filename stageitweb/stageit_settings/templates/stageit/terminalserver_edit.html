@@ -7,7 +7,7 @@
 <div class="top-gutter bottom-gutter container-wrapper">
     <div class="content-area">
         <div class="container-lg">
-            <form method="post" id="templateform" action="/api/terminalserver/?format=json">
+            <form method="post" id="templateform" action="/api/terminalserver/{{form.instance.pkid}}/?format=json">
                 {% csrf_token %}
                 {% crispy form %}
 
@@ -28,7 +28,7 @@
     function jsonsubmit() {
         frm = $("#templateform");
         $.ajax({
-            type: 'POST',
+            type: 'PUT',
             url: $('#templateform').attr('action'),
             data: serializeFormJSON(frm)
         }).done(function (response) {
