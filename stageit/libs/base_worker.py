@@ -63,7 +63,7 @@ class BaseWorker(Task):
 
         # Now we have checked the task is OK to work on and marked it as ours, fetch task data
         self.fktask = self.historydata.get('fktask')
-        self.taskdasta = requests.get(
+        self.taskdata = requests.get(
             URL_BASE + 'task/' + self.fktask + URL_SUFFIX).json()
 
         # From the task we find the template
@@ -169,12 +169,12 @@ class BaseWorker(Task):
         if self.filepath != '':
             try:
                 self.driver.upgrade_software(uri=self.filepath,
-                                             mode=self.installmode)
+                                             mode_install=self.installmode)
             except ConnectionError:
                 self.driver.load_temp_config(**self.tempconfig)
                 sleep(3)
                 self.driver.upgrade_software(uri=self.filepath,
-                                             mode=self.installmode)
+                                             mode_install=self.installmode)
 
         self.driver.load_final_config(self.finalconfig)
 
