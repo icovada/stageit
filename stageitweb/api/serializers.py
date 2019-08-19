@@ -61,7 +61,7 @@ class LogSerializer(serializers.ModelSerializer):
     """Defines log table"""
     fkhistory = serializers.PrimaryKeyRelatedField(queryset=models.History.objects)
     sequence = serializers.IntegerField()
-    log = serializers.CharField() 
+    log = serializers.CharField(required=False) 
 
     class Meta:
         model = models.Log
