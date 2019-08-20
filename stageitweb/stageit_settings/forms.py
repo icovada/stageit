@@ -15,18 +15,18 @@ class TerminalServerForm(forms.ModelForm):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
 
-    class Meta():
+    class Meta:
         model = models.TerminalServer
         fields = '__all__'
 
 
 class SerialPortForm(forms.ModelForm):
-    fkterminalserver = forms.ModelChoiceField(queryset=models.TerminalServer.objects)
-    transport = forms.ChoiceField(choices=(('telnet', 'Telnet'), ('ssh', 'SSH')))
+    fkterminalserver = forms.ModelChoiceField(queryset=models.TerminalServer.objects, label="Terminal Server")
+    transport = forms.ChoiceField(choices=(('telnet', 'Telnet'), ('ssh', 'SSH')), help_text="SSH is not supported for Serial over IP connections")
     port = forms.IntegerField(min_value=1, max_value=65535)
     line = forms.IntegerField(min_value=1, max_value=65535)
 
-    class Meta():
+    class Meta:
         model = models.SerialPort
         fields = '__all__'
 
