@@ -22,17 +22,19 @@ class FakeIO(BytesIO):
         if self.lastflush == self.buffer.tell():
             return self.buffer.flush()
         self.buffer.seek(self.lastflush)
+
+        binlog = self.buffer.read()
         postdata = {'fkhistory': self.fkhistory,
                     'sequence' : self.sequence,
-                    'log': self.buffer.read()}
+                    'log': binlog}
 
         log = requests.post('http://localhost:8000/api/log/?format=json',
                             data = postdata)
 
-        assert log.ok
 
         self.sequence += 1
         self.lastflush = self.buffer.tell()
+
         return self.buffer.flush()
 
     def getbuffer(self):
