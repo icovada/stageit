@@ -18,19 +18,19 @@
                     <h2>Run data</h2>
                     <table class="table">
                         <tr>
-                            <td><strong>Status</strong></td>
+                            <td><strong>Status</strong>  {{instance.status}}</td>
                             <td id="statusfield"></td>
                         </tr>
                         <tr>
-                            <td><strong>Task start time</strong></td>
+                            <td><strong>Task start time</strong>  {{instance.startdate}}</td>
                             <td id="datestartfield"></td>
                         </tr>
                         <tr>
-                            <td><strong>Task finish time</strong></td>
+                            <td><strong>Task finish time</strong>  {{instance.enddate}}</td>
                             <td id="dateendfield"></td>
                         </tr>
                         <tr>
-                            <td><strong>Task description</strong></td>
+                            <td><strong>Task description</strong>  {{instance.description}}</td>
                             <td id="descriptionfield"></td>
                         </tr>
                     </table>
@@ -41,15 +41,15 @@
                     <h2>Hardware</h2>
                     <table class="table">
                         <tr>
-                            <td><strong>Vendor</strong></td>
+                            <td><strong>Vendor</strong>  {{instance.vendor}}</td>
                             <td id="vendorfield"></td>
                         </tr>
                         <tr>
-                            <td><strong>Model</strong></td>
+                            <td><strong>Model</strong>  {{instance.model}}</td>
                             <td id="modelfield"></td>
                         </tr>
                         <tr>
-                            <td><strong>Serial</strong></td>
+                            <td><strong>Serial</strong>  {{instance.serial}}</td>
                             <td id="serialfield"></td>
                         </tr>
                     </table>
@@ -58,16 +58,12 @@
                     <h2>Software</h2>
                     <table class="table">
                         <tr>
-                            <td><strong>Install mode</strong></td>
+                            <td><strong>Install mode</strong>  {{instance.installmode}}</td>
                             <td id="installmodefield"></td>
                         </tr>
                         <tr>
-                            <td><strong>OS Version</strong></td>
+                            <td><strong>OS Version</strong>  {{instance.os_version}}</td>
                             <td id="os_versionfield"></td>
-                        </tr>
-                        <tr>
-                            <td><strong>Serial Number</strong></td>
-                            <td id="serial_numberfield"></td>
                         </tr>
                     </table>
                 </div>
@@ -99,7 +95,7 @@
 {% block script %}
 <script>
     var client = new XMLHttpRequest();
-    client.open('get', '/api/streamlogs/{{pkid}}');
+    client.open('get', '/api/streamlogs/{{instance.pkid}}');
     client.send();
     client.onprogress = function () {
         var textarea = $('#runlog')

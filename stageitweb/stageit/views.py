@@ -28,7 +28,8 @@ def history(request):
     return render(request, 'stageit/history.html')
 
 def historydetail(request, uuid):
-    data = {'pkid': uuid}
+    instance = models.History.objects.get(pkid=uuid)
+    data = {'instance': instance}
     return render(request, 'stageit/history/detail.html', data)
 
 def historyadd(request, uuid):
