@@ -12,9 +12,7 @@ from jinja2 import Environment, BaseLoader
 from stageit.libs.base_device import BaseDevice
 import requests
 
-URL_BASE = "http://localhost:8000/api/"
 URL_SUFFIX = "/?format=json"
-
 
 class BaseWorker(Task):
     """Base class to connect to network device."""
@@ -151,8 +149,7 @@ class BaseWorker(Task):
             from stageit.libs.cisco.switch.ios import IOSSwitch as specific_device
 
         else:
-            specific_device = BaseDevice
-            #raise ValueError("Unrecognised model")
+            raise ValueError("Unrecognised model")
 
         data = {'status': 'In Progress'}
         requests.put(URL_BASE + 'history/' +

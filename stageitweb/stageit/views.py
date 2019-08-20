@@ -34,7 +34,6 @@ def historydetail(request, uuid):
     return render(request, 'stageit/history/detail.html', data)
 
 def historyadd(request, uuid):
-    #from stageit.libs.fake_worker import fakeworker as fw
     from stageit.libs.base_worker import baseworker as bw
 
     # Check there are no other running workers for this task
@@ -42,7 +41,6 @@ def historyadd(request, uuid):
         return HttpResponseForbidden("A worker is already running for this task")
     
     if request.method == 'POST':
-        instance = models.Task.objects.get(pkid=uuid)
         form = forms.EnqueueTask(request.POST)
         if form.is_valid():
             history = models.History()

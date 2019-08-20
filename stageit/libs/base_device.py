@@ -63,12 +63,9 @@ class BaseDevice():
         self.status = 'Getting facts'
         logging.info(self.status)
         self._checksession()
-        #oldtimeout = self.session.timeout
-        #self.session.timeout = 10
         self._checksession()
         self.session.open()
         self.facts = self.session.get_facts()
-        #self.session.timeout = oldtimeout
 
         data = {'vendor': self.facts['vendor'],
                 'serial': self.facts['serial_number'],
