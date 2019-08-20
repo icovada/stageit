@@ -14,10 +14,12 @@
                 </div>
             </div>
             <div class="row">
-                <form method="post" id="templateform" action="/history/new/{{uuid}}">
-                    {% csrf_token %}
-                    {% crispy form %}
-                </form>
+                <div class="col-xl-12">
+                    <form method="post" id="templateform" action="/history/new/{{uuid}}">
+                        {% csrf_token %}
+                        {% crispy form %}
+                    </form>
+                </div>
             </div>
 
         </div>
