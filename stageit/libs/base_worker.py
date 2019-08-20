@@ -42,6 +42,8 @@ class BaseWorker(Task):
     def run(self, *args, **kwargs):
         """Celery calls this to start the task."""
 
+        URL_BASE = kwargs.get('apipath') + "/api/"
+
         self.workerid = self.app.oid
         self.pkid = kwargs.get('fkhistory')
         self.logbuffer = FakeIO(self.pkid)
@@ -58,7 +60,7 @@ class BaseWorker(Task):
             # Mark History row as being worked on by us
             data = {'workerid': self.workerid,
                     'status': 'Discovering'}
-            result = requests.put(URL_BASE + 'history/' +
+            requests.put(URL_BASE + 'history/' +
                          self.pkid + URL_SUFFIX, data=data)
 
         # Now we have checked the task is OK to work on and marked it as ours, fetch task data
@@ -108,7 +110,7 @@ class BaseWorker(Task):
                            'transport': transport,
                            'username': username,
                            'password': password,
-                           'platform': platform,
+                           'platform': platform,                 
                            'logbuffer': self.logbuffer
                            }
 
@@ -154,11 +156,10 @@ class BaseWorker(Task):
 
         data = {'status': 'In Progress'}
         requests.put(URL_BASE + 'history/' +
-                         self.pkid + URL_SUFFIX, data=data)
+                     self.pkid + URL_SUFFIX, data=data)
 
         device.close()
         return specific_device(**self.devicedata, tserver=self.tserver, pkid=self.pkid)
-
 
     def stageit(self):
         """Do the job."""
@@ -185,4 +186,4 @@ app.register_task(BaseWorker())
 @app.task(bind=True, base=BaseWorker)
 def baseworker(self, *args, **kwargs):
     worker = BaseWorker()
-    return worker.run(fkhistory=kwargs.get('fkhistory'))
+    return worker.run(fkhistory=kwargs.get('fkhistory'), apipath=kwargs.get('apipath'))

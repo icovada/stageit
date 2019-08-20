@@ -3,6 +3,7 @@ from django.http import HttpResponseForbidden
 from django.views.generic import FormView
 
 from . import forms as forms
+from . import settings as settings
 
 import stageitweb.stageit.models as models
 import pickle
@@ -49,7 +50,7 @@ def historyadd(request, uuid):
             history.status = "Queued"
             history.fkserialport = "b3527269-53ca-483b-9e14-55617c1682f1"
             history.save()
-            bw.delay(fkhistory=str(history.pkid))
+            bw.delay(fkhistory=str(history.pkid), apipath=settings.API_BASE_URL)
             return redirect('/history/' + str(history.pkid))
 
     else:
