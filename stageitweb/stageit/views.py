@@ -1,5 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponseForbidden
+from django.views.generic import FormView
+
+from . import forms as forms
 
 import stageitweb.stageit.models as models
 import pickle
@@ -36,15 +39,22 @@ def historyadd(request, uuid):
     if models.History.objects.filter(fktask = uuid, status = "In progress").count() > 0:
         return HttpResponseForbidden("A worker is already running for this task")
     
-    history = models.History()
-    history.fktask = uuid
-    history.status = "Queued"
-    history.fkserialport = "b3527269-53ca-483b-9e14-55617c1682f1"
-    history.save()
+    if request.method == 'POST':
+        instance = models.Task.objects.get(pkid=uuid)
+        form = forms.EnqueueTask(request.POST)
+        if form.is_valid():
+            history = models.History()
+            history.fktask = uuid
+            history.status = "Queued"
+            history.fkserialport = "b3527269-53ca-483b-9e14-55617c1682f1"
+            history.save()
+            bw.delay(fkhistory=str(history.pkid))
+            return redirect('/history/' + str(history.pkid))
 
-    bw.delay(fkhistory=str(history.pkid))
+    else:
+        form = forms.EnqueueTask()
 
-    return render(request, 'stageit/history/add.html')
+        return render(request, 'stageit/history/add.html', {'form': form, 'uuid': uuid})
 
 def tasks(request):
     return render(request, 'stageit/tasks.html')
