@@ -12,9 +12,7 @@ from jinja2 import Environment, BaseLoader
 from stageit.libs.base_device import BaseDevice
 import requests
 
-URL_BASE = "http://localhost:8000/api/"
 URL_SUFFIX = "/?format=json"
-
 
 class BaseWorker(Task):
     """Base class to connect to network device."""
@@ -42,6 +40,9 @@ class BaseWorker(Task):
     def run(self, *args, **kwargs):
         """Celery calls this to start the task."""
 
+        URL_BASE = kwargs.get('apipath') + "/api/"
+
+        self.workerid = self.app.oid
         self.pkid = kwargs.get('fkhistory')
         self.logbuffer = FakeIO(self.pkid)
         logging.info('Worker for {} ready'.format(self.pkid))
@@ -55,7 +56,7 @@ class BaseWorker(Task):
                 "Task already being worked on by someone else")
         else:
             # Mark History row as being worked on by us
-            data = {'workerid': kwargs.get('celeryid'),
+            data = {'workerid': self.workerid,
                     'status': 'Discovering'}
             requests.put(URL_BASE + 'history/' +
                          self.pkid + URL_SUFFIX, data=data)
@@ -82,10 +83,8 @@ class BaseWorker(Task):
         hostname = self.terminalserverdata.get('hostname')
         port = self.serialportdata.get('port')
         transport = self.serialportdata.get('transport')
-
-        # TODO: Pass these from template
-        username = 'cisco'
-        password = 'cisco'
+        username = self.terminalserverdata.get('username')
+        password = self.terminalserverdata.get('password')
 
         description = self.taskdata.get('description')
         taskvalues = self.taskdata.get('taskvalues')
@@ -109,7 +108,7 @@ class BaseWorker(Task):
                            'transport': transport,
                            'username': username,
                            'password': password,
-                           'platform': platform,
+                           'platform': platform,                 
                            'logbuffer': self.logbuffer
                            }
 
@@ -150,16 +149,14 @@ class BaseWorker(Task):
             from stageit.libs.cisco.switch.ios import IOSSwitch as specific_device
 
         else:
-            specific_device = BaseDevice
-            #raise ValueError("Unrecognised model")
+            raise ValueError("Unrecognised model")
 
         data = {'status': 'In Progress'}
         requests.put(URL_BASE + 'history/' +
-                         self.pkid + URL_SUFFIX, data=data)
+                     self.pkid + URL_SUFFIX, data=data)
 
         device.close()
         return specific_device(**self.devicedata, tserver=self.tserver, pkid=self.pkid)
-
 
     def stageit(self):
         """Do the job."""
@@ -170,12 +167,12 @@ class BaseWorker(Task):
         if self.filepath != '':
             try:
                 self.driver.upgrade_software(uri=self.filepath,
-                                             mode=self.installmode)
+                                             mode_install=self.installmode)
             except ConnectionError:
                 self.driver.load_temp_config(**self.tempconfig)
                 sleep(3)
                 self.driver.upgrade_software(uri=self.filepath,
-                                             mode=self.installmode)
+                                             mode_install=self.installmode)
 
         self.driver.load_final_config(self.finalconfig)
 
@@ -184,7 +181,6 @@ app.register_task(BaseWorker())
 
 
 @app.task(bind=True, base=BaseWorker)
-def baseworker(self, **kwargs):
-    celeryid = self.request.id.__str__()
+def baseworker(self, *args, **kwargs):
     worker = BaseWorker()
-    return worker.run(fkhistory=kwargs.get('fkhistory'), celeryid=celeryid)
+    return worker.run(fkhistory=kwargs.get('fkhistory'), apipath=kwargs.get('apipath'))

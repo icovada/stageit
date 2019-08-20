@@ -27,6 +27,8 @@ class BaseDevice():
                             'optional_args': {'port': kwargs.get('port'),
                                               'transport': kwargs.get('transport'),
                                               'session_log': kwargs.get('logbuffer')}}
+        self.session = None
+        self._checksession()
 
         self.tserver = tserver
 
@@ -60,12 +62,13 @@ class BaseDevice():
         """Get device facts and update history db table."""
         self.status = 'Getting facts'
         logging.info(self.status)
-        with self.driver(**self.sessiondata) as session:
-            session.timeout = 10
-            self.facts = session.get_facts()
+        self._checksession()
+        self._checksession()
+        self.session.open()
+        self.facts = self.session.get_facts()
 
         data = {'vendor': self.facts['vendor'],
-                'serial_number': self.facts['serial_number'],
+                'serial': self.facts['serial_number'],
                 'os_version': self.facts['os_version'],
                 'model': self.facts['model']}
         requests.put(URL_BASE + 'history/' + self.pkid + URL_SUFFIX, data=data)
@@ -78,59 +81,61 @@ class BaseDevice():
         """
         self.status = 'Loading temp config'
         logging.info(self.status)
+        self._checksession()
         # Check if we have info from outside, otherwise default to dhcp
         if 'ip' not in kwargs or 'netmask' not in kwargs:
             kwargs['ip'] = 'dhcp'
 
-        with self.driver(**self.sessiondata) as session:
-            # Ignore warnings and worry later
-            session.auto_rollback_on_error = False
-            session.load_template(template_name="upgrade_template",
-                                  template_path=os.path.abspath(
-                                      os.path.curdir) + "/configs",
-                                  username="cisco",
-                                  password="cisco",
-                                  l2_interface="Gi1/0/48",
-                                  l3_interface="Vlan 1",
-                                  vlan=1,
-                                  ip="dhcp")
-            session.commit_config()
+        # Ignore warnings and worry later
+        self.session.auto_rollback_on_error = False
+        self.session.load_template(template_name="upgrade_template",
+                                   template_path=os.path.abspath(
+                                       os.path.curdir) + "/configs",
+                                   username="cisco",
+                                   password="cisco",
+                                   l2_interface="Gi1/0/48",
+                                   l3_interface="Vlan 1",
+                                   vlan=1,
+                                   ip="dhcp")
+        self.session.commit_config()
 
-            if kwargs['ip'] == 'dhcp':
-                self.status = "Waiting for DHCP"
-                logging.info(self.status)
-                # Wait for device to grab ip.
-                int_ip = {}
-                while int_ip:
-                    int_ip = session.get_interfaces_ip()
+        if kwargs['ip'] == 'dhcp':
+            self.status = "Waiting for DHCP"
+            logging.info(self.status)
+            # Wait for device to grab ip.
+            int_ip = {}
+            while int_ip:
+                int_ip = self.session.get_interfaces_ip()
 
+        self.session.auto_rollback_on_error = True
         self._has_connectivity = True
 
     def load_final_config(self, config, **values):
         """Load final configuration from template."""
         self.status = 'Loading final config'
         logging.info(self.status)
-        with self.driver(**self.sessiondata) as session:
-            session.load_template(template_source=config,
-                                  template_name="stdin",
-                                  **values)
+        self._checksession()
+        self.session.load_template(template_source=config,
+                                   template_name="stdin",
+                                   **values)
 
-            session.commit_config()
+        self.session.commit_config()
 
         self.save_config()
 
-    def copy_file(self, session, uri):
+    def copy_file(self, uri):
         """Connect to device and issue copy command from uri."""
         self.status = 'Copying from {}'.format(uri)
         logging.info(self.status)
-        session.device.send_config_set(["file prompt quiet"])
+        self._checksession()
+        self.session.device.send_config_set(["file prompt quiet"])
         command = "copy " + uri + " flash:\n"
         # Destination filename [foo.bar]?
-        session.device.write_channel(command)
-        session.device.write_channel("\n")
-        session.device.timeout = 1800  # Could take ages...
-        out = session.device.read_until_prompt_or_pattern("Error")
-        session.device.send_config_set(["no file prompt quiet"])
+        self.session.device.write_channel(command)
+        self.session.device.write_channel("\n")
+        self.session.device.timeout = 1800  # Could take ages...
+        out = self.session.device.read_until_prompt_or_pattern("Error")
+        self.session.device.send_config_set(["no file prompt quiet"])
         if "Error" in out:
             raise ValueError("File transfer failed")
         elif "bytes copied" in out:
@@ -148,29 +153,32 @@ class BaseDevice():
         """Issue write command."""
         self.status = 'Saving config'
         logging.info(self.status)
-        with self.driver(**self.sessiondata) as session:
-            session.device.write_channel("wr\n")
-            session.device.write_channel("\n\n\n")
-            session.device.read_until_prompt()
+        self._checksession()
+        self.session.device.write_channel("wr\n")
+        self.session.device.write_channel("\n\n\n")
+        self.session.device.read_until_prompt()
 
     def reload_device(self):
         """Issue reload command."""
         self.status = 'Sending reload command'
         logging.info(self.status)
-        with self.driver(**self.sessiondata) as session:
-            session.device.write_channel("wr\n")
-            session.device.write_channel("\n\n\n")
-            session.device.read_until_prompt()
-            session.device.write_channel("reload")
-            session.device.write_channel("\n\n\n")
+        self._checksession()
+        self.session.device.write_channel("wr\n")
+        self.session.device.write_channel("\n\n\n")
+        self.session.device.read_until_prompt()
+        self.session.device.write_channel("reload")
+        self.session.device.write_channel("\n\n\n")
         self.checkavailable(1000)
 
     def close(self, logname=None):
         """Wrap-up task."""
-        self.status = 'Saving log'
-        logging.info(self.status)
-        if logname is not None:
-            with open(logname, "wb") as outlog:
-                outlog.write(self.logbuffer.getvalue())
-        else:
-            return self.logbuffer.getvalue()
+        self.session.close()
+
+    def _checksession(self):
+        def _createsession():
+                driver = self.driver(**self.sessiondata)
+                driver.open()
+                return driver 
+
+        if self.session is None or not self.session.is_alive().get('is_alive'):
+                self.session = _createsession()

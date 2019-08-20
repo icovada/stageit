@@ -32,38 +32,38 @@ class IOSSwitch(BaseDevice):
             return upgradestatus
 
     def _firmware_ok(self, version):
-        with self.driver(**self.sessiondata) as session:
-            showver = session.device.send_command("show version")
+        self._checksession()
+        showver = self.session.device.send_command("show version")
 
-            # This regex parses the following output
-            # System image file is "flash:c2960x-universalk9-mz.152-2.E5.bin"
-            # System image file is "flash:/c3560cx-universalk9-mz.152-4.E6/c3560cx-universalk9-mz.152-4.E6.bin"
+        # This regex parses the following output
+        # System image file is "flash:c2960x-universalk9-mz.152-2.E5.bin"
+        # System image file is "flash:/c3560cx-universalk9-mz.152-4.E6/c3560cx-universalk9-mz.152-4.E6.bin"
 
-            verregex = r'image file is "\w*\:\/*(?:.*\/)*(.*)"'
-            curversion = re.findall(verregex, showver, re.MULTILINE)[0]
+        verregex = r'image file is "\w*\:\/*(?:.*\/)*(.*)"'
+        curversion = re.findall(verregex, showver, re.MULTILINE)[0]
 
-            if curversion == version:
-                return (True, curversion, "BUNDLE")
-            else:
-                return (False, curversion, "BUNDLE")
+        if curversion == version:
+            return (True, curversion, "BUNDLE")
+        else:
+            return (False, curversion, "BUNDLE")
 
     def _upgrade_to_install(self, uri):
         raise Exception(
             "IOS does not have install mode. You should not have reached this")
 
     def _upgrade_to_bundle(self, uri):
-        with self.driver(**self.sessiondata) as session:
-            self.status = "Check file exists"
-            logging.info(self.status)
+        self._checksession()
+        self.status = "Check file exists"
+        logging.info(self.status)
 
-            flashuri = session._gen_full_path(uri.split("/")[-1])
-            if not session._check_file_exists(flashuri):
-                self.copy_file(session, uri)
+        flashuri = self.session._gen_full_path(uri.split("/")[-1])
+        if not self.session._check_file_exists(flashuri):
+            self.copy_file(uri)
 
-            self.status = "Upgrading IOS"
-            logging.info(self.status)
-            confset = ["no boot system", "boot system {}".format(flashuri)]
-            session.device.send_config_set(confset)
-            session.device.send_command("wr\n\n\n\n\n\n\n")
+        self.status = "Upgrading IOS"
+        logging.info(self.status)
+        confset = ["no boot system", "boot system {}".format(flashuri)]
+        self.session.device.send_config_set(confset)
+        self.session.device.send_command("wr\n\n\n\n\n\n\n")
         self.reload_device()
         return True

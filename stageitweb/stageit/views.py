@@ -1,5 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponseForbidden
+from django.views.generic import FormView
+
+from . import forms as forms
+from . import settings as settings
 
 import stageitweb.stageit.models as models
 import pickle
@@ -25,26 +29,32 @@ def history(request):
     return render(request, 'stageit/history.html')
 
 def historydetail(request, uuid):
-    data = {'pkid': uuid}
+    instance = models.History.objects.get(pkid=uuid)
+    data = {'instance': instance}
     return render(request, 'stageit/history/detail.html', data)
 
 def historyadd(request, uuid):
-    #from stageit.libs.fake_worker import fakeworker as fw
     from stageit.libs.base_worker import baseworker as bw
 
     # Check there are no other running workers for this task
     if models.History.objects.filter(fktask = uuid, status = "In progress").count() > 0:
         return HttpResponseForbidden("A worker is already running for this task")
     
-    history = models.History()
-    history.fktask = uuid
-    history.status = "Queued"
-    history.fkserialport = "249936ac-4957-4367-9506-5dceb90aab9c"
-    history.save()
+    if request.method == 'POST':
+        form = forms.EnqueueTask(request.POST)
+        if form.is_valid():
+            history = models.History()
+            history.fktask = uuid
+            history.status = "Queued"
+            history.fkserialport = "b3527269-53ca-483b-9e14-55617c1682f1"
+            history.save()
+            bw.delay(fkhistory=str(history.pkid), apipath=settings.API_BASE_URL)
+            return redirect('/history/' + str(history.pkid))
 
-    bw.delay(fkhistory=str(history.pkid))
+    else:
+        form = forms.EnqueueTask()
 
-    return render(request, 'stageit/history/add.html')
+        return render(request, 'stageit/history/add.html', {'form': form, 'uuid': uuid})
 
 def tasks(request):
     return render(request, 'stageit/tasks.html')

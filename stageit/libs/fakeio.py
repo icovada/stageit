@@ -5,6 +5,7 @@ A class overriding BytesIO to write every line added into a database
 from io import BytesIO
 import requests
 
+
 class FakeIO(BytesIO):
     def __init__(self, fkhistory):
         self.sequence = 1
@@ -22,17 +23,18 @@ class FakeIO(BytesIO):
         if self.lastflush == self.buffer.tell():
             return self.buffer.flush()
         self.buffer.seek(self.lastflush)
+
+        binlog = self.buffer.read()
         postdata = {'fkhistory': self.fkhistory,
-                    'sequence' : self.sequence,
-                    'log': self.buffer.read()}
+                    'sequence': self.sequence,
+                    'log': binlog}
 
-        log = requests.post('http://localhost:8000/api/log/?format=json',
-                            data = postdata)
-
-        assert log.ok
+        requests.post('http://localhost:8000/api/log/?format=json',
+                      data=postdata)
 
         self.sequence += 1
         self.lastflush = self.buffer.tell()
+
         return self.buffer.flush()
 
     def getbuffer(self):
@@ -57,19 +59,12 @@ class FakeIO(BytesIO):
     def seek(self, *args):
         return self.buffer.seek(*args)
 
-    #def seekable
-    #def tell
-    #def truncate
-    #def writable
+    # def seekable
+    # def tell
+    # def truncate
+    # def writable
     def write(self, text):
-        #row = Log()
-        #row.fkhistory = self.fkhistory
-        #row.log = text.decode()
-        #row.sequence = self.sequence
-        #self.sequence += 1
-        #row.save()
         return self.buffer.write(text)
 
     def writelines(self, *args):
         return self.buffer.writelines(*args)
-
