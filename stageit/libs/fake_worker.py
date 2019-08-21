@@ -30,7 +30,7 @@ class FakeWorker(Task):
 
 
     def run(self, *args, **kwargs):
-        self.status = "Initializing"
+        logging.info("Initializing")
         
         # Adapted from Sim City 4 loading screen to fit network
         self.statuses = ["Adding Hidden Config",
@@ -132,10 +132,6 @@ class FakeWorker(Task):
         self.log = FakeIO(fkhistory=self.pkid)
         self.stageit()
 
-    def getstatus(self):
-        """Return status of running task"""
-        return self.status
-
     def driver(self):
         """
         Return complete log.
@@ -148,11 +144,11 @@ class FakeWorker(Task):
     def stageit(self):
         """Choose random status"""
         for i in range(random.randint(2, 3)):
-            self.status = self.statuses[random.randint(0, len(self.statuses)-1)]
-            self.log.write(self.status.encode('utf-8') + "\n".encode('utf-8'))
+            status = self.statuses[random.randint(0, len(self.statuses)-1)]
+            self.log.write(status.encode('utf-8') + "\n".encode('utf-8'))
             if (i % 2) == 0:
                 self.log.flush()
-            logging.info(self.status)
+            logging.info(status)
             sleep(random.randint(1, 2))
         
         self.log.flush()

@@ -9,8 +9,7 @@ class IOSXERouter(BaseDevice):
 
     def upgrade_software(self, uri, mode="INSTALL"):
         """Verify software version and if necessary upgrade through proper path."""
-        self.status = "Checking firmware versions"
-        logging.info(self.status)
+        logging.info("Checking firmware versions")
         firmware = (False, None, None)
         if re.search(r'isr4300-universalk9(_npe)?(\.(\d{2})){3}\.SPA\.bin', uri):
             # ISR 4000
@@ -29,10 +28,10 @@ class IOSXERouter(BaseDevice):
             raise Warning("Unsupported image file")
 
         if not self._check_rommon():
+            # TODO: Add firmware/minimum rommon version table
             self._checksession()
             self.copy_file("http://10.82.135.9/ios-xe/isr4200_4300_rommon_169_1r_SPA.pkg")
-            self.status = "Upgrading ROMMON"
-            logging.info(self.status)
+            logging.info("Upgrading ROMMON")
             self.session.device.timeout = 600  # Takes at least a good 5 min
             self.session.device.write_channel(
                     "upgrade rom-monitor filename bootflash:isr4200_4300_rommon_169_1r_SPA.pkg all\n")
@@ -68,8 +67,7 @@ class IOSXERouter(BaseDevice):
 
     def _firmware_ok(self, version, mode='INSTALL'):
         self._checksession()
-        self.status = "Checking IOS XE version"
-        logging.info(self.status)
+        logging.info("Checking IOS XE version")
         showver = self.session.device.send_command("show version")
 
         # This regex parses the following output
@@ -99,8 +97,7 @@ class IOSXERouter(BaseDevice):
 
     def _check_rommon(self):
         self._checksession()
-        self.status = "Checking ROMMON version"
-        logging.info(self.status)
+        logging.info("Checking ROMMON version")
         command = "show rom-monitor RP active\n"
         showrommon = self.session.device.send_command(command)
 
@@ -114,15 +111,13 @@ class IOSXERouter(BaseDevice):
 
     def _upgrade_to_install(self, uri):
         self._checksession()
-        self.status = "Check file exists"
-        logging.info(self.status)
+        logging.info("Check file exists")
 
         flashuri = self.session._gen_full_path(uri.split("/")[-1])
         if not self.session._check_file_exists(flashuri):
             self.copy_file(uri)
 
-        self.status = "Upgrading IOS-XE to INSTALL mode"
-        logging.info(self.status)
+        logging.info("Upgrading IOS-XE to INSTALL mode")
         command = "request platform software package expand file {}\n".format(
             flashuri)
         self.session.device.timeout = 1800
@@ -134,6 +129,7 @@ class IOSXERouter(BaseDevice):
             return False
         else:
             if "different version of provisioning file packages.conf already exists" in output:
+                # TODO: Add output of command in comments
                 confregex = r'WARNING: (\w*\:.*)'
                 bootvaruri = re.findall(confregex, output)[0]
             else:
@@ -149,15 +145,13 @@ class IOSXERouter(BaseDevice):
 
     def _upgrade_to_bundle(self, uri):
         self._checksession()
-        self.status = "Check file exists"
-        logging.info(self.status)
+        logging.info("Check file exists")
 
         flashuri = self.session._gen_full_path(uri.split("/")[-1])
         if not self.session._check_file_exists(flashuri):
                 self.copy_file(uri)
 
-        self.status = "Upgrading IOS-XE to BUNDLE mode"
-        logging.info(self.status)
+        logging.info("Upgrading IOS-XE to BUNDLE mode")
         confset = ["no boot system", "boot system {}".format(flashuri)]
         self.session.device.send_config_set(confset)
         self.session.device.send_command("wr\n\n\n\n\n\n\n\n")

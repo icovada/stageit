@@ -9,8 +9,7 @@ class IOSXESwitch(BaseDevice):
 
     def upgrade_software(self, uri, mode="INSTALL"):
         """Verify software version and if necessary upgrade through proper path."""
-        self.status = "Checking firmware version"
-        logging.info(self.status)
+        logging.info("Checking firmware version")
         firmware = (False, None, None)
         if re.search(r'cat3k_caa-universalk9(ldpe)?(\.(\d{2})){3}\.SPA\.bin', uri):
             # Catalyst 3650, 3750
@@ -73,16 +72,14 @@ class IOSXESwitch(BaseDevice):
         return (True, member[3], member[5])
 
     def _upgrade_to_install(self, uri):
-        self._checksession()
-        self.status = "Check file exists"
-        logging.info(self.status)
+        self._checksession() 
+        logging.info("Check file exists")
 
         flashuri = self.session._gen_full_path(uri.split("/")[-1])
         if not self.session._check_file_exists(flashuri):
             self.copy_file(uri)
 
-        self.status = "Upgrading IOS XE to INSTALL mode"
-        logging.info(self.status)
+        logging.info("Upgrading IOS XE to INSTALL mode")
         command = "request platform software package install switch all file {} force new auto-copy\n".format(
             flashuri)
         self.session.device.timeout = 1800
@@ -97,15 +94,13 @@ class IOSXESwitch(BaseDevice):
 
     def _upgrade_to_bundle(self, uri):
         self._checksession()
-        self.status = "Check file exists"
-        logging.info(self.status)
+        logging.info("Check file exists")
 
         flashuri = self.session._gen_full_path(uri.split("/")[-1])
         if not self.session._check_file_exists(flashuri):
             self.copy_file(uri)
 
-        self.status = "Upgrading IOS-XE to BUNDLE mode"
-        logging.info(self.status)
+        logging.info("Upgrading IOS-XE to BUNDLE mode")
         confset = ["no boot system", "boot system {}".format(flashuri)]
         self.session.device.send_config_set(confset)
         self.session.device.send_command("wr\n\n\n\n\n\n\n")

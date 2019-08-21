@@ -15,8 +15,7 @@ class BaseDevice():
 
     def __init__(self, tserver, pkid, **kwargs):
         """Define all class data."""
-        self.status = 'Init'
-        logging.info(self.status)
+        logging.info('Init')
         self._has_connectivity = False
 
         self.driver = napalm.get_network_driver(kwargs.get('platform'))
@@ -37,14 +36,14 @@ class BaseDevice():
 
     def checkavailable(self, retries):
         """Check if device is available and has booted."""
-        self.status = 'Waiting for connection'
-        logging.info(self.status)
+        logging.info('Waiting for connection')
         self.facts = None
+
+        # Repeat until we get data from the device
         while self.facts is None:
             if retries >= 0:
                 retries = retries - 1
-                self.status = 'Waiting for device {}'.format(retries)
-                logging.info(self.status)
+                logging.info('Waiting for device {}'.format(retries))
                 try:
                     self.getfacts()
                 except (netmiko.ssh_exception.NetMikoAuthenticationException, ValueError):
@@ -60,8 +59,7 @@ class BaseDevice():
 
     def getfacts(self):
         """Get device facts and update history db table."""
-        self.status = 'Getting facts'
-        logging.info(self.status)
+        logging.info('Getting facts')
         self._checksession()
         self._checksession()
         self.session.open()
@@ -71,6 +69,8 @@ class BaseDevice():
                 'serial': self.facts['serial_number'],
                 'os_version': self.facts['os_version'],
                 'model': self.facts['model']}
+
+        # Update history line with new facts we found
         requests.put(URL_BASE + 'history/' + self.pkid + URL_SUFFIX, data=data)
 
     def load_temp_config(self, **kwargs):
@@ -79,8 +79,8 @@ class BaseDevice():
 
         Is called by upgrade_software if self._has_connectivity is False.
         """
-        self.status = 'Loading temp config'
-        logging.info(self.status)
+
+        logging.info('Loading temp config')
         self._checksession()
         # Check if we have info from outside, otherwise default to dhcp
         if 'ip' not in kwargs or 'netmask' not in kwargs:
@@ -100,8 +100,7 @@ class BaseDevice():
         self.session.commit_config()
 
         if kwargs['ip'] == 'dhcp':
-            self.status = "Waiting for DHCP"
-            logging.info(self.status)
+            logging.info("Waiting for DHCP")
             # Wait for device to grab ip.
             int_ip = {}
             while int_ip:
@@ -112,8 +111,7 @@ class BaseDevice():
 
     def load_final_config(self, config, **values):
         """Load final configuration from template."""
-        self.status = 'Loading final config'
-        logging.info(self.status)
+        logging.info('Loading final config')
         self._checksession()
         self.session.load_template(template_source=config,
                                    template_name="stdin",
@@ -125,8 +123,7 @@ class BaseDevice():
 
     def copy_file(self, uri):
         """Connect to device and issue copy command from uri."""
-        self.status = 'Copying from {}'.format(uri)
-        logging.info(self.status)
+        logging.info('Copying from {}'.format(uri))
         self._checksession()
         self.session.device.send_config_set(["file prompt quiet"])
         command = "copy " + uri + " flash:\n"
@@ -151,8 +148,7 @@ class BaseDevice():
 
     def save_config(self):
         """Issue write command."""
-        self.status = 'Saving config'
-        logging.info(self.status)
+        logging.info('Saving config')
         self._checksession()
         self.session.device.write_channel("wr\n")
         self.session.device.write_channel("\n\n\n")
@@ -160,8 +156,7 @@ class BaseDevice():
 
     def reload_device(self):
         """Issue reload command."""
-        self.status = 'Sending reload command'
-        logging.info(self.status)
+        logging.info(Sending reload command')
         self._checksession()
         self.session.device.write_channel("wr\n")
         self.session.device.write_channel("\n\n\n")
@@ -171,7 +166,7 @@ class BaseDevice():
         self.checkavailable(1000)
 
     def close(self, logname=None):
-        """Wrap-up task."""
+        """Wrap-up session."""
         self.session.close()
 
     def _checksession(self):

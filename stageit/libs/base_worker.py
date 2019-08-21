@@ -20,6 +20,10 @@ class BaseWorker(Task):
     name = "stageit.libs.base_worker.baseworker"
 
     def on_success(self, retval, task_id, *args, **kwargs):
+        """
+        Celery runs this if the task runs successfully 
+        Update database, set history as successful and delete task.
+        """
         logging.info("Set task successful")
         logging.info(retval)
         logging.info(kwargs)
@@ -31,6 +35,11 @@ class BaseWorker(Task):
         requests.put(URL_BASE + 'history/' + self.pkid + URL_SUFFIX, data=data)
 
     def on_failure(self, retval, task_id, *args, **kwargs):
+        """
+        Celery runs this if the task fails
+        Update database, set history as failed.
+        """
+
         logging.info("EPIC FAIL")
         data = {'status': 'Fail',
                 'dateend': datetime.utcnow()
@@ -128,7 +137,6 @@ class BaseWorker(Task):
         logging.info('Discovering platform')
         self.driver = self.find_model()
 
-        self.status = "Working"
         # Actually do the job (finally!)
         self.stageit()
 
@@ -139,6 +147,7 @@ class BaseWorker(Task):
                             self.devicedata, pkid=self.pkid)
         device.checkavailable(300)
 
+        # Load appropriate class based on discovered device
         if any(model in device.facts["model"] for model in ("C3650", "C3850")):
             from stageit.libs.cisco.switch.iosxe import IOSXESwitch as specific_device
 
@@ -151,6 +160,7 @@ class BaseWorker(Task):
         else:
             raise ValueError("Unrecognised model")
 
+        # Update database row
         data = {'status': 'In Progress'}
         requests.put(URL_BASE + 'history/' +
                      self.pkid + URL_SUFFIX, data=data)
@@ -160,7 +170,6 @@ class BaseWorker(Task):
 
     def stageit(self):
         """Do the job."""
-        self.status = 'Working'
         self.driver.checkavailable(1000)
 
         # Skip upgrade if file path not provided
@@ -169,6 +178,9 @@ class BaseWorker(Task):
                 self.driver.upgrade_software(uri=self.filepath,
                                              mode_install=self.installmode)
             except ConnectionError:
+                # Connection initiates from the device back to the storage
+                # If the device hasn't received an IP via DHCP on its own
+                # we push a custom config and try again
                 self.driver.load_temp_config(**self.tempconfig)
                 sleep(3)
                 self.driver.upgrade_software(uri=self.filepath,
@@ -182,5 +194,6 @@ app.register_task(BaseWorker())
 
 @app.task(bind=True, base=BaseWorker)
 def baseworker(self, *args, **kwargs):
+    """Call this with .delay() to start the Celery task."""
     worker = BaseWorker()
     return worker.run(fkhistory=kwargs.get('fkhistory'), apipath=kwargs.get('apipath'))

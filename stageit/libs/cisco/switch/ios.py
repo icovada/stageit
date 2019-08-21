@@ -13,8 +13,7 @@ class IOSSwitch(BaseDevice):
 
     def upgrade_software(self, uri, **kwargs):
         """Upgrade device firmware. IOS only supports BUNDLE mode."""
-        self.status = "Checking firmware version"
-        logging.info(self.status)
+        logging.info("Checking firmware version")
         firmware = (False, None, None)
         version = uri.split("/")[-1]
 
@@ -53,15 +52,13 @@ class IOSSwitch(BaseDevice):
 
     def _upgrade_to_bundle(self, uri):
         self._checksession()
-        self.status = "Check file exists"
-        logging.info(self.status)
+        logging.info("Check file exists")
 
         flashuri = self.session._gen_full_path(uri.split("/")[-1])
         if not self.session._check_file_exists(flashuri):
             self.copy_file(uri)
 
-        self.status = "Upgrading IOS"
-        logging.info(self.status)
+        logging.info("Upgrading IOS")
         confset = ["no boot system", "boot system {}".format(flashuri)]
         self.session.device.send_config_set(confset)
         self.session.device.send_command("wr\n\n\n\n\n\n\n")
