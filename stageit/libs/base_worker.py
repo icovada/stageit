@@ -104,12 +104,12 @@ class BaseWorker(Task):
         self.finalconfig = rtemplate.render(taskvalues)
         platform = self.templatedata.get('platform')
         poststaging = self.templatedata.get('poststaging')
-        self.filepath = self.templatedata.get('filepath')
-        self.installmode = self.templatedata.get('installmode')
+        filepath = self.templatedata.get('filepath')
+        installmode = self.templatedata.get('installmode')
 
         data = {'datestart': datetime.utcnow(),
                 'description': description,
-                'installmode': self.installmode,
+                'installmode': installmode,
                 'templatevalues': taskvalues,
                 'template': self.template}
 
@@ -140,7 +140,7 @@ class BaseWorker(Task):
         self.driver = self.find_model()
 
         # Actually do the job (finally!)
-        self.stageit()
+        self.stageit(filepath=filepath, installmode=installmode)
 
     def find_model(self):
         """Find device type and return appropriate class to deal with
@@ -170,25 +170,26 @@ class BaseWorker(Task):
         device.close()
         return specific_device(**self.devicedata, tserver=self.tserver, pkid=self.pkid)
 
-    def stageit(self):
+    def stageit(self, filepath, installmode):
         """Do the job."""
         self.driver.checkavailable(1000)
 
         # Skip upgrade if file path not provided
-        if self.filepath != '':
+        if filepath != '':
             try:
-                self.driver.upgrade_software(uri=self.filepath,
-                                             mode_install=self.installmode)
+                self.driver.upgrade_software(uri=filepath,
+                                             mode_install=installmode)
             except ConnectionError:
                 # Connection initiates from the device back to the storage
                 # If the device hasn't received an IP via DHCP on its own
                 # we push a custom config and try again
                 self.driver.load_temp_config(**self.tempconfig)
                 sleep(3)
-                self.driver.upgrade_software(uri=self.filepath,
-                                             mode_install=self.installmode)
+                self.driver.upgrade_software(uri=filepath,
+                                             mode_install=installmode)
 
         self.driver.load_final_config(self.finalconfig)
+
 
 
 app.register_task(BaseWorker())
