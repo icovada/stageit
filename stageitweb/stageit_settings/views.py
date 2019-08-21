@@ -55,7 +55,7 @@ def upload_file(request):
             save_path = os.path.join(settings.MEDIA_ROOT, filename)
             default_storage.save(save_path, fileobject)
             models.Firmware.objects.create(filename=filename)
-            return HttpResponseRedirect('/success/url/')
+            return HttpResponseRedirect('/settings/filemanager/')
     else:
         form = UploadFileForm()
     return render(request, 'stageit/upload.html', {'form': form})
