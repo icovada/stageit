@@ -24,6 +24,7 @@ class BaseWorker(Task):
         Celery runs this if the task runs successfully 
         Update database, set history as successful and delete task.
         """
+        URL_BASE = kwargs.get('apipath') + "/api/"
         logging.info("Set task successful")
         logging.info(retval)
         logging.info(kwargs)
@@ -40,7 +41,8 @@ class BaseWorker(Task):
         Update database, set history as failed.
         """
 
-        logging.info("EPIC FAIL")
+        URL_BASE = kwargs.get('apipath') + "/api/"
+        logging.error("EPIC FAIL")
         data = {'status': 'Fail',
                 'dateend': datetime.utcnow()
                 }
