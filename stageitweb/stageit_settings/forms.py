@@ -18,6 +18,11 @@ class TerminalServerForm(forms.ModelForm):
     class Meta:
         model = models.TerminalServer
         fields = '__all__'
+    
+    def __init__(self, *args, **kwargs):
+        super(TerminalServerForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
 
 
 class SerialPortForm(forms.ModelForm):
@@ -30,6 +35,11 @@ class SerialPortForm(forms.ModelForm):
         model = models.SerialPort
         fields = '__all__'
 
+    def __init__(self, *args, **kwargs):
+        super(SerialPortForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
+
 
 class UploadFileForm(forms.Form):
     file = forms.FileField()
@@ -37,3 +47,8 @@ class UploadFileForm(forms.Form):
     helper = FormHelper()
     helper.add_input(Submit('submit', 'Submit', css_class='btn-primary'))
     helper.form_method = 'POST'
+
+    def __init__(self, *args, **kwargs):
+        super(UploadFileForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
