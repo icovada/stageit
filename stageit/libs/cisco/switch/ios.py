@@ -46,10 +46,6 @@ class IOSSwitch(BaseDevice):
         else:
             return (False, curversion, "BUNDLE")
 
-    def _upgrade_to_install(self, uri):
-        raise Exception(
-            "IOS does not have install mode. You should not have reached this")
-
     def _upgrade_to_bundle(self, uri):
         self._checksession()
         logging.info("Check file exists")
