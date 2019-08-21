@@ -156,7 +156,7 @@ class BaseDevice():
 
     def reload_device(self):
         """Issue reload command."""
-        logging.info(Sending reload command')
+        logging.info('Sending reload command')
         self._checksession()
         self.session.device.write_channel("wr\n")
         self.session.device.write_channel("\n\n\n")
