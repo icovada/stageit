@@ -12,10 +12,10 @@ class IOSXESwitch(BaseDevice):
         self.status = "Checking firmware version"
         logging.info(self.status)
         firmware = (False, None, None)
-        try:
+        if re.search(r'cat3k_caa-universalk9(?:ldpe)*\.(\d*\w*\.\d*\w*\.\d*\w*)\.', uri):
             version = re.findall(
                 r'cat3k_caa-universalk9(?:ldpe)*\.(\d*\w*\.\d*\w*\.\d*\w*)\.', uri)[0]
-        except IndexError:
+        else:
             raise Warning("Unsupported image file")
 
         while not firmware[0]:

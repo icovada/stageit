@@ -12,10 +12,10 @@ class IOSXERouter(BaseDevice):
         self.status = "Checking firmware versions"
         logging.info(self.status)
         firmware = (False, None, None)
-        try:
+        if re.search(r'isr4300-universalk9(?:_npe)*\.(\d*\w*\.\d*\w*\.\d*\w*)\.', uri):
             version = re.findall(
                 r'isr4300-universalk9(?:_npe)*\.(\d*\w*\.\d*\w*\.\d*\w*)\.', uri)[0]
-        except IndexError:
+        else:
             raise Warning("Unsupported image file")
 
         if not self._check_rommon():
