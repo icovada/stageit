@@ -12,9 +12,19 @@ class IOSXESwitch(BaseDevice):
         self.status = "Checking firmware version"
         logging.info(self.status)
         firmware = (False, None, None)
-        if re.search(r'cat3k_caa-universalk9(?:ldpe)*\.(\d*\w*\.\d*\w*\.\d*\w*)\.', uri):
+        if re.search(r'cat3k_caa-universalk9(ldpe)?(\.(\d{2})){3}\.SPA\.bin', uri):
+            # Catalyst 3650, 3750
+            # cat3k_caa-universalk9.16.06.06.SPA.bin
+            # cat3k_caa-universalk9ldpe.16.06.06.SPA.bin
             version = re.findall(
-                r'cat3k_caa-universalk9(?:ldpe)*\.(\d*\w*\.\d*\w*\.\d*\w*)\.', uri)[0]
+                r'cat3k_caa-universalk9(ldpe)?(\.(\d{2})){3}\.SPA\.bin', uri)[0]
+
+        if re.search(r'cat9k_lite_iosxe(_npe)?(\.(\d{2})){3}\.SPA\.bin', uri):
+            # Catalyst 9200, 9300
+            # cat9k_lite_iosxe.16.12.01.SPA.bin
+            # cat9k_lite_iosxe_npe.16.12.01.SPA.bin
+            version = re.findall(
+                r'cat9k_lite_iosxe(_npe)?(\.(\d{2})){3}\.SPA\.bin', uri)[0]
         else:
             raise Warning("Unsupported image file")
 

@@ -12,9 +12,19 @@ class IOSXERouter(BaseDevice):
         self.status = "Checking firmware versions"
         logging.info(self.status)
         firmware = (False, None, None)
-        if re.search(r'isr4300-universalk9(?:_npe)*\.(\d*\w*\.\d*\w*\.\d*\w*)\.', uri):
+        if re.search(r'isr4300-universalk9(_npe)?(\.(\d{2})){3}\.SPA\.bin', uri):
+            # ISR 4000
+            # isr4300-universalk9.16.09.03.SPA.bin
+            # isr4300-universalk9_npe.16.09.03.SPA.bin
             version = re.findall(
-                r'isr4300-universalk9(?:_npe)*\.(\d*\w*\.\d*\w*\.\d*\w*)\.', uri)[0]
+                r'isr4300-universalk9(_npe)?(\.(\d{2})){3}\.SPA\.bin', uri)[0]
+        
+        if re.search(r'cat9k_iosxe(ldpe)?(\.(\d{2})){3}\.SPA\.bin', uri):
+            # Catalyst 9500, 9600
+            # cat9k_iosxe.16.09.03.SPA.bin
+            # cat9k_iosxeldpe.16.09.03.SPA.bin
+            version = re.findall(
+                r'cat9k_iosxe(ldpe)?(\.(\d{2})){3}\.SPA\.bin', uri)[0]
         else:
             raise Warning("Unsupported image file")
 
