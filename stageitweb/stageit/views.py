@@ -46,7 +46,7 @@ def historyadd(request, uuid):
             history = models.History()
             history.fktask = uuid
             history.status = "Queued"
-            history.fkserialport = "b3527269-53ca-483b-9e14-55617c1682f1"
+            history.fkserialport = request.POST.get('fkserialport')
             history.save()
             bw.delay(fkhistory=str(history.pkid), apipath=settings.API_BASE_URL)
             return redirect('/history/' + str(history.pkid))
