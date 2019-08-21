@@ -142,6 +142,10 @@ class BaseWorker(Task):
         # Actually do the job (finally!)
         self.stageit(filepath=filepath, installmode=installmode)
 
+        if poststaging is not None and poststaging is not '':
+            self.driver.poststaging(poststaging)
+
+
     def find_model(self):
         """Find device type and return appropriate class to deal with
         upgrading, version checking and else."""
@@ -189,7 +193,6 @@ class BaseWorker(Task):
                                              mode_install=installmode)
 
         self.driver.load_final_config(self.finalconfig)
-
 
 
 app.register_task(BaseWorker())

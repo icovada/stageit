@@ -169,6 +169,12 @@ class BaseDevice():
         """Wrap-up session."""
         self.session.close()
 
+    def poststaging(self, commands):
+        """Run commands after staging the device"""
+        self._checksession()
+        for line in commands.split("\n"):
+            self.session.send_command(line)
+
     def _checksession(self):
         def _createsession():
                 driver = self.driver(**self.sessiondata)
