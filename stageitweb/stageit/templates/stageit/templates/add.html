@@ -87,13 +87,13 @@
                     </div>
                 </div>
 
-
                 <hr class="pt-3">
                 <h4 class="mb-3">Software version</h4>
                 <div class="form-row">
                     <div class="form-group mb-3 col-xl-9 form-left">
                         <label for="filepath">Firmware file path</label>
-                        <input type="url" class="form-control" id="filepath" aria-describedby="filepathHelp">
+                        <input type="url" class="form-control" id="filepath" aria-describedby="filepathHelp"
+                            oninput="installmodecheck()">
                         <small id="filepathHelp" class="form-text text-muted">Insert URI to file image. Leave
                             empty to skip
                             image check</small>
@@ -103,12 +103,12 @@
                         <div class="form-group" id="installmode" aria-describedby="installmodeHelp">
                             <div class="radio">
                                 <label>
-                                    <input type="radio" name="installmode" value="INSTALL" checked>Install
+                                    <input type="radio" name="installmode" value="INSTALL" disabled checked>Install
                                 </label>
                             </div>
                             <div class="radio">
                                 <label>
-                                    <input type="radio" name="installmode" value="BUNDLE">Bundle
+                                    <input type="radio" name="installmode" value="BUNDLE" disabled>Bundle
                                 </label>
                             </div>
                             <small id="installmodeHelp" class="form-text text-muted">Does not apply to IOS. If unsure
@@ -128,8 +128,6 @@
                         are finished. Enter one per line</small>
                 </div>
 
-
-
                 <hr class="mb-4">
                 <button class="btn btn-primary btn-lg btn-block" type="submit">Save template</button>
                 <div id="submitalertspace" class="my-3"></div>
@@ -139,12 +137,23 @@
 </div>
 
 
-
 {% endblock %}
-
 
 {% block script %}
 <script>
+    function installmodecheck() {
+        installmodeoptions = $('[name=installmode]').toArray();
+        if ($('#filepath').val() == '') {
+            installmodeoptions.forEach(function(item) {
+                item.parentElement.classList.add('disabled');
+            });
+        } else {
+            installmodeoptions.forEach(function (item) {
+                item.parentElement.classList.remove('disabled');
+            });
+        }
+    }
+
     $("#templaterender").on('show.bs.modal', function () {
         $('#templaterenderview').html("");
         $.ajax({
@@ -183,10 +192,11 @@
             $toast.trigger('show', [5000]); // show toast for 5s
             window.location.href = "/templates/" + response['pkid'];
         }).fail(function (response) {
-            var $toast = basecoat.toast('<span class="fa fa-exclamation-triangle"></span>There was an error submitting your template', 'warning');
+            var $toast = basecoat.toast(
+                '<span class="fa fa-exclamation-triangle"></span>There was an error submitting your template',
+                'warning');
             $toast.trigger('show', [5000]); // show toast for 5s
         });
     });
-
 </script>
 {% endblock %}

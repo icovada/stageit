@@ -25,7 +25,6 @@
                     </div>
                 </div>
 
-
                 <label for="platformRadio">Platform</label>
                 <div class="form-group" id="platform">
                     <div class="radio">
@@ -41,7 +40,6 @@
                         </label>
                     </div>
                 </div>
-
 
                 <hr class="pt-3">
                 <h4 class="mb-3">Final configuration details</h4>
@@ -59,9 +57,7 @@
                         <textarea class="form-control font-monospace" id="templatevalues" rows="6"
                             aria-describedby="templatevaluesHelp">{{templatevalues}}</textarea>
                         <small id="templatevaluesHelp" class="form-text text-muted">Insert variables required by
-                            your template
-                            in
-                            yaml format</small>
+                            your template in yaml format</small>
                     </div>
                 </div>
 
@@ -92,7 +88,7 @@
                     <div class="form-group mb-3 col-xl-9 form-left">
                         <label for="filepath">Firmware file path</label>
                         <input type="url" class="form-control" id="filepath" aria-describedby="filepathHelp"
-                            value="{{filepath}}">
+                            value="{{filepath}}" oninput="installmodecheck()">
                         <small id="filepathHelp" class="form-text text-muted">Insert URI to file image. Leave empty
                             to skip
                             image check</small>
@@ -115,7 +111,6 @@
                             <small id="installmodeHelp" class="form-text text-muted">Does not apply to IOS. If unsure
                                 leave default</small>
                         </div>
-
                     </div>
                 </div>
 
@@ -150,13 +145,25 @@
         </div>
     </div>
 </div>
-</div>
 
 
 {% endblock %}
 
 {% block script %}
 <script>
+    function installmodecheck() {
+        installmodeoptions = $('[name=installmode]').toArray();
+        if ($('#filepath').val() == '') {
+            installmodeoptions.forEach(function(item) {
+                item.parentElement.classList.add('disabled');
+            });
+        } else {
+            installmodeoptions.forEach(function (item) {
+                item.parentElement.classList.remove('disabled');
+            });
+        }
+    }
+
     $("#templaterender").on('show.bs.modal', function () {
         $('#templaterenderview').html("");
         $.ajax({
