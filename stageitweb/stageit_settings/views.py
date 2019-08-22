@@ -61,19 +61,9 @@ def upload_file(request):
         form = UploadFileForm()
     return render(request, 'stageit/upload.html', {'form': form})
 
-class BootstrapConfigFormView(FormView):
-    form_class = BootstrapConfigForm
-    template_name = 'stageit/bootstrapconfig_add.html'
 
-
-class BootStrapConfigFormAdd(BootstrapConfigFormView):
-
-    def form_valid(self, form):
-        rowdata = {**form.cleaned_data,
-                   'values': json.loads(form.cleaned_data.get('values'))}
-        models.BootstrapConfig.objects.create(**rowdata)
-        return HttpResponseRedirect('/settings/bootstrapconfig/')
-
+def bootstrapconfig(request):
+    return render(request, 'stageit/bootstrapconfig_list.html')
 
 class BootstrapConfigCreate(CreateView):
     form_class = BootstrapConfigForm

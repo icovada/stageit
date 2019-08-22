@@ -11,6 +11,7 @@ urlpatterns = [
     path('serialport/<uuid:uuid>', views.edit_serial_port),
     path('filemanager/upload', views.upload_file),
     path('filemanager/', views.filemanager),
+    path('bootstrapconfig/', views.bootstrapconfig),
     path('bootstrapconfig/add', views.BootstrapConfigCreate.as_view()),
     path('bootstrapconfig/<uuid:pk>', views.BootstrapConfigUpdate.as_view()),
     path('bootstrapconfig/<uuid:pk>/delete', views.BootstrapConfigDelete.as_view())

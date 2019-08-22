@@ -95,7 +95,7 @@ class SerialPortSerializer(serializers.ModelSerializer):
 class BootstrapConfigSerializer(serializers.ModelSerializer):
     name = serializers.CharField()
     description = serializers.CharField()
-    bootstrapconfig = serializers.CharField()
+    bootstraptemplate = serializers.CharField()
     values = serializers.JSONField()
 
     class Meta:
