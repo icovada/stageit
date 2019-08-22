@@ -58,15 +58,14 @@ def convertjinja(request):
     try:
         rtemplate = Environment(loader=BaseLoader).from_string(request.POST['template'])
     except jinja2.exceptions.TemplateSyntaxError as exception:
-        return JsonResponse({'status': 'Error', 'message': str(exception)})
+        return HttpResponse(str(exception), status=500)
 
     yamlvalues = yaml.load(request.POST['values'], Loader=yaml.FullLoader)
     if yamlvalues is None:
         yamlvalues = {}
 
-    result = {'status': 'OK', 'message': rtemplate.render(
-        **yamlvalues).replace("\n", "<br/>")}
-    return JsonResponse(result)
+    result = rtemplate.render(**yamlvalues).replace("\n", "<br/>")
+    return HttpResponse(result)
 
 
 def loggenerator(uuid):

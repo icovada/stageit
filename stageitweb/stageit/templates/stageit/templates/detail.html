@@ -158,6 +158,7 @@
 {% block script %}
 <script>
     $("#templaterender").on('show.bs.modal', function () {
+        $('#templaterenderview').html("");
         $.ajax({
             type: "POST",
             url: "/api/convertjinja",
@@ -166,14 +167,10 @@
                 values: $('#templatevalues').val()
             },
             success: function (msg) {
-                if (msg['status'] == 'OK') {
-                    $('#templaterenderview').html(msg['message']);
-                } else {
-                    // Show error
-                }
+                $('#templaterenderview').html(msg);
             },
-            error: function () {
-                // Show error
+            error: function (msg, exception) {
+                $('#templaterenderview').html(msg.responseText);
             }
         });
     })
