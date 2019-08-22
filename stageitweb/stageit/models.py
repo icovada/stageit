@@ -3,6 +3,16 @@ from django.db import models
 from uuid import uuid4
 
 # Create your models here.
+class BootstrapConfig(models.Model):
+    pkid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    name = models.TextField()
+    description = models.TextField()
+    temptemplate = models.TextField()
+    values = jsonfield.JSONField()
+
+    def __str__(self):
+        return('{} - {}'.format(self.name, self.description))
+
 class Template(models.Model):
     """Defines templates table."""
     pkid = models.UUIDField(primary_key=True, default=uuid4, editable=False)
@@ -14,6 +24,7 @@ class Template(models.Model):
     poststaging = models.TextField(max_length=1000)
     template = models.TextField(max_length=500000)
     templatevalues = jsonfield.JSONField()
+    fkbootstrapconfig = models.ForeignKey(BootstrapConfig, models.PROTECT)
 
     def __str__(self):
         return('{} - {}'.format(str(self.pkid)[:5], self.name))
