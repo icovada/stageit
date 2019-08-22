@@ -7,7 +7,7 @@ class BootstrapConfig(models.Model):
     pkid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
     name = models.TextField()
     description = models.TextField()
-    temptemplate = models.TextField()
+    bootstraptemplate = models.TextField()
     values = jsonfield.JSONField()
 
     def __str__(self):
