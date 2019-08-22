@@ -1,6 +1,7 @@
 import jsonfield
 from django.db import models
 from uuid import uuid4
+from django.urls import reverse
 
 # Create your models here.
 class BootstrapConfig(models.Model):
@@ -12,6 +13,9 @@ class BootstrapConfig(models.Model):
 
     def __str__(self):
         return('{} - {}'.format(self.name, self.description))
+
+    def get_absolute_url(self):
+        return(str(self.pkid))
 
 class Template(models.Model):
     """Defines templates table."""

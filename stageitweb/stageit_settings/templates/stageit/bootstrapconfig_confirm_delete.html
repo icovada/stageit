@@ -1,0 +1,18 @@
+{% extends "stageit/layout.html" %}
+
+{% load crispy_forms_tags %}
+{% load crispy_forms_field %}
+
+{% block body %}
+<div class="top-gutter bottom-gutter container-wrapper">
+    <div class="content-area">
+        <div class="container-lg">
+            <form method="post">{% csrf_token %}
+                <p>Are you sure you want to delete "{{ object }}"?</p>
+                <input type="submit" value="Confirm">
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

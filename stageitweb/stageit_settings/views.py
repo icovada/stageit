@@ -1,15 +1,16 @@
 import os
 
 from django.core.files.storage import default_storage
-from django.views.generic import FormView, TemplateView
+from django.views.generic import FormView, TemplateView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.conf import settings
 
-from .forms import TerminalServerForm, SerialPortForm, UploadFileForm
+from .forms import TerminalServerForm, SerialPortForm, UploadFileForm, BootstrapConfigForm
 
 import stageitweb.stageit.models as models
+import json
 
 
 class TerminalServerFormView(FormView):
@@ -59,3 +60,32 @@ def upload_file(request):
     else:
         form = UploadFileForm()
     return render(request, 'stageit/upload.html', {'form': form})
+
+class BootstrapConfigFormView(FormView):
+    form_class = BootstrapConfigForm
+    template_name = 'stageit/bootstrapconfig_add.html'
+
+
+class BootStrapConfigFormAdd(BootstrapConfigFormView):
+
+    def form_valid(self, form):
+        rowdata = {**form.cleaned_data,
+                   'values': json.loads(form.cleaned_data.get('values'))}
+        models.BootstrapConfig.objects.create(**rowdata)
+        return HttpResponseRedirect('/settings/bootstrapconfig/')
+
+
+class BootstrapConfigCreate(CreateView):
+    form_class = BootstrapConfigForm
+    model = models.BootstrapConfig
+
+class BootstrapConfigUpdate(UpdateView):
+    form_class = BootstrapConfigForm
+    model = models.BootstrapConfig
+
+class BootstrapConfigDelete(DeleteView):
+    form_class = BootstrapConfigForm
+    model = models.BootstrapConfig
+    success_url = "/settings/bootstrapconfig"
+
+
