@@ -137,7 +137,7 @@ class BaseWorker(Task):
             **{**self.serialportdata, **self.terminalserverdata})
 
         logging.info('Discovering platform')
-        self.driver = self.find_model()
+        self.driver = self.find_model(URL_BASE)
 
         # Actually do the job (finally!)
         self.stageit(filepath=filepath, installmode=installmode)
@@ -146,7 +146,7 @@ class BaseWorker(Task):
             self.driver.poststaging(poststaging)
 
 
-    def find_model(self):
+    def find_model(self, url_base):
         """Find device type and return appropriate class to deal with
         upgrading, version checking and else."""
         device = BaseDevice(tserver=self.tserver, **
@@ -168,7 +168,7 @@ class BaseWorker(Task):
 
         # Update database row
         data = {'status': 'In Progress'}
-        requests.put(URL_BASE + 'history/' +
+        requests.put(url_base + 'history/' +
                      self.pkid + URL_SUFFIX, data=data)
 
         device.close()
