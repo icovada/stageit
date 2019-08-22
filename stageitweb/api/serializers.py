@@ -91,3 +91,13 @@ class SerialPortSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.SerialPort
         fields = '__all__'
+
+class BootstrapConfigSerializer(serializers.ModelSerializer):
+    name = serializers.CharField()
+    description = serializers.CharField()
+    bootstrapconfig = serializers.CharField()
+    values = serializers.JSONField()
+
+    class Meta:
+        model = models.BootstrapConfig
+        fields = '__all__'

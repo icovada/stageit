@@ -51,6 +51,9 @@ class SerialPortViewSet(viewsets.ModelViewSet):
         'fkterminalserver' : ['exact']
     }
 
+class BootstrapConfigSet(viewsets.ModelViewSet):
+    queryset = models.BootstrapConfig.objects.all()
+    serializer_class = serializers.BootstrapConfigSerializer
 
 @csrf_exempt
 def convertjinja(request):
