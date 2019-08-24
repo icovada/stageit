@@ -34,6 +34,9 @@ class HistoryViewSet(viewsets.ModelViewSet):
 class LogViewSet(viewsets.ModelViewSet):
     queryset = models.Log.objects.all()
     serializer_class = serializers.LogSerializer
+    # https://stackoverflow.com/questions/57479402/choosing-column-to-search-by-in-django-rest-framework
+    lookup_field = 'fkhistory'
+    kookup_url_kwarg = 'fkhistory'
     filter_fields = {
         'sequence': ['gte', 'lte'],
         'fkhistory': ['exact']
@@ -51,6 +54,9 @@ class SerialPortViewSet(viewsets.ModelViewSet):
         'fkterminalserver' : ['exact']
     }
 
+class BootstrapConfigSet(viewsets.ModelViewSet):
+    queryset = models.BootstrapConfig.objects.all()
+    serializer_class = serializers.BootstrapConfigSerializer
 
 @csrf_exempt
 def convertjinja(request):
@@ -58,15 +64,14 @@ def convertjinja(request):
     try:
         rtemplate = Environment(loader=BaseLoader).from_string(request.POST['template'])
     except jinja2.exceptions.TemplateSyntaxError as exception:
-        return JsonResponse({'status': 'Error', 'message': str(exception)})
+        return HttpResponse(str(exception), status=500)
 
     yamlvalues = yaml.load(request.POST['values'], Loader=yaml.FullLoader)
     if yamlvalues is None:
         yamlvalues = {}
 
-    result = {'status': 'OK', 'message': rtemplate.render(
-        **yamlvalues).replace("\n", "<br/>")}
-    return JsonResponse(result)
+    result = rtemplate.render(**yamlvalues).replace("\n", "<br/>")
+    return HttpResponse(result)
 
 
 def loggenerator(uuid):

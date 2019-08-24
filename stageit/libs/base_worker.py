@@ -14,6 +14,7 @@ import requests
 
 URL_SUFFIX = "/?format=json"
 
+
 class BaseWorker(Task):
     """Base class to connect to network device."""
 
@@ -119,7 +120,7 @@ class BaseWorker(Task):
                            'transport': transport,
                            'username': username,
                            'password': password,
-                           'platform': platform,                 
+                           'platform': platform,
                            'logbuffer': self.logbuffer
                            }
 
@@ -137,16 +138,16 @@ class BaseWorker(Task):
             **{**self.serialportdata, **self.terminalserverdata})
 
         logging.info('Discovering platform')
-        self.driver = self.find_model()
+        self.driver = self.find_model(URL_BASE)
 
         # Actually do the job (finally!)
-        self.stageit(filepath=filepath, installmode=installmode)
+        self.stageit(filepath=filepath, installmode=installmode,
+                     url_base=URL_BASE, fktemplate=self.templatedata.get('fkbootstrapconfig'))
 
         if poststaging is not None and poststaging is not '':
             self.driver.poststaging(poststaging)
 
-
-    def find_model(self):
+    def find_model(self, url_base):
         """Find device type and return appropriate class to deal with
         upgrading, version checking and else."""
         device = BaseDevice(tserver=self.tserver, **
@@ -168,13 +169,13 @@ class BaseWorker(Task):
 
         # Update database row
         data = {'status': 'In Progress'}
-        requests.put(URL_BASE + 'history/' +
+        requests.put(url_base + 'history/' +
                      self.pkid + URL_SUFFIX, data=data)
 
         device.close()
         return specific_device(**self.devicedata, tserver=self.tserver, pkid=self.pkid)
 
-    def stageit(self, filepath, installmode):
+    def stageit(self, filepath, installmode, url_base, fkbootstrapconfig):
         """Do the job."""
         self.driver.checkavailable(1000)
 
@@ -187,10 +188,15 @@ class BaseWorker(Task):
                 # Connection initiates from the device back to the storage
                 # If the device hasn't received an IP via DHCP on its own
                 # we push a custom config and try again
-                self.driver.load_temp_config(**self.tempconfig)
-                sleep(3)
-                self.driver.upgrade_software(uri=filepath,
-                                             mode_install=installmode)
+
+                # Get bootstrap config from database
+                if fkbootstrapconfig is not 'null':
+                    bootstrapconfig = requests.get(url_base + 'bootstrapconfig/' + fkbootstrapconfig)
+                    self.driver.load_bootstrap_config(**bootstrapconfig)
+                    self.driver.upgrade_software(uri=filepath,
+                                                 mode_install=installmode)
+                else:
+                    pass
 
         self.driver.load_final_config(self.finalconfig)
 

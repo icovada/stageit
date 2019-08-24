@@ -17,20 +17,28 @@ def templates(request):
     return render(request, 'stageit/templates.html')
 
 def templatesdetail(request, uuid):
-    data = models.Template.objects.get(pkid=uuid).__dict__
-    data['templatevalues'] = json.dumps(data['templatevalues'], indent=4, sort_keys=True)
+    template = models.Template.objects.get(pkid=uuid)
+    templatedict = template
+    templatedict.templatevalues = json.dumps(template.templatevalues, indent=4, sort_keys=True)
+    bootstrapconfig = models.BootstrapConfig.objects.all()
+    data = {'template': templatedict,
+            'bootstrapconfig': bootstrapconfig}
 
     return render(request, 'stageit/templates/detail.html', data)
 
 def templatesadd(request):
-    return render(request, 'stageit/templates/add.html')
+    bootstrapconfig = models.BootstrapConfig.objects.all()
+    data = {'bootstrapconfig': bootstrapconfig}
+    return render(request, 'stageit/templates/add.html', data)
 
 def history(request):
     return render(request, 'stageit/history.html')
 
 def historydetail(request, uuid):
+    bootstrapconfig = models.BootstrapConfig.objects.all()
     instance = models.History.objects.get(pkid=uuid)
-    data = {'instance': instance}
+    data = {'instance': instance,
+            'bootstrapconfig': bootstrapconfig}
     return render(request, 'stageit/history/detail.html', data)
 
 def historyadd(request, uuid):

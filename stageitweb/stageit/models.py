@@ -1,8 +1,22 @@
 import jsonfield
 from django.db import models
 from uuid import uuid4
+from django.urls import reverse
 
 # Create your models here.
+class BootstrapConfig(models.Model):
+    pkid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    name = models.TextField()
+    description = models.TextField()
+    bootstraptemplate = models.TextField()
+    values = jsonfield.JSONField()
+
+    def __str__(self):
+        return('{} - {}'.format(self.name, self.description))
+
+    def get_absolute_url(self):
+        return(str(self.pkid))
+
 class Template(models.Model):
     """Defines templates table."""
     pkid = models.UUIDField(primary_key=True, default=uuid4, editable=False)
@@ -14,6 +28,7 @@ class Template(models.Model):
     poststaging = models.TextField(max_length=1000)
     template = models.TextField(max_length=500000)
     templatevalues = jsonfield.JSONField()
+    fkbootstrapconfig = models.ForeignKey(BootstrapConfig, models.PROTECT, null=True)
 
     def __str__(self):
         return('{} - {}'.format(str(self.pkid)[:5], self.name))
@@ -49,7 +64,7 @@ class Task(models.Model):
 
 class Log(models.Model):
     """Define staging Log format"""
-    fkhistory = models.ForeignKey(History, on_delete=models.CASCADE)
+    fkhistory = models.OneToOneField(History, on_delete=models.CASCADE)
     sequence = models.PositiveIntegerField()
     log = models.TextField(null=True)
     logdate = models.DateTimeField(auto_now_add=True)

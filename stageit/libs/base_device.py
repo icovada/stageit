@@ -73,7 +73,7 @@ class BaseDevice():
         # Update history line with new facts we found
         requests.put(URL_BASE + 'history/' + self.pkid + URL_SUFFIX, data=data)
 
-    def load_temp_config(self, **kwargs):
+    def load_bootstrap_config(self, bootstraptemplate, values, **kwargs):
         """
         Load temporary configuration to transfer files.
 
@@ -82,29 +82,19 @@ class BaseDevice():
 
         logging.info('Loading temp config')
         self._checksession()
-        # Check if we have info from outside, otherwise default to dhcp
-        if 'ip' not in kwargs or 'netmask' not in kwargs:
-            kwargs['ip'] = 'dhcp'
 
         # Ignore warnings and worry later
         self.session.auto_rollback_on_error = False
-        self.session.load_template(template_name="upgrade_template",
-                                   template_path=os.path.abspath(
-                                       os.path.curdir) + "/configs",
-                                   username="cisco",
-                                   password="cisco",
-                                   l2_interface="Gi1/0/48",
-                                   l3_interface="Vlan 1",
-                                   vlan=1,
-                                   ip="dhcp")
+        self.session.load_template(template_source=bootstraptemplate,
+                                   template_name="stdin",
+                                   **values)
         self.session.commit_config()
 
-        if kwargs['ip'] == 'dhcp':
-            logging.info("Waiting for DHCP")
-            # Wait for device to grab ip.
-            int_ip = {}
-            while int_ip:
-                int_ip = self.session.get_interfaces_ip()
+        logging.info("Checking device got an IP")
+        # Wait for device to grab ip.
+        int_ip = {}
+        while int_ip:
+            int_ip = self.session.get_interfaces_ip()
 
         self.session.auto_rollback_on_error = True
         self._has_connectivity = True

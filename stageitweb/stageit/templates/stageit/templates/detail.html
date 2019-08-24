@@ -4,11 +4,10 @@
 <div class="top-gutter bottom-gutter container-wrapper">
     <div class="content-area">
         <div class="container-lg">
-
             <form class="needs-validation" action="/api/template/" id="templateform" method="post">
                 <div class="form-group">
                     <h1>Edit template</h2>
-                        <p>{{pkid}}</p>
+                        <p>{{template.pkid}}</p>
                 </div>
 
 
@@ -16,32 +15,30 @@
                     <div class="form-row">
                         <div class="form-group col-xl-6 form-left">
                             <label class="control-label" for="name">Name</label>
-                            <input type="text" class="form-control" id="name" value="{{name}}" required>
+                            <input type="text" class="form-control" id="name" value="{{template.name}}" required>
                         </div>
                         <div class="form-group col-xl-6 form-right">
                             <label for="description">Description</label>
-                            <input type="text" class="form-control" id="description" value="{{description}}" required>
+                            <input type="text" class="form-control" id="description" value="{{template.description}}" required>
                         </div>
                     </div>
                 </div>
-
 
                 <label for="platformRadio">Platform</label>
                 <div class="form-group" id="platform">
                     <div class="radio">
                         <label>
                             <input type="radio" id="iosRadio" name="platformRadio" value="ios"
-                                {% if platform == 'ios'%}checked{%endif%}>Cisco IOS
+                                {% if template.platform == 'ios'%}checked{%endif%}>Cisco IOS
                         </label>
                     </div>
                     <div class="radio">
                         <label>
                             <input type="radio" name="platformRadio" value="nx-os"
-                                {% if platform == 'nx-os'%}checked{%endif%}>Cisco NX-OS
+                                {% if template.platform == 'nx-os'%}checked{%endif%}>Cisco NX-OS
                         </label>
                     </div>
                 </div>
-
 
                 <hr class="pt-3">
                 <h4 class="mb-3">Final configuration details</h4>
@@ -49,7 +46,7 @@
                     <div class="form-group col-xl-6 form-left">
                         <label for="template">Template</label>
                         <textarea class="form-control font-monospace" id="template" rows="6"
-                            aria-describedby="templateHelp">{{template}}</textarea>
+                            aria-describedby="templateHelp">{{template.template}}</textarea>
                         <small id="templateHelp" class="form-text text-muted">Leave empty to leave final device
                             config
                             empty.<br />Pure text or Jinja2 templates accepted</small>
@@ -57,11 +54,9 @@
                     <div class="form-group col-xl-6 form-right">
                         <label for="templatevalues">Template values</label>
                         <textarea class="form-control font-monospace" id="templatevalues" rows="6"
-                            aria-describedby="templatevaluesHelp">{{templatevalues}}</textarea>
+                            aria-describedby="templatevaluesHelp">{{template.templatevalues}}</textarea>
                         <small id="templatevaluesHelp" class="form-text text-muted">Insert variables required by
-                            your template
-                            in
-                            yaml format</small>
+                            your template in yaml format</small>
                     </div>
                 </div>
 
@@ -92,7 +87,7 @@
                     <div class="form-group mb-3 col-xl-9 form-left">
                         <label for="filepath">Firmware file path</label>
                         <input type="url" class="form-control" id="filepath" aria-describedby="filepathHelp"
-                            value="{{filepath}}">
+                            value="{{template.filepath}}" oninput="installmodecheck()">
                         <small id="filepathHelp" class="form-text text-muted">Insert URI to file image. Leave empty
                             to skip
                             image check</small>
@@ -103,19 +98,48 @@
                             <div class="radio">
                                 <label>
                                     <input type="radio" name="installmode" value="INSTALL"
-                                        {% if installmode == 'INSTALL'%}checked{%endif%}>Install
+                                        {% if template.installmode == 'INSTALL'%}checked{%endif%}>Install
                                 </label>
                             </div>
                             <div class="radio">
                                 <label>
                                     <input type="radio" name="installmode" value="BUNDLE"
-                                        {% if installmode == 'BUNDLE'%}checked{%endif%}>Bundle
+                                        {% if template.installmode == 'BUNDLE'%}checked{%endif%}>Bundle
                                 </label>
                             </div>
                             <small id="installmodeHelp" class="form-text text-muted">Does not apply to IOS. If unsure
                                 leave default</small>
                         </div>
+                    </div>
 
+                    <div class="form-group mb-3 col-xl-12 form-right form-left">
+                        <label class="control-label" for="fkbootstrapconfig">Bootstrap config</label>
+                        <div class="dropdown" data-dropdown>
+                            <input type="text" class="hidden">
+                            <button type="button" class="form-control dropdown-toggle" id="fkbootstrapconfig"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" value="{% if template.fkbootstrapconfig %}{{template.fkbootstrapconfig.pkid}}{% else %}null{% endif %}">
+                                {% if template.fkbootstrapconfig %}{{template.fkbootstrapconfig.name}}{% else %}No config{% endif %}
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="fkbootstrapconfig">
+                                <li>
+                                    <a href="#" data-value="null">
+                                        No config
+                                    </a>
+                                </li>
+                                {% for element in bootstrapconfig %}
+                                <li>
+                                    <a href="#" data-value="{{element.pkid}}">
+                                        {{element.name}}
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <small id="installmodeHelp" class="form-text text-muted">Basic config to give IP reachability to
+                            the device</br>
+                            Used during firmware upgrade</small>
+                        </small>
                     </div>
                 </div>
 
@@ -124,7 +148,7 @@
                 <div class="form-group mb-3">
                     <label for="poststaging">Post-staging</label>
                     <textarea class="form-control font-monospace" id="poststaging" rows="5"
-                        aria-describedby="poststagingHelp">{{poststaging}}</textarea>
+                        aria-describedby="poststagingHelp">{{template.poststaging}}</textarea>
                     <small id="poststagingHelp" class="form-text text-muted">Insert commands to be run after
                         previous tasks
                         are finished. Enter one per line</small>
@@ -134,7 +158,7 @@
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <a id="btncreatetask" role="button" class="btn btn-primary btn-lg btn-block btn-success"
-                            href="/tasks/new/{{pkid}}">Create task</a>
+                            href="/tasks/new/{{template.pkid}}">Create task</a>
                     </div>
                     <div class="col-md-4 mb-3">
                         <button id="btnsave" class="btn btn-primary btn-lg btn-block" type="submit">Save</button>
@@ -150,14 +174,27 @@
         </div>
     </div>
 </div>
-</div>
 
 
 {% endblock %}
 
 {% block script %}
 <script>
+    function installmodecheck() {
+        installmodeoptions = $('[name=installmode]').toArray();
+        if ($('#filepath').val() == '') {
+            installmodeoptions.forEach(function(item) {
+                item.parentElement.classList.add('disabled');
+            });
+        } else {
+            installmodeoptions.forEach(function (item) {
+                item.parentElement.classList.remove('disabled');
+            });
+        }
+    }
+
     $("#templaterender").on('show.bs.modal', function () {
+        $('#templaterenderview').html("");
         $.ajax({
             type: "POST",
             url: "/api/convertjinja",
@@ -166,14 +203,10 @@
                 values: $('#templatevalues').val()
             },
             success: function (msg) {
-                if (msg['status'] == 'OK') {
-                    $('#templaterenderview').html(msg['message']);
-                } else {
-                    // Show error
-                }
+                $('#templaterenderview').html(msg);
             },
-            error: function () {
-                // Show error
+            error: function (msg, exception) {
+                $('#templaterenderview').html(msg.responseText);
             }
         });
     })
@@ -182,7 +215,7 @@
         event.preventDefault();
         $.ajax({
             type: 'PUT',
-            url: "/api/template/{{pkid}}/",
+            url: "/api/template/{{template.pkid}}/",
             data: {
                 name: $('#name').val(),
                 description: $('#description').val(),
@@ -191,7 +224,8 @@
                 templatevalues: $('#templatevalues').val(),
                 filepath: $('#filepath').val(),
                 installmode: $("input[name='installmode']:checked").val(),
-                poststaging: $('#poststaging').val()
+                poststaging: $('#poststaging').val(),
+                fkbootstrapconfig: $('#fkbootstrapconfig')[0].value
             }
         }).done(function (response) {
             var $toast = basecoat.toast('<span class="fa fa-check"></span>Task submitted', 'success');
@@ -211,7 +245,7 @@
             .on('accept', function () {
                 $.ajax({
                     type: 'DELETE',
-                    url: "/api/template/{{pkid}}/"});
+                    url: "/api/template/{{template.pkid}}/"});
                 basecoat.alert('Template deleted')
                     .on('hide.bs.modal', function () {
                         window.location.href = "/templates";

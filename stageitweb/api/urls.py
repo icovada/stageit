@@ -9,6 +9,7 @@ router.register(r'history', views.HistoryViewSet)
 router.register(r'log', views.LogViewSet)
 router.register(r'terminalserver', views.TerminalServerViewSet)
 router.register(r'serialport', views.SerialPortViewSet)
+router.register(r'bootstrapconfig', views.BootstrapConfigSet)
 
 urlpatterns = [
     path('convertjinja', views.convertjinja, name='convertjinja'),
