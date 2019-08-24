@@ -23,14 +23,18 @@ def templatesdetail(request, uuid):
     return render(request, 'stageit/templates/detail.html', data)
 
 def templatesadd(request):
-    return render(request, 'stageit/templates/add.html')
+    bootstrapconfig = models.BootstrapConfig.objects.all()
+    data = {'bootstrapconfig': bootstrapconfig}
+    return render(request, 'stageit/templates/add.html', data)
 
 def history(request):
     return render(request, 'stageit/history.html')
 
 def historydetail(request, uuid):
+    bootstrapconfig = models.BootstrapConfig.objects.all()
     instance = models.History.objects.get(pkid=uuid)
-    data = {'instance': instance}
+    data = {'instance': instance,
+            'bootstrapconfig': bootstrapconfig}
     return render(request, 'stageit/history/detail.html', data)
 
 def historyadd(request, uuid):

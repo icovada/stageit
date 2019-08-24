@@ -115,6 +115,36 @@
                                 leave default</small>
                         </div>
                     </div>
+
+                    <div class="form-group mb-3">
+                        <label class="control-label" for="bootstrapconfig">Bootstrap config</label>
+                        <div class="dropdown" data-dropdown>
+                            <input type="text" class="hidden" id="bootstrapconfig">
+                            <button type="button" class="form-control dropdown-toggle" id="bootstrapconfig_button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" value="dhcp">
+                                No config
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="bootstrapconfig">
+                                <li>
+                                    <a href="#" data-value="dhcp">
+                                        No config
+                                    </a>
+                                </li>
+                                {% for element in bootstrapconfig %}
+                                <li>
+                                    <a href="#" data-value="{{element.pkid}}">
+                                        {{element.name}}
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <small id="installmodeHelp" class="form-text text-muted">Basic config to give IP reachability to
+                            the device</br>
+                            Used during firmware upgrade</small>
+                        </small>
+                    </div>
                 </div>
 
                 <hr class="pt-3">
@@ -144,7 +174,7 @@
     function installmodecheck() {
         installmodeoptions = $('[name=installmode]').toArray();
         if ($('#filepath').val() == '') {
-            installmodeoptions.forEach(function(item) {
+            installmodeoptions.forEach(function (item) {
                 item.parentElement.classList.add('disabled');
             });
         } else {

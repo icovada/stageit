@@ -48,7 +48,7 @@ class UploadFileForm(forms.Form):
 class BootstrapConfigForm(forms.ModelForm):
     name = forms.CharField()
     description = forms.CharField()
-    bootstraptemplate = forms.CharField(widget=forms.Textarea())
+    bootstraptemplate = forms.CharField(widget=forms.Textarea(), label="Boostrap Config Template")
     values = jsonfield.JSONField()
 
     class Meta:
