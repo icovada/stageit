@@ -116,18 +116,18 @@
                         </div>
                     </div>
 
-                    <div class="form-group mb-3">
-                        <label class="control-label" for="bootstrapconfig">Bootstrap config</label>
+                    <div class="form-group mb-3 col-xl-12 form-right form-left">
+                        <label class="control-label" for="fkbootstrapconfig">Bootstrap config</label>
                         <div class="dropdown" data-dropdown>
-                            <input type="text" class="hidden" id="bootstrapconfig">
-                            <button type="button" class="form-control dropdown-toggle" id="bootstrapconfig_button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" value="dhcp">
+                            <input type="text" class="hidden">
+                            <button type="button" class="form-control dropdown-toggle" id="fkbootstrapconfig"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" value="null">
                                 No config
                                 <span class="caret"></span>
                             </button>
-                            <ul class="dropdown-menu" aria-labelledby="bootstrapconfig">
+                            <ul class="dropdown-menu" aria-labelledby="fkbootstrapconfig">
                                 <li>
-                                    <a href="#" data-value="dhcp">
+                                    <a href="#" data-value="null">
                                         No config
                                     </a>
                                 </li>
@@ -215,7 +215,8 @@
                 templatevalues: $('#templatevalues').val(),
                 filepath: $('#filepath').val(),
                 installmode: $("input[name='installmode']:checked").val(),
-                poststaging: $('#poststaging').val()
+                poststaging: $('#poststaging').val(),
+                fkbootstrapconfig: $('#fkbootstrapconfig')[0].value
             }
         }).done(function (response) {
             var $toast = basecoat.toast('<span class="fa fa-check"></span>Task submitted', 'success');
