@@ -73,7 +73,7 @@ class BaseDevice():
         # Update history line with new facts we found
         requests.put(URL_BASE + 'history/' + self.pkid + URL_SUFFIX, data=data)
 
-    def load_temp_config(self, **kwargs):
+    def load_bootstrap_config(self, **kwargs):
         """
         Load temporary configuration to transfer files.
 

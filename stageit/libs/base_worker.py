@@ -187,7 +187,7 @@ class BaseWorker(Task):
                 # Connection initiates from the device back to the storage
                 # If the device hasn't received an IP via DHCP on its own
                 # we push a custom config and try again
-                self.driver.load_temp_config(**self.tempconfig)
+                self.driver.load_bootstrap_config(**self.tempconfig)
                 sleep(3)
                 self.driver.upgrade_software(uri=filepath,
                                              mode_install=installmode)
