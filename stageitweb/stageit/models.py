@@ -28,7 +28,7 @@ class Template(models.Model):
     poststaging = models.TextField(max_length=1000)
     template = models.TextField(max_length=500000)
     templatevalues = jsonfield.JSONField()
-    fkbootstrapconfig = models.ForeignKey(BootstrapConfig, models.PROTECT, null=False)
+    fkbootstrapconfig = models.ForeignKey(BootstrapConfig, models.PROTECT, null=True)
 
     def __str__(self):
         return('{} - {}'.format(str(self.pkid)[:5], self.name))

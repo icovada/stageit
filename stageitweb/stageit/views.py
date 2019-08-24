@@ -17,8 +17,12 @@ def templates(request):
     return render(request, 'stageit/templates.html')
 
 def templatesdetail(request, uuid):
-    data = models.Template.objects.get(pkid=uuid).__dict__
-    data['templatevalues'] = json.dumps(data['templatevalues'], indent=4, sort_keys=True)
+    template = models.Template.objects.get(pkid=uuid)
+    templatedict = template
+    templatedict.templatevalues = json.dumps(template.templatevalues, indent=4, sort_keys=True)
+    bootstrapconfig = models.BootstrapConfig.objects.all()
+    data = {'template': templatedict,
+            'bootstrapconfig': bootstrapconfig}
 
     return render(request, 'stageit/templates/detail.html', data)
 
