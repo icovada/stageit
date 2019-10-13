@@ -23,7 +23,7 @@ class FakeWorker(Task):
         logging.info("Set task successful")
         logging.info(retval)
         logging.info(kwargs)
-        requests.put('http://localhost:8000/api/history/' + kwargs.get('fkhistory') + '/?format=json', data={'status':'Success'})
+        requests.put('http://web:8000/api/history/' + kwargs.get('fkhistory') + '/?format=json', data={'status':'Success'})
 
     def on_failure(self, retval, task_id, args, kwargs):
         logging.info("EPIC FAIL")
@@ -112,18 +112,18 @@ class FakeWorker(Task):
         logging.info("Fake Worker ready")
         logging.info(kwargs.get('fkhistory'))
 
-        self.historydata = requests.get('http://localhost:8000/api/history/' + kwargs.get('fkhistory') + '/?format=json')
+        self.historydata = requests.get('http://web:8000/api/history/' + kwargs.get('fkhistory') + '/?format=json')
         if self.historydata.json().get('workerid') is not None:
             raise AssertionError("Task already being worked on by someone else")
         
-        requests.put('http://localhost:8000/api/history/' + kwargs.get('fkhistory') + '/?format=json', data={'workerid':kwargs.get('celeryid'), 'status':'In progress'})
+        requests.put('http://web:8000/api/history/' + kwargs.get('fkhistory') + '/?format=json', data={'workerid':kwargs.get('celeryid'), 'status':'In progress'})
 
         self.pkid = self.historydata.json().get('pkid')
         fktask = self.historydata.json().get('fktask')
 
-        self.task = requests.get('http://localhost:8000/api/task/' + fktask + '/?format=json')
+        self.task = requests.get('http://web:8000/api/task/' + fktask + '/?format=json')
         fktemplate = self.task.json().get('fktemplate')
-        self.template = requests.get('http://localhost:8000/api/template/' + fktemplate + '/?format=json')
+        self.template = requests.get('http://web:8000/api/template/' + fktemplate + '/?format=json')
 
         logging.info(self.template.json().get('template'))
         

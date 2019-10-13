@@ -25,7 +25,7 @@ class BaseWorker(Task):
         Celery runs this if the task runs successfully 
         Update database, set history as successful and delete task.
         """
-        URL_BASE = kwargs.get('apipath') + "/api/"
+        URL_BASE = "http://web:8000/api/"
         logging.info("Set task successful")
         logging.info(retval)
         logging.info(kwargs)
@@ -42,7 +42,7 @@ class BaseWorker(Task):
         Update database, set history as failed.
         """
 
-        URL_BASE = kwargs.get('apipath') + "/api/"
+        URL_BASE = "http://web:8000/api/"
         logging.error("EPIC FAIL")
         data = {'status': 'Fail',
                 'dateend': datetime.utcnow()
@@ -52,7 +52,7 @@ class BaseWorker(Task):
     def run(self, *args, **kwargs):
         """Celery calls this to start the task."""
 
-        URL_BASE = kwargs.get('apipath') + "/api/"
+        URL_BASE = "http://web:8000/api/"
 
         self.workerid = self.app.oid
         self.pkid = kwargs.get('fkhistory')
@@ -208,4 +208,4 @@ app.register_task(BaseWorker())
 def baseworker(self, *args, **kwargs):
     """Call this with .delay() to start the Celery task."""
     worker = BaseWorker()
-    return worker.run(fkhistory=kwargs.get('fkhistory'), apipath=kwargs.get('apipath'))
+    return worker.run(fkhistory=kwargs.get('fkhistory'))

@@ -6,7 +6,7 @@ import napalm
 import netmiko
 import requests
 
-URL_BASE = "http://localhost:8000/api/"
+URL_BASE = "http://web:8000/api/"
 URL_SUFFIX = "/?format=json"
 
 

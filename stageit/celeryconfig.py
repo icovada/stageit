@@ -1,4 +1,4 @@
-broker_url = 'amqp://'
+broker_url = 'amqp://rabbit'
 
 task_serializer = 'json'
 accept_content = ['json']
