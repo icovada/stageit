@@ -10,9 +10,10 @@
 
             <form class="needs-validation" action="/api/template/" id="templateform" method="post">
                 <div class="form-group">
-                    <h1>Edit task</h2>
-                        <p>{{pkid}}</p>
+                    <h1>Edit task</h1>
+                    <p>{{pkid}}</p>
                 </div>
+                {% csrf_token %}
 
 
                 <div class="form-group">
@@ -206,7 +207,8 @@
             .on('accept', function () {
                 $.ajax({
                     type: 'DELETE',
-                    url: "/api/task/{{pkid}}/"});
+                    url: "/api/task/{{pkid}}/"
+                });
                 basecoat.alert('Task deleted')
                     .on('hide.bs.modal', function () {
                         window.location.href = "/tasks";
