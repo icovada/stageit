@@ -24,11 +24,11 @@
                             <td id="statusfield"></td>
                         </tr>
                         <tr>
-                            <td><strong>Task start time</strong>  {{instance.startdate}}</td>
+                            <td><strong>Task start time</strong>  {{instance.datestart}}</td>
                             <td id="datestartfield"></td>
                         </tr>
                         <tr>
-                            <td><strong>Task finish time</strong>  {{instance.enddate}}</td>
+                            <td><strong>Task finish time</strong>  {{instance.dateend}}</td>
                             <td id="dateendfield"></td>
                         </tr>
                         <tr>
@@ -114,7 +114,7 @@
             .on('accept', function () {
                 $.ajax({
                     type: 'DELETE',
-                    url: "/api/history/{{pkid}}/"
+                    url: "/api/history/{{instance.pkid}}/"
                 });
                 basecoat.alert('History deleted')
                     .on('hide.bs.modal', function () {
