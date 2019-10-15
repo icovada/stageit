@@ -142,10 +142,12 @@ class BaseWorker(Task):
 
         # Actually do the job (finally!)
         self.stageit(filepath=filepath, installmode=installmode,
-                     url_base=URL_BASE, fktemplate=self.templatedata.get('fkbootstrapconfig'))
+                     url_base=URL_BASE, fkbootstrapconfig=self.templatedata.get('fkbootstrapconfig'))
 
         if poststaging is not None and poststaging is not '':
             self.driver.poststaging(poststaging)
+
+        self.driver.close()
 
     def find_model(self, url_base):
         """Find device type and return appropriate class to deal with
@@ -161,7 +163,7 @@ class BaseWorker(Task):
         elif any(model in device.facts["model"] for model in ("4221", "4321", "4331", "4351", "4431", "4451", "4461")):
             from stageit.libs.cisco.router.iosxe import IOSXERouter as specific_device
 
-        elif any(model in device.facts["model"] for model in ("2960", "3560CX")):
+        elif any(model in device.facts["model"] for model in ("2960", "3560CX", "1841")):
             from stageit.libs.cisco.switch.ios import IOSSwitch as specific_device
 
         else:
