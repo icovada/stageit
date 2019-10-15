@@ -61,8 +61,6 @@ class BaseDevice():
         """Get device facts and update history db table."""
         logging.info('Getting facts')
         self._checksession()
-        self._checksession()
-        self.session.open()
         self.facts = self.session.get_facts()
 
         data = {'vendor': self.facts['vendor'],
@@ -72,6 +70,7 @@ class BaseDevice():
 
         # Update history line with new facts we found
         requests.put(URL_BASE + 'history/' + self.pkid + URL_SUFFIX, data=data)
+        logging.info('Getting facts done')
 
     def load_bootstrap_config(self, bootstraptemplate, values, **kwargs):
         """
@@ -171,5 +170,15 @@ class BaseDevice():
                 driver.open()
                 return driver 
 
-        if self.session is None or not self.session.is_alive().get('is_alive'):
+        # Cannot use session.is_alive) because it interacts weirdly
+        # with out terminal server and makes the switch kill the connection
+        if self.session is None: 
                 self.session = _createsession()
+
+        try:
+            self.session._netmiko_device.timeout = 3
+            self.session.get_users()
+        except OSError as e:
+            self.session = _createsession()
+            
+        self.session._netmiko_device.timeout = 60
