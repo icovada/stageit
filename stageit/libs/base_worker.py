@@ -147,6 +147,8 @@ class BaseWorker(Task):
         if poststaging is not None and poststaging is not '':
             self.driver.poststaging(poststaging)
 
+        self.driver.close()
+
     def find_model(self, url_base):
         """Find device type and return appropriate class to deal with
         upgrading, version checking and else."""
