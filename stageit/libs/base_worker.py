@@ -194,7 +194,7 @@ class BaseWorker(Task):
                 # Get bootstrap config from database
                 if fkbootstrapconfig is not 'null':
                     bootstrapconfig = requests.get(url_base + 'bootstrapconfig/' + fkbootstrapconfig)
-                    self.driver.load_bootstrap_config(**bootstrapconfig)
+                    self.driver.load_bootstrap_config(**bootstrapconfig.json())
                     self.driver.upgrade_software(uri=filepath,
                                                  mode_install=installmode)
                 else:
