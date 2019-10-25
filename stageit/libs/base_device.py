@@ -25,7 +25,8 @@ class BaseDevice():
                             'password': kwargs.get('password'),
                             'optional_args': {'port': kwargs.get('port'),
                                               'transport': kwargs.get('transport'),
-                                              'session_log': kwargs.get('logbuffer')}}
+                                              'session_log': kwargs.get('logbuffer'),
+                                              'secret': 'cisco'}}
         self.session = None
         self._checksession()
 
