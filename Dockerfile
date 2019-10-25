@@ -7,5 +7,3 @@ RUN pip install psycopg2-binary
 RUN pip install pipenv
 RUN pipenv install --system --skip-lock
 COPY . /code
-
-ENTRYPOINT bash /code/docker-files/entrypoint.sh

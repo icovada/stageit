@@ -25,11 +25,12 @@ class BaseDevice():
                             'password': kwargs.get('password'),
                             'optional_args': {'port': kwargs.get('port'),
                                               'transport': kwargs.get('transport'),
-                                              'session_log': kwargs.get('logbuffer')}}
+                                              'session_log': kwargs.get('logbuffer'),
+                                              'secret': 'cisco'}}
         self.session = None
-        self._checksession()
-
         self.tserver = tserver
+
+        self._checksession()
 
         self.facts = None
         self.pkid = pkid
@@ -167,7 +168,10 @@ class BaseDevice():
     def _checksession(self):
         def _createsession():
                 driver = self.driver(**self.sessiondata)
-                driver.open()
+                try:
+                    driver.open()
+                except ConnectionRefusedError:
+                    self.tserver.reset()
                 return driver 
 
         # Cannot use session.is_alive) because it interacts weirdly

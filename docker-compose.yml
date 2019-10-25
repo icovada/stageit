@@ -12,7 +12,7 @@ services:
       - "8000:8000"
     depends_on:
       - db
-      - celery
+    entrypoint: ["bash", "/code/docker-files/entrypoint.sh"]
 
   celery:
     build: .
@@ -20,6 +20,7 @@ services:
     depends_on:
       - db
       - rabbit
+      - web
 
   rabbit:
     image: rabbitmq:3

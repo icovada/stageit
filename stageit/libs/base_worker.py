@@ -163,7 +163,7 @@ class BaseWorker(Task):
         elif any(model in device.facts["model"] for model in ("4221", "4321", "4331", "4351", "4431", "4451", "4461")):
             from stageit.libs.cisco.router.iosxe import IOSXERouter as specific_device
 
-        elif any(model in device.facts["model"] for model in ("2960", "3560CX", "1841")):
+        elif any(model in device.facts["model"] for model in ("2960", "3560CX", "1841", "CDB")):
             from stageit.libs.cisco.switch.ios import IOSSwitch as specific_device
 
         else:
