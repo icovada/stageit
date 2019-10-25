@@ -28,9 +28,9 @@ class BaseDevice():
                                               'session_log': kwargs.get('logbuffer'),
                                               'secret': 'cisco'}}
         self.session = None
-        self._checksession()
-
         self.tserver = tserver
+
+        self._checksession()
 
         self.facts = None
         self.pkid = pkid
