@@ -167,7 +167,10 @@ class BaseDevice():
     def _checksession(self):
         def _createsession():
                 driver = self.driver(**self.sessiondata)
-                driver.open()
+                try:
+                    driver.open()
+                except ConnectionRefusedError:
+                    self.tserver.reset()
                 return driver 
 
         # Cannot use session.is_alive) because it interacts weirdly
