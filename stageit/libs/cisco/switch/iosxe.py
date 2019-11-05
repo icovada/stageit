@@ -25,6 +25,7 @@ class IOSXESwitch(BaseDevice):
             version = re.findall(
                 r'cat9k_lite_iosxe(_npe)?(\.(\d{2})){3}\.SPA\.bin', uri)[0]
         else:
+            self.session.close()
             raise Warning("Unsupported image file")
 
         while not firmware[0]:

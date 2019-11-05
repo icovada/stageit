@@ -124,12 +124,14 @@ class BaseDevice():
         out = self.session.device.read_until_prompt_or_pattern("Error")
         self.session.device.send_config_set(["no file prompt quiet"])
         if "Error" in out:
+            self.session.close()
             raise ValueError("File transfer failed")
         elif "bytes copied" in out:
             return
 
     def upgrade_software(self, uri, mode_install):
         """Not implemented."""
+        self.session.close()
         raise NotImplementedError
 
     def getlog(self):

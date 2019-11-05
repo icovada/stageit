@@ -25,6 +25,7 @@ class IOSXERouter(BaseDevice):
             version = re.findall(
                 r'cat9k_iosxe(ldpe)?(\.(\d{2})){3}\.SPA\.bin', uri)[0]
         else:
+            self.session.close()
             raise Warning("Unsupported image file")
 
         if not self._check_rommon():
