@@ -165,6 +165,7 @@ class BaseWorker(Task):
             from stageit.libs.cisco.switch.ios import IOSSwitch as specific_device
 
         else:
+            self.driver.close()
             raise ValueError("Unrecognised model")
 
         # Update database row
