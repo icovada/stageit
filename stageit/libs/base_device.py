@@ -187,5 +187,8 @@ class BaseDevice():
             self.session.get_users()
         except (OSError, AttributeError) as e:
             self.session = _createsession()
-            
-        self.session._netmiko_device.timeout = 60
+
+        try:
+            self.session._netmiko_device.timeout = 60
+        except (OSError, AttributeError) as e:
+            self.session = _createsession()
