@@ -124,12 +124,14 @@ class BaseDevice():
         out = self.session.device.read_until_prompt_or_pattern("Error")
         self.session.device.send_config_set(["no file prompt quiet"])
         if "Error" in out:
+            self.session.close()
             raise ValueError("File transfer failed")
         elif "bytes copied" in out:
             return
 
     def upgrade_software(self, uri, mode_install):
         """Not implemented."""
+        self.session.close()
         raise NotImplementedError
 
     def getlog(self):
@@ -153,6 +155,7 @@ class BaseDevice():
         self.session.device.read_until_prompt()
         self.session.device.write_channel("reload")
         self.session.device.write_channel("\n\n\n")
+        sleep(30)
         self.checkavailable(1000)
 
     def close(self, logname=None):
@@ -163,7 +166,7 @@ class BaseDevice():
         """Run commands after staging the device"""
         self._checksession()
         for line in commands.split("\n"):
-            self.session.send_command(line)
+            self.session.device.send_command(line)
 
     def _checksession(self):
         def _createsession():
@@ -182,7 +185,10 @@ class BaseDevice():
         try:
             self.session._netmiko_device.timeout = 3
             self.session.get_users()
-        except OSError as e:
+        except (OSError, AttributeError) as e:
             self.session = _createsession()
-            
-        self.session._netmiko_device.timeout = 60
+
+        try:
+            self.session._netmiko_device.timeout = 60
+        except (OSError, AttributeError) as e:
+            self.session = _createsession()

@@ -167,6 +167,7 @@ class BaseWorker(Task):
             from stageit.libs.cisco.switch.ios import IOSSwitch as specific_device
 
         else:
+            device.close()
             raise ValueError("Unrecognised model")
 
         # Update database row
@@ -194,13 +195,14 @@ class BaseWorker(Task):
                 # Get bootstrap config from database
                 if fkbootstrapconfig is not 'null':
                     bootstrapconfig = requests.get(url_base + 'bootstrapconfig/' + fkbootstrapconfig)
-                    self.driver.load_bootstrap_config(**bootstrapconfig)
+                    self.driver.load_bootstrap_config(**bootstrapconfig.json())
                     self.driver.upgrade_software(uri=filepath,
                                                  mode_install=installmode)
                 else:
                     pass
 
         self.driver.load_final_config(self.finalconfig)
+        self.driver.close()
 
 
 app.register_task(BaseWorker())
