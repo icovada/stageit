@@ -166,7 +166,7 @@ class BaseDevice():
         """Run commands after staging the device"""
         self._checksession()
         for line in commands.split("\n"):
-            self.session.send_command(line)
+            self.session.device.send_command(line)
 
     def _checksession(self):
         def _createsession():
