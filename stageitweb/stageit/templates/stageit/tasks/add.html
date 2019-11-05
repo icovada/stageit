@@ -11,6 +11,7 @@
                 <div class="form-group">
                     <h1>Create task from {{slug}}</h1>
                 </div>
+                {% csrf_token %}
 
                 <div class="form-group">
                     <label for="description">Description</label>

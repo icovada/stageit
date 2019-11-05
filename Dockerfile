@@ -2,9 +2,8 @@ FROM python:3
 ENV PYTHONUNBUFFERED 1
 RUN mkdir /code
 WORKDIR /code
-COPY Pipfile Pipfile.lock /code/
+COPY Pipfile /code/
+RUN pip install psycopg2-binary
 RUN pip install pipenv
-RUN pipenv install --system
+RUN pipenv install --system --skip-lock
 COPY . /code
-RUN python manage.py makemigrations
-RUN python manage.py migrate

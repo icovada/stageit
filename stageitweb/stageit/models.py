@@ -64,7 +64,7 @@ class Task(models.Model):
 
 class Log(models.Model):
     """Define staging Log format"""
-    fkhistory = models.OneToOneField(History, on_delete=models.CASCADE)
+    fkhistory = models.ForeignKey(History, on_delete=models.CASCADE)
     sequence = models.PositiveIntegerField()
     log = models.TextField(null=True)
     logdate = models.DateTimeField(auto_now_add=True)
