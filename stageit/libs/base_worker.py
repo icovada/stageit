@@ -200,6 +200,7 @@ class BaseWorker(Task):
                     pass
 
         self.driver.load_final_config(self.finalconfig)
+        self.driver.close()
 
 
 app.register_task(BaseWorker())
