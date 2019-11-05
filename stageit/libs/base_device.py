@@ -155,7 +155,7 @@ class BaseDevice():
         self.session.device.read_until_prompt()
         self.session.device.write_channel("reload")
         self.session.device.write_channel("\n\n\n")
-        time.sleep(30)
+        sleep(30)
         self.checkavailable(1000)
 
     def close(self, logname=None):
