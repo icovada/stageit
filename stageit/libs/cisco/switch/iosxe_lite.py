@@ -80,6 +80,8 @@ class IOSXELiteSwitch(BaseDevice):
         if not self.session._check_file_exists(flashuri):
             self.copy_file(uri)
 
+        self.save_config()
+
         logging.info("Upgrading IOS XE Lite to INSTALL mode")
         command = "install add file {} activate commit auto-copy\n".format(
             flashuri)
