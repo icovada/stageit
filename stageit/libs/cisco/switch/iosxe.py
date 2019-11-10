@@ -18,12 +18,6 @@ class IOSXESwitch(BaseDevice):
             version = re.findall(
                 r'cat3k_caa-universalk9(ldpe)?(\.(\d{2})){3}\.SPA\.bin', uri)[0]
 
-        if re.search(r'cat9k_lite_iosxe(_npe)?(\.(\d{2})){3}\.SPA\.bin', uri):
-            # Catalyst 9200, 9300
-            # cat9k_lite_iosxe.16.12.01.SPA.bin
-            # cat9k_lite_iosxe_npe.16.12.01.SPA.bin
-            version = re.findall(
-                r'cat9k_lite_iosxe(_npe)?(\.(\d{2})){3}\.SPA\.bin', uri)[0]
         else:
             self.session.close()
             raise Warning("Unsupported image file")
@@ -63,7 +57,7 @@ class IOSXESwitch(BaseDevice):
         # *    1 28    WS-C3650-24PD      16.6.4            CAT3K_CAA-UNIVERSALK9 INSTALL
         #      2 52    WS-C3650-48PD      16.6.4            CAT3K_CAA-UNIVERSALK9 INSTALL
 
-        verregex = r'^\** *(\d) (\d{1,2}) *([A-Za-z0-9\-]*) *([0-9\.]*) *([A-Za-z0-9\-_]*) (\w*)$'
+        verregex = r'^\** *(\d) (\d{1,2}) *([A-Za-z0-9\-]*) *([0-9\.]*) *([A-Za-z0-9\-_]*) *(\w*)$'
         switches = re.findall(verregex, showver, re.MULTILINE)
 
         for member in switches:
