@@ -16,7 +16,7 @@ class IOSXELiteSwitch(BaseDevice):
             # cat3k_caa-universalk9.16.06.06.SPA.bin
             # cat3k_caa-universalk9ldpe.16.06.06.SPA.bin
             version = re.findall(
-                r'cat3k_caa-universalk9(ldpe)?(\.(\d{2})){3}\.SPA\.bin', uri)[0]
+                r'cat9k_lite_iosxe(_npe)?(\.(\d{2})){3}\.SPA\.bin', uri)[0]
 
         if re.search(r'cat9k_lite_iosxe(_npe)?(\.(\d{2})){3}\.SPA\.bin', uri):
             # Catalyst 9200, 9300
