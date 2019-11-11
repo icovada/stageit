@@ -189,7 +189,7 @@ class BaseWorker(Task):
         if filepath != '':
             try:
                 self.driver.upgrade_software(uri=filepath,
-                                             mode_install=installmode)
+                                             mode=installmode)
             except ConnectionError:
                 # Connection initiates from the device back to the storage
                 # If the device hasn't received an IP via DHCP on its own
