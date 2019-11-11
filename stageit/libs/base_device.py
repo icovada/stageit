@@ -5,6 +5,8 @@ from time import sleep
 import napalm
 import netmiko
 import requests
+from napalm.base.exceptions import ConnectionClosedException
+from netmiko.ssh_exception import NetMikoAuthenticationException
 
 URL_BASE = "http://web:8000/api/"
 URL_SUFFIX = "/?format=json"
@@ -92,8 +94,8 @@ class BaseDevice():
 
         logging.info("Checking device got an IP")
         # Wait for device to grab ip.
-        int_ip = []
-        while True not in ["ipv4" in x for x in a.values()]:
+        int_ip = {}
+        while True not in ["ipv4" in x for x in int_ip.values()]:
             # While there are no interfaces with an 'ipv4' address type
             int_ip = self.session.get_interfaces_ip()
 
@@ -174,22 +176,23 @@ class BaseDevice():
                 driver = self.driver(**self.sessiondata)
                 try:
                     driver.open()
-                except ConnectionRefusedError:
+                    driver.device.send_command("ter len 0\n")
+                except (ConnectionRefusedError, NetMikoAuthenticationException):
                     self.tserver.reset()
-                return driver 
+                return driver
 
-        # Cannot use session.is_alive) because it interacts weirdly
-        # with out terminal server and makes the switch kill the connection
+        # Cannot use session.is_alive()) because it interacts weirdly
+        # with our terminal server and makes the switch kill the connection
         if self.session is None: 
                 self.session = _createsession()
 
         try:
             self.session._netmiko_device.timeout = 3
             self.session.get_users()
-        except (OSError, AttributeError) as e:
+        except (OSError, AttributeError, ConnectionClosedException) as e:
             self.session = _createsession()
 
         try:
             self.session._netmiko_device.timeout = 60
-        except (OSError, AttributeError) as e:
+        except (OSError, AttributeError, ConnectionClosedException) as e:
             self.session = _createsession()
