@@ -93,8 +93,8 @@ class BaseDevice():
 
         logging.info("Checking device got an IP")
         # Wait for device to grab ip.
-        int_ip = []
-        while True not in ["ipv4" in x for x in a.values()]:
+        int_ip = {}
+        while True not in ["ipv4" in x for x in int_ip.values()]:
             # While there are no interfaces with an 'ipv4' address type
             int_ip = self.session.get_interfaces_ip()
 
