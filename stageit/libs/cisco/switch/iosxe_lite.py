@@ -11,19 +11,13 @@ class IOSXELiteSwitch(BaseDevice):
         """Verify software version and if necessary upgrade through proper path."""
         logging.info("Checking firmware version")
         firmware = (False, None, None)
-        if re.search(r'cat9k_lite_iosxe(_npe)?(\.(\d{2})){3}\.SPA\.bin', uri):
-            # Catalyst 9200
-            # cat3k_caa-universalk9.16.06.06.SPA.bin
-            # cat3k_caa-universalk9ldpe.16.06.06.SPA.bin
-            version = re.findall(
-                r'cat9k_lite_iosxe(_npe)?(\.(\d{2})){3}\.SPA\.bin', uri)[0]
 
-        if re.search(r'cat9k_lite_iosxe(_npe)?(\.(\d{2})){3}\.SPA\.bin', uri):
+        if re.search(r'cat9k_lite_iosxe(?:_npe)*\.(\d*\w*\.\d*\w*\.\d*\w*)\.', uri):
             # Catalyst 9200, 9300
             # cat9k_lite_iosxe.16.12.01.SPA.bin
             # cat9k_lite_iosxe_npe.16.12.01.SPA.bin
             version = re.findall(
-                r'cat9k_lite_iosxe(_npe)?(\.(\d{2})){3}\.SPA\.bin', uri)[0]
+                r'cat9k_lite_iosxe(?:_npe)*\.(\d*\w*\.\d*\w*\.\d*\w*)\.', uri)[0]
         else:
             self.session.close()
             raise Warning("Unsupported image file")
