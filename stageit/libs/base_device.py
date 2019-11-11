@@ -173,6 +173,7 @@ class BaseDevice():
                 driver = self.driver(**self.sessiondata)
                 try:
                     driver.open()
+                    driver.send_command("ter len 0\n")
                 except ConnectionRefusedError:
                     self.tserver.reset()
                 return driver 
