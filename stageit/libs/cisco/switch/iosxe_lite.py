@@ -81,7 +81,7 @@ class IOSXELiteSwitch(BaseDevice):
             flashuri)
         self.session.device.timeout = 1800
         self.session.device.write_channel(command)
-        output = self.session.device.read_until_prompt_or_pattern(
+        output = self.session.device.read_until_pattern(
             "This operation requires a reload of the system. Do you want to proceed?")
         self.session.device.write_channel("y\n")
 
