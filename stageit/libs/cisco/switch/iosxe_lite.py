@@ -97,3 +97,33 @@ class IOSXELiteSwitch(BaseDevice):
 
         self.tserver.reset()
         return True
+
+    def _checksession(self):
+        """
+        Overload base_device to inject "ter len 0" in privileged EXEC mode
+        (enable mode), 
+        """
+        def _createsession():
+                driver = self.driver(**self.sessiondata)
+                try:
+                    driver.open()
+                    driver.send_command("ter len 0\n")
+                except ConnectionRefusedError:
+                    self.tserver.reset()
+                return driver 
+
+        # Cannot use session.is_alive) because it interacts weirdly
+        # with out terminal server and makes the switch kill the connection
+        if self.session is None: 
+                self.session = _createsession()
+
+        try:
+            self.session._netmiko_device.timeout = 3
+            self.session.get_users()
+        except (OSError, AttributeError) as e:
+            self.session = _createsession()
+
+        try:
+            self.session._netmiko_device.timeout = 60
+        except (OSError, AttributeError) as e:
+            self.session = _createsession()
