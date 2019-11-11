@@ -6,6 +6,7 @@ import napalm
 import netmiko
 import requests
 from napalm.base.exceptions import ConnectionClosedException
+from netmiko.ssh_exception import NetMikoAuthenticationException
 
 URL_BASE = "http://web:8000/api/"
 URL_SUFFIX = "/?format=json"
@@ -187,10 +188,10 @@ class BaseDevice():
         try:
             self.session._netmiko_device.timeout = 3
             self.session.get_users()
-        except (OSError, AttributeError, ConnectionClosedException) as e:
+        except (OSError, AttributeError, ConnectionClosedException, NetMikoAuthenticationException) as e:
             self.session = _createsession()
 
         try:
             self.session._netmiko_device.timeout = 60
-        except (OSError, AttributeError, ConnectionClosedException) as e:
+        except (OSError, AttributeError, ConnectionClosedException, NetMikoAuthenticationException) as e:
             self.session = _createsession()
