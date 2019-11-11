@@ -77,7 +77,7 @@ class IOSXELiteSwitch(BaseDevice):
         self.save_config()
 
         logging.info("Upgrading IOS XE Lite to INSTALL mode")
-        command = "install add file {} activate commit auto-copy\n".format(
+        command = "install add file {} activate commit\n".format(
             flashuri)
         self.session.device.timeout = 1800
         self.session.device.write_channel(command)
