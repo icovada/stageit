@@ -180,8 +180,8 @@ class BaseDevice():
                     self.tserver.reset()
                 return driver 
 
-        # Cannot use session.is_alive) because it interacts weirdly
-        # with out terminal server and makes the switch kill the connection
+        # Cannot use session.is_alive()) because it interacts weirdly
+        # with our terminal server and makes the switch kill the connection
         if self.session is None: 
                 self.session = _createsession()
 
