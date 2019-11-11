@@ -176,7 +176,7 @@ class BaseDevice():
                 driver = self.driver(**self.sessiondata)
                 try:
                     driver.open()
-                except ConnectionRefusedError:
+                except (ConnectionRefusedError, NetMikoAuthenticationException):
                     self.tserver.reset()
                 return driver 
 
@@ -188,10 +188,10 @@ class BaseDevice():
         try:
             self.session._netmiko_device.timeout = 3
             self.session.get_users()
-        except (OSError, AttributeError, ConnectionClosedException, NetMikoAuthenticationException) as e:
+        except (OSError, AttributeError, ConnectionClosedException) as e:
             self.session = _createsession()
 
         try:
             self.session._netmiko_device.timeout = 60
-        except (OSError, AttributeError, ConnectionClosedException, NetMikoAuthenticationException) as e:
+        except (OSError, AttributeError, ConnectionClosedException) as e:
             self.session = _createsession()
