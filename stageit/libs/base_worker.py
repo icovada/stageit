@@ -200,7 +200,7 @@ class BaseWorker(Task):
                     bootstrapconfig = requests.get(url_base + 'bootstrapconfig/' + fkbootstrapconfig)
                     self.driver.load_bootstrap_config(**bootstrapconfig.json())
                     self.driver.upgrade_software(uri=filepath,
-                                                 mode_install=installmode)
+                                                 mode=installmode)
                 else:
                     pass
 
