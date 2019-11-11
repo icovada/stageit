@@ -157,8 +157,11 @@ class BaseWorker(Task):
         device.checkavailable(300)
 
         # Load appropriate class based on discovered device
-        if any(model in device.facts["model"] for model in ("C3650", "C3850")):
+        if any(model in device.facts["model"] for model in ("C3650", "C3850", "9300")):
             from stageit.libs.cisco.switch.iosxe import IOSXESwitch as specific_device
+
+        elif any(model in device.facts["model"] for model in ("9200L")):
+            from stageit.libs.cisco.switch.iosxe_lite import IOSXELiteSwitch as specific_device
 
         elif any(model in device.facts["model"] for model in ("4221", "4321", "4331", "4351", "4431", "4451", "4461")):
             from stageit.libs.cisco.router.iosxe import IOSXERouter as specific_device
