@@ -176,9 +176,10 @@ class BaseDevice():
                 driver = self.driver(**self.sessiondata)
                 try:
                     driver.open()
+                    driver.device.send_command("ter len 0\n")
                 except (ConnectionRefusedError, NetMikoAuthenticationException):
                     self.tserver.reset()
-                return driver 
+                return driver
 
         # Cannot use session.is_alive()) because it interacts weirdly
         # with our terminal server and makes the switch kill the connection

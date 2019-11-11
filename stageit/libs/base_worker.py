@@ -157,8 +157,11 @@ class BaseWorker(Task):
         device.checkavailable(300)
 
         # Load appropriate class based on discovered device
-        if any(model in device.facts["model"] for model in ("C3650", "C3850")):
+        if any(model in device.facts["model"] for model in ("C3650", "C3850", "9300")):
             from stageit.libs.cisco.switch.iosxe import IOSXESwitch as specific_device
+
+        elif any(model in device.facts["model"] for model in ("9200L")):
+            from stageit.libs.cisco.switch.iosxe_lite import IOSXELiteSwitch as specific_device
 
         elif any(model in device.facts["model"] for model in ("4221", "4321", "4331", "4351", "4431", "4451", "4461")):
             from stageit.libs.cisco.router.iosxe import IOSXERouter as specific_device
@@ -186,7 +189,7 @@ class BaseWorker(Task):
         if filepath != '':
             try:
                 self.driver.upgrade_software(uri=filepath,
-                                             mode_install=installmode)
+                                             mode=installmode)
             except ConnectionError:
                 # Connection initiates from the device back to the storage
                 # If the device hasn't received an IP via DHCP on its own
@@ -197,7 +200,7 @@ class BaseWorker(Task):
                     bootstrapconfig = requests.get(url_base + 'bootstrapconfig/' + fkbootstrapconfig)
                     self.driver.load_bootstrap_config(**bootstrapconfig.json())
                     self.driver.upgrade_software(uri=filepath,
-                                                 mode_install=installmode)
+                                                 mode=installmode)
                 else:
                     pass
 
