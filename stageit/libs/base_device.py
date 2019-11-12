@@ -49,7 +49,7 @@ class BaseDevice():
                 logging.info('Waiting for device {}'.format(retries))
                 try:
                     self.getfacts()
-                except (netmiko.ssh_exception.NetMikoAuthenticationException, ValueError):
+                except (netmiko.ssh_exception.NetMikoAuthenticationException, ValueError, AttributeError):
                     if retries > 100:
                         # Chill. Still booting.
                         sleep(10)
