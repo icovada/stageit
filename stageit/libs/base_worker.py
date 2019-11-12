@@ -204,7 +204,7 @@ class BaseWorker(Task):
                 else:
                     pass
 
-        self.driver.checkavailable()
+        self.driver.checkavailable(50)
         self.driver.load_final_config(self.finalconfig)
         self.driver.close()
 
