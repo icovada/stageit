@@ -101,7 +101,7 @@
             var $toast = basecoat.toast('<span class="fa fa-check"></span>Task <a href="/tasks/' + fktask + '">' + fktask.substring(0,5) + '</a> submitted', 'success');
             $toast.trigger('show'); // show toast for 5s
         }).fail(function (response) {
-            var $toast = basecoat.toast('<span class="fa fa-exclamation-triangle"></span>There was an error submitting your template', 'warning');
+            var $toast = basecoat.toast('<span class="fa fa-exclamation-triangle"></span>' + response.responseText, 'danger');
             $toast.trigger('show'); // show toast for 5s
         });
     });
