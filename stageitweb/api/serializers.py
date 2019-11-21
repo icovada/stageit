@@ -14,6 +14,7 @@ class TemplateSerializer(serializers.ModelSerializer):
     poststaging = serializers.CharField(max_length=1000, required=False)
     template = serializers.CharField(max_length=500000)
     templatevalues = serializers.JSONField()
+    fkbootstrapconfig = serializers.PrimaryKeyRelatedField(queryset=models.BootstrapConfig.objects, required=True)
 
     class Meta:
         model = models.Template
