@@ -7,9 +7,6 @@ from crispy_forms.bootstrap import FormActions
 import stageitweb.stageit.models as models
 from django.db.utils import OperationalError
 
-import jsonfield
-
-
 class TerminalServerForm(forms.ModelForm):
     name = forms.CharField()
     model = forms.ChoiceField(choices=(('cisco', 'Cisco'),))
@@ -49,7 +46,7 @@ class BootstrapConfigForm(forms.ModelForm):
     name = forms.CharField()
     description = forms.CharField()
     bootstraptemplate = forms.CharField(widget=forms.Textarea(), label="Boostrap Config Template")
-    values = jsonfield.JSONField()
+    values = forms.CharField()
 
     class Meta:
         model = models.BootstrapConfig
