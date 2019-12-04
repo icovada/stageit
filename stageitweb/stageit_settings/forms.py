@@ -46,7 +46,7 @@ class BootstrapConfigForm(forms.ModelForm):
     name = forms.CharField()
     description = forms.CharField()
     bootstraptemplate = forms.CharField(widget=forms.Textarea(), label="Boostrap Config Template")
-    values = forms.CharField()
+    values = forms.CharField(widget=forms.Textarea())
 
     class Meta:
         model = models.BootstrapConfig
