@@ -113,7 +113,7 @@ class FakeWorker(Task):
         logging.info(kwargs.get('fkhistory'))
 
         self.historydata = requests.get('http://web:8000/api/history/' + kwargs.get('fkhistory') + '/?format=json')
-        if self.historydata.json().get('workerid') is not None:
+        if self.historydata.json().get('workerid') != None:
             raise AssertionError("Task already being worked on by someone else")
         
         requests.put('http://web:8000/api/history/' + kwargs.get('fkhistory') + '/?format=json', data={'workerid':kwargs.get('celeryid'), 'status':'In progress'})

@@ -63,7 +63,7 @@ class BaseWorker(Task):
         self.historydata = requests.get(
             URL_BASE + 'history/' + self.pkid + URL_SUFFIX).json()
 
-        if self.historydata.get('workerid') is not None:
+        if self.historydata.get('workerid') != None:
             raise AssertionError(
                 "Task already being worked on by someone else")
         else:
@@ -144,7 +144,7 @@ class BaseWorker(Task):
         self.stageit(filepath=filepath, installmode=installmode,
                      url_base=URL_BASE, fkbootstrapconfig=self.templatedata.get('fkbootstrapconfig'))
 
-        if poststaging is not None and poststaging is not '':
+        if poststaging != None and poststaging != '':
             self.driver.poststaging(poststaging)
 
         self.driver.close()
@@ -196,7 +196,7 @@ class BaseWorker(Task):
                 # we push a custom config and try again
 
                 # Get bootstrap config from database
-                if fkbootstrapconfig is not 'null':
+                if fkbootstrapconfig != 'null':
                     bootstrapconfig = requests.get(url_base + 'bootstrapconfig/' + fkbootstrapconfig)
                     self.driver.load_bootstrap_config(**bootstrapconfig.json())
                     self.driver.upgrade_software(uri=filepath,

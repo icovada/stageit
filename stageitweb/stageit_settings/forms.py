@@ -25,7 +25,7 @@ class SerialPortForm(forms.ModelForm):
     fkterminalserver = forms.ModelChoiceField(
         queryset=models.TerminalServer.objects, label="Terminal Server")
     transport = forms.ChoiceField(choices=(('telnet', 'Telnet'), ('ssh', 'SSH')),
-                                  help_text="SSH is not supported for Serial over IP connections")
+                                  help_text="SSH != supported for Serial over IP connections")
     port = forms.IntegerField(min_value=1, max_value=65535)
     line = forms.IntegerField(min_value=1, max_value=65535)
 
