@@ -1,6 +1,7 @@
 from django.db import models
 from uuid import uuid4
 from django.urls import reverse
+import ast
 
 # Create your models here.
 class BootstrapConfig(models.Model):
@@ -15,6 +16,10 @@ class BootstrapConfig(models.Model):
 
     def get_absolute_url(self):
         return(str(self.pkid))
+
+    def save(self, *args, **kwargs):
+        self.values = ast.literal_eval(self.values)
+        super().save(*args, **kwargs)
 
 class Template(models.Model):
     """Defines templates table."""
@@ -31,6 +36,10 @@ class Template(models.Model):
 
     def __str__(self):
         return('{} - {}'.format(str(self.pkid)[:5], self.name))
+
+    def save(self, *args, **kwargs):
+        self.templatevalues = ast.literal_eval(self.templatevalues)
+        super().save(*args, **kwargs)
 
 class History(models.Model):
     """Defines history table."""
@@ -60,6 +69,10 @@ class Task(models.Model):
 
     def __str__(self):
         return('{} based on {}'.format(self.description, self.fktemplate))
+
+    def save(self, *args, **kwargs):
+        self.taskvalues = ast.literal_eval(self.taskvalues)
+        super().save(*args, **kwargs)
 
 class Log(models.Model):
     """Define staging Log format"""
