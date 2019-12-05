@@ -43,7 +43,7 @@ class IOSXERouter(BaseDevice):
 
         while not firmware[0]:
             firmware = self._firmware_ok(version, mode)
-            if not firmware[0]:  # If firmware is not ok
+            if not firmware[0]:  # If firmware != ok
                 if not self._has_connectivity:
                     raise ConnectionError("Cannot copy file, device has no IP")
                 # Check if firmware is version 03

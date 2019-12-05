@@ -1,6 +1,6 @@
 #!/bin/sh
 cd /code
-sleep 10
+sleep 2
 echo "Entrypoint script running"
 python manage.py makemigrations
 python manage.py migrate --noinput
