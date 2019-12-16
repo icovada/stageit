@@ -105,12 +105,12 @@
                         <div class="form-group" id="installmode" aria-describedby="installmodeHelp">
                             <div class="radio">
                                 <label>
-                                    <input type="radio" name="installmode" value="INSTALL" disabled checked>Install
+                                    <input type="radio" name="installmode" value="INSTALL" checked>Install
                                 </label>
                             </div>
                             <div class="radio">
                                 <label>
-                                    <input type="radio" name="installmode" value="BUNDLE" disabled>Bundle
+                                    <input type="radio" name="installmode" value="BUNDLE">Bundle
                                 </label>
                             </div>
                             <small id="installmodeHelp" class="form-text text-muted">Does not apply to IOS. If unsure
@@ -123,16 +123,18 @@
                         <div class="dropdown" data-dropdown>
                             <input type="text" class="hidden">
                             <button type="button" class="form-control dropdown-toggle" id="fkbootstrapconfig"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" value="null">
-                                No config
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" required>
+                                None
                                 <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="fkbootstrapconfig">
+                                {% if bootstrapconfig|length == 0 %}
                                 <li>
                                     <a href="#" data-value="null">
                                         No config
                                     </a>
                                 </li>
+                                {% endif %}
                                 {% for element in bootstrapconfig %}
                                 <li>
                                     <a href="#" data-value="{{element.pkid}}">
@@ -226,7 +228,7 @@
             window.location.href = "/templates/" + response['pkid'];
         }).fail(function (response) {
             var $toast = basecoat.toast(
-                '<span class="fa fa-exclamation-triangle"></span>There was an error submitting your template',
+                '<span class="fa fa-exclamation-triangle"></span>' + response.responseText,
                 'warning');
             $toast.trigger('show', [5000]); // show toast for 5s
         });

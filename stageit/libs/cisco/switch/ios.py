@@ -53,10 +53,29 @@ class IOSSwitch(BaseDevice):
         flashuri = self.session._gen_full_path(uri.split("/")[-1])
         if not self.session._check_file_exists(flashuri):
             self.copy_file(uri)
-
+        self._manage_stack()
         logging.info("Upgrading IOS")
         confset = ["no boot system", "boot system {}".format(flashuri)]
         self.session.device.send_config_set(confset)
         self.session.device.send_command("wr\n\n\n\n\n\n\n")
         self.reload_device()
         return True
+
+
+    def _manage_stack(self):
+        """Connect to device and issue copy command from uri."""
+        logging.info('Copying from {}'.format(uri))
+        self._checksession()
+        self.session.device.send_config_set(["file prompt quiet"])
+        command = "copy " + uri + " flash:\n"
+        # Destination filename [foo.bar]?
+        self.session.device.write_channel(command)
+        self.session.device.write_channel("\n")
+        self.session.device.timeout = 1800  # Could take ages...
+        out = self.session.device.read_until_prompt_or_pattern("Error")
+        self.session.device.send_config_set(["no file prompt quiet"])
+        if "Error" in out:
+            self.session.close()
+            raise ValueError("File transfer failed")
+        elif "bytes copied" in out:
+            return

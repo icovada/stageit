@@ -63,7 +63,7 @@ class BaseWorker(Task):
         self.historydata = requests.get(
             URL_BASE + 'history/' + self.pkid + URL_SUFFIX).json()
 
-        if self.historydata.get('workerid') is not None:
+        if self.historydata.get('workerid') != None:
             raise AssertionError(
                 "Task already being worked on by someone else")
         else:
@@ -144,7 +144,7 @@ class BaseWorker(Task):
         self.stageit(filepath=filepath, installmode=installmode,
                      url_base=URL_BASE, fkbootstrapconfig=self.templatedata.get('fkbootstrapconfig'))
 
-        if poststaging is not None and poststaging is not '':
+        if poststaging != None and poststaging != '':
             self.driver.poststaging(poststaging)
 
         self.driver.close()
@@ -157,8 +157,11 @@ class BaseWorker(Task):
         device.checkavailable(300)
 
         # Load appropriate class based on discovered device
-        if any(model in device.facts["model"] for model in ("C3650", "C3850")):
+        if any(model in device.facts["model"] for model in ("C3650", "C3850", "9300")):
             from stageit.libs.cisco.switch.iosxe import IOSXESwitch as specific_device
+
+        elif any(model in device.facts["model"] for model in ("9200L",)):
+            from stageit.libs.cisco.switch.iosxe_lite import IOSXELiteSwitch as specific_device
 
         elif any(model in device.facts["model"] for model in ("4221", "4321", "4331", "4351", "4431", "4451", "4461")):
             from stageit.libs.cisco.router.iosxe import IOSXERouter as specific_device
@@ -167,6 +170,7 @@ class BaseWorker(Task):
             from stageit.libs.cisco.switch.ios import IOSSwitch as specific_device
 
         else:
+            device.close()
             raise ValueError("Unrecognised model")
 
         # Update database row
@@ -185,22 +189,24 @@ class BaseWorker(Task):
         if filepath != '':
             try:
                 self.driver.upgrade_software(uri=filepath,
-                                             mode_install=installmode)
+                                             mode=installmode)
             except ConnectionError:
                 # Connection initiates from the device back to the storage
                 # If the device hasn't received an IP via DHCP on its own
                 # we push a custom config and try again
 
                 # Get bootstrap config from database
-                if fkbootstrapconfig is not 'null':
+                if fkbootstrapconfig != 'null':
                     bootstrapconfig = requests.get(url_base + 'bootstrapconfig/' + fkbootstrapconfig)
                     self.driver.load_bootstrap_config(**bootstrapconfig.json())
                     self.driver.upgrade_software(uri=filepath,
-                                                 mode_install=installmode)
+                                                 mode=installmode)
                 else:
                     pass
 
+        self.driver.checkavailable(50)
         self.driver.load_final_config(self.finalconfig)
+        self.driver.close()
 
 
 app.register_task(BaseWorker())
