@@ -7,6 +7,8 @@ from crispy_forms.bootstrap import FormActions
 import stageitweb.stageit.models as models
 from django.db.utils import OperationalError
 
+import ast
+
 class TerminalServerForm(forms.ModelForm):
     name = forms.CharField()
     model = forms.ChoiceField(choices=(('cisco', 'Cisco'),))
@@ -47,6 +49,15 @@ class BootstrapConfigForm(forms.ModelForm):
     description = forms.CharField()
     bootstraptemplate = forms.CharField(widget=forms.Textarea(), label="Boostrap Config Template")
     values = forms.CharField(widget=forms.Textarea())
+
+    def clean_values(self):
+        jdata = self.cleaned_data['values']
+        try:
+            json_data = ast.literal_eval(jdata)
+        except Exception as e:
+            raise forms.ValidationError(e)
+
+        return json_data
 
     class Meta:
         model = models.BootstrapConfig

@@ -1,3 +1,4 @@
+from django.contrib.postgres.fields import JSONField
 from django.db import models
 from uuid import uuid4
 from django.urls import reverse
@@ -8,7 +9,7 @@ class BootstrapConfig(models.Model):
     name = models.TextField()
     description = models.TextField()
     bootstraptemplate = models.TextField()
-    values = models.TextField()
+    values = JSONField()
 
     def __str__(self):
         return('{} - {}'.format(self.name, self.description))
