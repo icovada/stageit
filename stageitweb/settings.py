@@ -139,7 +139,8 @@ TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'templates'),
 )
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'stageitweb/media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media_cdn')
+STATIC_ROOT = os.path.join(BASE_DIR, "static_cdn")
 
 
 REST_FRAMEWORK = {
@@ -151,4 +152,5 @@ REST_FRAMEWORK = {
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
