@@ -12,7 +12,7 @@ import stageitweb.api.serializers as serializers
 from rest_framework import generics
 
 import glob
-import yaml
+import json
 from jinja2 import Environment, BaseLoader
 import jinja2
 
@@ -66,7 +66,7 @@ def convertjinja(request):
     except jinja2.exceptions.TemplateSyntaxError as exception:
         return HttpResponse(str(exception), status=500)
 
-    yamlvalues = yaml.load(request.POST['values'], Loader=yaml.FullLoader)
+    yamlvalues = json.loads(request.POST['values'])
     if yamlvalues is None:
         yamlvalues = {}
 
