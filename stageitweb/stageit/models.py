@@ -27,7 +27,7 @@ class Template(models.Model):
     platform = models.TextField(max_length=30, null=False)
     poststaging = models.TextField(max_length=1000)
     template = models.TextField(max_length=500000)
-    templatevalues = models.TextField()
+    templatevalues = JSONField(null=True)
     fkbootstrapconfig = models.ForeignKey(BootstrapConfig, models.PROTECT, null=True)
 
     def __str__(self):
@@ -45,7 +45,7 @@ class History(models.Model):
     rundata = models.BinaryField(max_length=1024000, editable=True, null=True)
     serial = models.TextField(max_length=20)
     template = models.TextField(max_length=20000)
-    templatevalues = models.TextField(null=True)
+    templatevalues = JSONField(null=True)
     vendor = models.TextField(max_length=30)
     status = models.TextField(null=True)
     workerid = models.TextField(null=True)
@@ -57,7 +57,7 @@ class Task(models.Model):
     pkid = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     description = models.TextField(max_length=50)
     fktemplate = models.ForeignKey(Template, on_delete=models.CASCADE)
-    taskvalues = models.TextField(null=True)
+    taskvalues = JSONField(null=True)
 
     def __str__(self):
         return('{} based on {}'.format(self.description, self.fktemplate))
