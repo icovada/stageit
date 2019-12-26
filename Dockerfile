@@ -1,9 +1,8 @@
 FROM python:3
 ENV PYTHONUNBUFFERED 1
-RUN mkdir /code
 WORKDIR /code
-COPY Pipfile /code/
 RUN pip install psycopg2-binary
 RUN pip install pipenv
+RUN pip install gunicorn
+COPY Pipfile .
 RUN pipenv install --system --skip-lock
-COPY . /code
