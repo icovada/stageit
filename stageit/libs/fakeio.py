@@ -29,7 +29,7 @@ class FakeIO(BytesIO):
                     'sequence': self.sequence,
                     'log': binlog}
 
-        requests.post('http://localhost:8000/api/log/?format=json',
+        requests.post('http://web:8000/api/log/?format=json',
                       data=postdata)
 
         self.sequence += 1

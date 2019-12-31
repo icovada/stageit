@@ -25,7 +25,7 @@ class BaseWorker(Task):
         Celery runs this if the task runs successfully 
         Update database, set history as successful and delete task.
         """
-        URL_BASE = kwargs.get('apipath') + "/api/"
+        URL_BASE = "http://web:8000/api/"
         logging.info("Set task successful")
         logging.info(retval)
         logging.info(kwargs)
@@ -42,7 +42,7 @@ class BaseWorker(Task):
         Update database, set history as failed.
         """
 
-        URL_BASE = kwargs.get('apipath') + "/api/"
+        URL_BASE = "http://web:8000/api/"
         logging.error("EPIC FAIL")
         data = {'status': 'Fail',
                 'dateend': datetime.utcnow()
@@ -52,7 +52,7 @@ class BaseWorker(Task):
     def run(self, *args, **kwargs):
         """Celery calls this to start the task."""
 
-        URL_BASE = kwargs.get('apipath') + "/api/"
+        URL_BASE = "http://web:8000/api/"
 
         self.workerid = self.app.oid
         self.pkid = kwargs.get('fkhistory')
@@ -63,7 +63,7 @@ class BaseWorker(Task):
         self.historydata = requests.get(
             URL_BASE + 'history/' + self.pkid + URL_SUFFIX).json()
 
-        if self.historydata.get('workerid') is not None:
+        if self.historydata.get('workerid') != None:
             raise AssertionError(
                 "Task already being worked on by someone else")
         else:
@@ -142,10 +142,12 @@ class BaseWorker(Task):
 
         # Actually do the job (finally!)
         self.stageit(filepath=filepath, installmode=installmode,
-                     url_base=URL_BASE, fktemplate=self.templatedata.get('fkbootstrapconfig'))
+                     url_base=URL_BASE, fkbootstrapconfig=self.templatedata.get('fkbootstrapconfig'))
 
-        if poststaging is not None and poststaging is not '':
+        if poststaging != None and poststaging != '':
             self.driver.poststaging(poststaging)
+
+        self.driver.close()
 
     def find_model(self, url_base):
         """Find device type and return appropriate class to deal with
@@ -155,16 +157,20 @@ class BaseWorker(Task):
         device.checkavailable(300)
 
         # Load appropriate class based on discovered device
-        if any(model in device.facts["model"] for model in ("C3650", "C3850")):
+        if any(model in device.facts["model"] for model in ("C3650", "C3850", "9300")):
             from stageit.libs.cisco.switch.iosxe import IOSXESwitch as specific_device
+
+        elif any(model in device.facts["model"] for model in ("9200L",)):
+            from stageit.libs.cisco.switch.iosxe_lite import IOSXELiteSwitch as specific_device
 
         elif any(model in device.facts["model"] for model in ("4221", "4321", "4331", "4351", "4431", "4451", "4461")):
             from stageit.libs.cisco.router.iosxe import IOSXERouter as specific_device
 
-        elif any(model in device.facts["model"] for model in ("2960", "3560CX")):
+        elif any(model in device.facts["model"] for model in ("2960", "3560CX", "1841", "CDB")):
             from stageit.libs.cisco.switch.ios import IOSSwitch as specific_device
 
         else:
+            device.close()
             raise ValueError("Unrecognised model")
 
         # Update database row
@@ -183,22 +189,24 @@ class BaseWorker(Task):
         if filepath != '':
             try:
                 self.driver.upgrade_software(uri=filepath,
-                                             mode_install=installmode)
+                                             mode=installmode)
             except ConnectionError:
                 # Connection initiates from the device back to the storage
                 # If the device hasn't received an IP via DHCP on its own
                 # we push a custom config and try again
 
                 # Get bootstrap config from database
-                if fkbootstrapconfig is not 'null':
+                if fkbootstrapconfig != 'null':
                     bootstrapconfig = requests.get(url_base + 'bootstrapconfig/' + fkbootstrapconfig)
-                    self.driver.load_bootstrap_config(**bootstrapconfig)
+                    self.driver.load_bootstrap_config(**bootstrapconfig.json())
                     self.driver.upgrade_software(uri=filepath,
-                                                 mode_install=installmode)
+                                                 mode=installmode)
                 else:
                     pass
 
+        self.driver.checkavailable(50)
         self.driver.load_final_config(self.finalconfig)
+        self.driver.close()
 
 
 app.register_task(BaseWorker())
@@ -208,4 +216,4 @@ app.register_task(BaseWorker())
 def baseworker(self, *args, **kwargs):
     """Call this with .delay() to start the Celery task."""
     worker = BaseWorker()
-    return worker.run(fkhistory=kwargs.get('fkhistory'), apipath=kwargs.get('apipath'))
+    return worker.run(fkhistory=kwargs.get('fkhistory'))

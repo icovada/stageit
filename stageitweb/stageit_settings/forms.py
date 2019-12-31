@@ -7,8 +7,7 @@ from crispy_forms.bootstrap import FormActions
 import stageitweb.stageit.models as models
 from django.db.utils import OperationalError
 
-import jsonfield
-
+import ast
 
 class TerminalServerForm(forms.ModelForm):
     name = forms.CharField()
@@ -33,7 +32,7 @@ class SerialPortForm(forms.ModelForm):
     fkterminalserver = forms.ModelChoiceField(
         queryset=models.TerminalServer.objects, label="Terminal Server")
     transport = forms.ChoiceField(choices=(('telnet', 'Telnet'), ('ssh', 'SSH')),
-                                  help_text="SSH is not supported for Serial over IP connections")
+                                  help_text="SSH != supported for Serial over IP connections")
     port = forms.IntegerField(min_value=1, max_value=65535)
     line = forms.IntegerField(min_value=1, max_value=65535)
 
@@ -59,7 +58,16 @@ class BootstrapConfigForm(forms.ModelForm):
     name = forms.CharField()
     description = forms.CharField()
     bootstraptemplate = forms.CharField(widget=forms.Textarea(), label="Boostrap Config Template")
-    values = jsonfield.JSONField()
+    values = forms.CharField(widget=forms.Textarea())
+
+    def clean_values(self):
+        jdata = self.cleaned_data['values']
+        try:
+            json_data = ast.literal_eval(jdata)
+        except Exception as e:
+            raise forms.ValidationError(e)
+
+        return json_data
 
     class Meta:
         model = models.BootstrapConfig

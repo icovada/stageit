@@ -11,6 +11,7 @@
                     <h1>Edit template</h2>
                         <p>{{template.pkid}}</p>
                 </div>
+                {% csrf_token %}
 
 
                 <div class="form-group">
@@ -233,7 +234,7 @@
             var $toast = basecoat.toast('<span class="fa fa-check"></span>Task submitted', 'success');
             $toast.trigger('show', [5000]); // show toast for 5s
         }).fail(function (response) {
-            var $toast = basecoat.toast('<span class="fa fa-fail"></span>There was an error submitting your template', 'warning');
+            var $toast = basecoat.toast('<span class="fa fa-fail"></span>' + response.responseText, 'danger');
             $toast.trigger('show', [5000]); // show toast for 5s
         });
     });

@@ -12,7 +12,7 @@ import stageitweb.api.serializers as serializers
 from rest_framework import generics
 
 import glob
-import yaml
+import json
 from jinja2 import Environment, BaseLoader
 import jinja2
 
@@ -66,7 +66,7 @@ def convertjinja(request):
     except jinja2.exceptions.TemplateSyntaxError as exception:
         return HttpResponse(str(exception), status=500)
 
-    yamlvalues = yaml.load(request.POST['values'], Loader=yaml.FullLoader)
+    yamlvalues = json.loads(request.POST['values'])
     if yamlvalues is None:
         yamlvalues = {}
 
@@ -86,7 +86,7 @@ def loggenerator(uuid):
         yield(log.log)
 
     history_row = models.History.objects.get(pkid=uuid)
-    while history_row.status == "In Progress":
+    while history_row.status in ("In Progress", "Discovering"):
         logs = models.Log.objects.filter(fkhistory=uuid, sequence__gt=lastlog)
         for log in logs:
             lastlog = log.sequence

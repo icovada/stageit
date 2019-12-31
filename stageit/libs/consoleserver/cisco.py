@@ -18,7 +18,7 @@ class CiscoConsoleServer(BaseConsoleServer):
 
         cmd = "clear line {}".format(self.line)
 
-        # send_command_timing as the router prompt is not returned
+        # send_command_timing as the router prompt != returned
         output = net_connect.send_command_timing(
             cmd, strip_command=False, strip_prompt=False)
         if "onfirm" in output:

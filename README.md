@@ -1,8 +1,7 @@
-# Django root folder for web project
+# StageIT
+Automated Cisco router and switch staging application
 
-Run as:
-```
-python manage.py makemigrations
-python manage.py migrate
-python manage.py runserver
-```
+## How to install:
+
+### Docker
+Simply run `docker-compose up` and visit localhost:8000

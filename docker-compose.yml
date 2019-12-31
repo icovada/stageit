@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+  nginx:
+    restart: always
+    build: ./docker-files/nginx
+    volumes: 
+      - ./docker-files/nginx/:/etc/nginx/conf.d
+      - ./docker-files/nginx/logs/:/code/logs
+      - static:/code/static_cdn
+      - media:/code/media_cdn
+    ports: 
+      - "1221:80"
+    links:
+      - web
+
+  db:
+    image: postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    volumes:
+      - .:/code
+      - static:/code/static_cdn
+      - media:/code/media_cdn
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    command: bash -c "python manage.py collectstatic --no-input && python manage.py makemigrations && python manage.py migrate && gunicorn --workers=3 stageitweb.wsgi -b 0.0.0.0:8000"
+
+  celery:
+    build: .
+    command: celery -A stageit worker -l info
+    volumes:
+      - .:/code
+    depends_on:
+      - db
+      - rabbit
+      - web
+
+  rabbit:
+    image: rabbitmq:3
+
+volumes:
+  postgres-data:
+  media:
+  static:

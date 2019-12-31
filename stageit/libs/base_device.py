@@ -5,8 +5,10 @@ from time import sleep
 import napalm
 import netmiko
 import requests
+from napalm.base.exceptions import ConnectionClosedException
+from netmiko.ssh_exception import NetMikoAuthenticationException
 
-URL_BASE = "http://localhost:8000/api/"
+URL_BASE = "http://web:8000/api/"
 URL_SUFFIX = "/?format=json"
 
 
@@ -25,11 +27,12 @@ class BaseDevice():
                             'password': kwargs.get('password'),
                             'optional_args': {'port': kwargs.get('port'),
                                               'transport': kwargs.get('transport'),
-                                              'session_log': kwargs.get('logbuffer')}}
+                                              'session_log': kwargs.get('logbuffer'),
+                                              'secret': 'cisco'}}
         self.session = None
-        self._checksession()
-
         self.tserver = tserver
+
+        self._checksession()
 
         self.facts = None
         self.pkid = pkid
@@ -46,7 +49,7 @@ class BaseDevice():
                 logging.info('Waiting for device {}'.format(retries))
                 try:
                     self.getfacts()
-                except (netmiko.ssh_exception.NetMikoAuthenticationException, ValueError):
+                except (netmiko.ssh_exception.NetMikoAuthenticationException, ValueError, AttributeError):
                     if retries > 100:
                         # Chill. Still booting.
                         sleep(10)
@@ -61,8 +64,6 @@ class BaseDevice():
         """Get device facts and update history db table."""
         logging.info('Getting facts')
         self._checksession()
-        self._checksession()
-        self.session.open()
         self.facts = self.session.get_facts()
 
         data = {'vendor': self.facts['vendor'],
@@ -72,6 +73,7 @@ class BaseDevice():
 
         # Update history line with new facts we found
         requests.put(URL_BASE + 'history/' + self.pkid + URL_SUFFIX, data=data)
+        logging.info('Getting facts done')
 
     def load_bootstrap_config(self, bootstraptemplate, values, **kwargs):
         """
@@ -93,7 +95,8 @@ class BaseDevice():
         logging.info("Checking device got an IP")
         # Wait for device to grab ip.
         int_ip = {}
-        while int_ip:
+        while True not in ["ipv4" in x for x in int_ip.values()]:
+            # While there are no interfaces with an 'ipv4' address type
             int_ip = self.session.get_interfaces_ip()
 
         self.session.auto_rollback_on_error = True
@@ -124,12 +127,14 @@ class BaseDevice():
         out = self.session.device.read_until_prompt_or_pattern("Error")
         self.session.device.send_config_set(["no file prompt quiet"])
         if "Error" in out:
+            self.session.close()
             raise ValueError("File transfer failed")
         elif "bytes copied" in out:
             return
 
     def upgrade_software(self, uri, mode_install):
         """Not implemented."""
+        self.session.close()
         raise NotImplementedError
 
     def getlog(self):
@@ -153,6 +158,7 @@ class BaseDevice():
         self.session.device.read_until_prompt()
         self.session.device.write_channel("reload")
         self.session.device.write_channel("\n\n\n")
+        sleep(30)
         self.checkavailable(1000)
 
     def close(self, logname=None):
@@ -163,13 +169,30 @@ class BaseDevice():
         """Run commands after staging the device"""
         self._checksession()
         for line in commands.split("\n"):
-            self.session.send_command(line)
+            self.session.device.send_command(line)
 
     def _checksession(self):
         def _createsession():
                 driver = self.driver(**self.sessiondata)
-                driver.open()
-                return driver 
+                try:
+                    driver.open()
+                    driver.device.send_command("ter len 0\n")
+                except (ConnectionRefusedError, NetMikoAuthenticationException):
+                    self.tserver.reset()
+                return driver
 
-        if self.session is None or not self.session.is_alive().get('is_alive'):
+        # Cannot use session.is_alive()) because it interacts weirdly
+        # with our terminal server and makes the switch kill the connection
+        if self.session is None: 
                 self.session = _createsession()
+
+        try:
+            self.session._netmiko_device.timeout = 3
+            self.session.get_users()
+        except (OSError, AttributeError, ConnectionClosedException) as e:
+            self.session = _createsession()
+
+        try:
+            self.session._netmiko_device.timeout = 60
+        except (OSError, AttributeError, ConnectionClosedException) as e:
+            self.session = _createsession()
