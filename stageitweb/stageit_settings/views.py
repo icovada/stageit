@@ -33,15 +33,6 @@ class TerminalServerDelete(DeleteView):
     template_name = baseform
 
 
-def edit_terminal_server(request, uuid):
-    instance = get_object_or_404(models.TerminalServer, pkid=uuid)
-    form = TerminalServerForm(request.POST or None, instance=instance)
-    if form.is_valid():
-        form.save()
-        return redirect('next_view')
-    return render(request, baseform, {'form': form})
-
-
 def serialport(request):
     return render(request, 'stageit/serialport_list.html')
 
@@ -55,6 +46,10 @@ class SerialPortUpdate(UpdateView):
     model = models.SerialPort
     template_name = baseform
 
+class SerialPortDelete(DeleteView):
+    form_class = SerialPortForm
+    model = models.SerialPort
+    template_name = baseform
 
 
 def filemanager(request):
