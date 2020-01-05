@@ -12,13 +12,26 @@ from .forms import TerminalServerForm, SerialPortForm, UploadFileForm, Bootstrap
 import stageitweb.stageit.models as models
 import json
 
-
-class TerminalServerFormView(FormView):
-    form_class = TerminalServerForm
-    template_name = 'stageit/terminalserver_add.html'
+baseform = 'stageit/baseform.html'
 
 def terminalserver(request):
     return render(request, 'stageit/terminalserver_list.html')
+
+class TerminalServerCreate(CreateView):
+    form_class = TerminalServerForm
+    model = models.TerminalServer
+    template_name = baseform
+
+class TerminalServerUpdate(UpdateView):
+    form_class = TerminalServerForm
+    model = models.TerminalServer
+    template_name = baseform
+
+class TerminalServerDelete(DeleteView):
+    form_class = TerminalServerForm
+    model = models.TerminalServer()
+    template_name = baseform
+
 
 def edit_terminal_server(request, uuid):
     instance = get_object_or_404(models.TerminalServer, pkid=uuid)
@@ -26,12 +39,12 @@ def edit_terminal_server(request, uuid):
     if form.is_valid():
         form.save()
         return redirect('next_view')
-    return render(request, 'stageit/terminalserver_edit.html', {'form': form})
+    return render(request, baseform, {'form': form})
 
 
-class SerialPortFormView(FormView):
+class SerialPortFormView(CreateView):
     form_class = SerialPortForm
-    template_name = 'stageit/serialport_add.html'
+    template_name = baseform
 
 def serialport(request):
     return render(request, 'stageit/serialport_list.html')
@@ -42,7 +55,7 @@ def edit_serial_port(request, uuid):
     if form.is_valid():
         form.save()
         return redirect('next_view')
-    return render(request, 'stageit/serialport_edit.html', {'form': form})
+    return render(request, baseform, {'form': form})
 
 def filemanager(request):
     return render(request, 'stageit/filemanager.html')
@@ -65,13 +78,16 @@ def upload_file(request):
 def bootstrapconfig(request):
     return render(request, 'stageit/bootstrapconfig_list.html')
 
+
 class BootstrapConfigCreate(CreateView):
     form_class = BootstrapConfigForm
     model = models.BootstrapConfig
+    success_url = "/settings/bootstrapconfig"
 
 class BootstrapConfigUpdate(UpdateView):
     form_class = BootstrapConfigForm
     model = models.BootstrapConfig
+    success_url = "/settings/bootstrapconfig"
 
 class BootstrapConfigDelete(DeleteView):
     form_class = BootstrapConfigForm

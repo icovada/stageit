@@ -1,13 +1,15 @@
 from django import forms
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Div, Submit, Row, Column, Field, Button
+from crispy_forms.layout import Layout, Div, Submit, Row, Column, Field, Button, HTML
 from crispy_forms.bootstrap import FormActions
 
 import stageitweb.stageit.models as models
 from django.db.utils import OperationalError
 
 import ast
+
+separator = """<hr class="mb-4">"""
 
 class TerminalServerForm(forms.ModelForm):
     name = forms.CharField()
@@ -17,6 +19,10 @@ class TerminalServerForm(forms.ModelForm):
         choices=(('telnet', 'Telnet'), ('ssh', 'SSH')))
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
+
+    helper = FormHelper()
+    helper.add_input(Submit('submit', 'Submit', css_class='btn btn-primary btn-lg btn-block'))
+    helper.form_method = 'POST'
 
     class Meta:
         model = models.TerminalServer
@@ -35,6 +41,10 @@ class SerialPortForm(forms.ModelForm):
                                   help_text="SSH != supported for Serial over IP connections")
     port = forms.IntegerField(min_value=1, max_value=65535)
     line = forms.IntegerField(min_value=1, max_value=65535)
+
+    helper = FormHelper()
+    helper.add_input(Submit('submit', 'Submit', css_class='btn-primary'))
+    helper.form_method = 'POST'
 
     class Meta:
         model = models.SerialPort
