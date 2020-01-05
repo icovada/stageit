@@ -33,6 +33,9 @@ class Template(models.Model):
     def __str__(self):
         return('{} - {}'.format(str(self.pkid)[:5], self.name))
 
+    def get_absolute_url(self):
+        return(str(self.pkid))
+
 class History(models.Model):
     """Defines history table."""
     pkid = models.UUIDField(primary_key=True, default=uuid4, editable=False)
@@ -52,6 +55,9 @@ class History(models.Model):
     fktask = models.TextField(null=False)
     fkserialport = models.UUIDField()
 
+    def get_absolute_url(self):
+        return(str(self.pkid))
+
 class Task(models.Model):
     """Defines tasks table."""
     pkid = models.UUIDField(primary_key=True, default=uuid4, editable=False)
@@ -61,6 +67,9 @@ class Task(models.Model):
 
     def __str__(self):
         return('{} based on {}'.format(self.description, self.fktemplate))
+    
+    def get_absolute_url(self):
+        return(str(self.pkid))
 
 class Log(models.Model):
     """Define staging Log format"""
@@ -80,6 +89,9 @@ class TerminalServer(models.Model):
 
     def __str__(self):
         return('{} - {}'.format(self.name, self.hostname))
+    
+    def get_absolute_url(self):
+        return(str(self.pkid))
 
 class SerialPort(models.Model):
     pkid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
@@ -93,6 +105,9 @@ class SerialPort(models.Model):
 
     def __str__(self):
         return('{} - {}'.format(self.fkterminalserver, self.line))
+    
+    def get_absolute_url(self):
+        return(str(self.pkid))
 
 class Firmware(models.Model):
     pkid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
