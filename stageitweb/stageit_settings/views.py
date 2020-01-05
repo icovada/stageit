@@ -42,20 +42,20 @@ def edit_terminal_server(request, uuid):
     return render(request, baseform, {'form': form})
 
 
-class SerialPortFormView(CreateView):
-    form_class = SerialPortForm
-    template_name = baseform
-
 def serialport(request):
     return render(request, 'stageit/serialport_list.html')
 
-def edit_serial_port(request, uuid):
-    instance = get_object_or_404(models.SerialPort, pkid=uuid)
-    form = SerialPortForm(request.POST or None, instance=instance)
-    if form.is_valid():
-        form.save()
-        return redirect('next_view')
-    return render(request, baseform, {'form': form})
+class SerialPortCreate(CreateView):
+    form_class = SerialPortForm
+    model = models.SerialPort
+    template_name = baseform
+
+class SerialPortUpdate(UpdateView):
+    form_class = SerialPortForm
+    model = models.SerialPort
+    template_name = baseform
+
+
 
 def filemanager(request):
     return render(request, 'stageit/filemanager.html')
@@ -82,16 +82,19 @@ def bootstrapconfig(request):
 class BootstrapConfigCreate(CreateView):
     form_class = BootstrapConfigForm
     model = models.BootstrapConfig
+    template_name = baseform
     success_url = "/settings/bootstrapconfig"
 
 class BootstrapConfigUpdate(UpdateView):
     form_class = BootstrapConfigForm
     model = models.BootstrapConfig
+    template_name = baseform
     success_url = "/settings/bootstrapconfig"
 
 class BootstrapConfigDelete(DeleteView):
     form_class = BootstrapConfigForm
     model = models.BootstrapConfig
+    template_name = baseform
     success_url = "/settings/bootstrapconfig"
 
 
