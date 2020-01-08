@@ -29,7 +29,7 @@ class TerminalServerUpdate(UpdateView):
 
 class TerminalServerDelete(DeleteView):
     form_class = TerminalServerForm
-    model = models.TerminalServer()
+    model = models.TerminalServer
     template_name = baseform
 
 

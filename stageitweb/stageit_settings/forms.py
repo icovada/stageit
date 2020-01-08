@@ -91,6 +91,7 @@ class BootstrapConfigForm(forms.ModelForm):
         Column('values', css_class="col-xl-6 form-right"),
         Div(
             Submit('save', 'Save changes'),
+            Button("delete", "Delete", href="delete")
         )
     )
     helper.form_method = 'POST'

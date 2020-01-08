@@ -6,6 +6,7 @@ urlpatterns = [
     path('terminalserver', views.terminalserver),
     path('terminalserver/add', views.TerminalServerCreate.as_view()),
     path('terminalserver/<uuid:pk>', views.TerminalServerUpdate.as_view()),
+    path('terminalserver/<uuid:pk>/delete', views.TerminalServerDelete.as_view()),
     path('serialport', views.serialport),
     path('serialport/add', views.SerialPortCreate.as_view()),
     path('serialport/<uuid:pk>', views.SerialPortUpdate.as_view()),
