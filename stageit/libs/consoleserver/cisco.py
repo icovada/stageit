@@ -3,6 +3,7 @@
 from netmiko import Netmiko as netmiko
 from stageit.libs.consoleserver import BaseConsoleServer
 
+
 class CiscoConsoleServer(BaseConsoleServer):
     """Overload reset method for Cisco routers
     Tested on Cisco 1801"""

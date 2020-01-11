@@ -61,10 +61,9 @@ class IOSSwitch(BaseDevice):
         self.reload_device()
         return True
 
-
     def _manage_stack(self):
         """Connect to device and issue copy command from uri."""
-        logging.info('Copying from {}'.format(uri))
+        logging.info('Copying from %s', uri)
         self._checksession()
         self.session.device.send_config_set(["file prompt quiet"])
         command = "copy " + uri + " flash:\n"

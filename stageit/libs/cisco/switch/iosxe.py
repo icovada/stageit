@@ -67,7 +67,7 @@ class IOSXESwitch(BaseDevice):
         return (True, member[3], member[5])
 
     def _upgrade_to_install(self, uri):
-        self._checksession() 
+        self._checksession()
         logging.info("Check file exists")
 
         flashuri = self.session._gen_full_path(uri.split("/")[-1])
