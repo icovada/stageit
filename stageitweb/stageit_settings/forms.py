@@ -1,13 +1,11 @@
-from django import forms
+import ast
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Div, Submit, Row, Column, Field, Button
-from crispy_forms.bootstrap import FormActions
+from crispy_forms.layout import Column, Div, Layout, Submit
+from django import forms
 
 import stageitweb.stageit.models as models
-from django.db.utils import OperationalError
 
-import ast
 
 class TerminalServerForm(forms.ModelForm):
     name = forms.CharField()
@@ -62,7 +60,7 @@ class BootstrapConfigForm(forms.ModelForm):
     class Meta:
         model = models.BootstrapConfig
         fields = '__all__'
-        
+
     helper = FormHelper()
     helper.layout = Layout(
         Div('name', css_class="form-row"),
@@ -74,4 +72,3 @@ class BootstrapConfigForm(forms.ModelForm):
         )
     )
     helper.form_method = 'POST'
-

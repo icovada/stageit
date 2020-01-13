@@ -1,37 +1,45 @@
 """Fake worker returning Sim City 4 loading screen messages"""
 
-from time import sleep
-import random
-import io
-#from uuid import uuid4
-import pickle
-#from stageit.libs.db import History, newsession
 import logging
-from stageit.libs.fakeio import FakeIO
-from stageit.celery import app
-from celery import Task
-import requests
+import random
+from time import sleep
 
-#@app.task(bind=True)
+import requests
+from celery import Task
+
+from stageit.celery import app
+from stageit.libs.fakeio import FakeIO
+
+
+# @app.task(bind=True)
 class FakeWorker(Task):
     """
     Fake for test
     """
     name = 'stageit.libs.fake_worker.fakeworker'
 
+    statuses = None
+    historydata = None
+    pkid = None
+    task = None
+    template = None
+    work = None
+    log = None
+
     def on_success(self, retval, task_id, args, kwargs):
         logging.info("Set task successful")
         logging.info(retval)
         logging.info(kwargs)
-        requests.put('http://web:8000/api/history/' + kwargs.get('fkhistory') + '/?format=json', data={'status':'Success'})
+        requests.put('http://web:8000/api/history/' + kwargs.get('fkhistory') +
+                     '/?format=json', data={'status': 'Success'})
 
     def on_failure(self, retval, task_id, args, kwargs):
-        logging.info("EPIC FAIL")
-
+        logging.fatal("EPIC FAIL")
+        logging.fatal(retval)
 
     def run(self, *args, **kwargs):
         logging.info("Initializing")
-        
+
         # Adapted from Sim City 4 loading screen to fit network
         self.statuses = ["Adding Hidden Config",
                          "Adjusting Burst Curves",
@@ -112,21 +120,26 @@ class FakeWorker(Task):
         logging.info("Fake Worker ready")
         logging.info(kwargs.get('fkhistory'))
 
-        self.historydata = requests.get('http://web:8000/api/history/' + kwargs.get('fkhistory') + '/?format=json')
-        if self.historydata.json().get('workerid') != None:
-            raise AssertionError("Task already being worked on by someone else")
-        
-        requests.put('http://web:8000/api/history/' + kwargs.get('fkhistory') + '/?format=json', data={'workerid':kwargs.get('celeryid'), 'status':'In progress'})
+        self.historydata = requests.get(
+            'http://web:8000/api/history/' + kwargs.get('fkhistory') + '/?format=json')
+        if self.historydata.json().get('workerid') is not None:
+            raise AssertionError(
+                "Task already being worked on by someone else")
+
+        requests.put('http://web:8000/api/history/' + kwargs.get('fkhistory') + '/?format=json',
+                     data={'workerid': kwargs.get('celeryid'), 'status': 'In progress'})
 
         self.pkid = self.historydata.json().get('pkid')
         fktask = self.historydata.json().get('fktask')
 
-        self.task = requests.get('http://web:8000/api/task/' + fktask + '/?format=json')
+        self.task = requests.get(
+            'http://web:8000/api/task/' + fktask + '/?format=json')
         fktemplate = self.task.json().get('fktemplate')
-        self.template = requests.get('http://web:8000/api/template/' + fktemplate + '/?format=json')
+        self.template = requests.get(
+            'http://web:8000/api/template/' + fktemplate + '/?format=json')
 
         logging.info(self.template.json().get('template'))
-        
+
         self.work = kwargs.get('work')
 
         self.log = FakeIO(fkhistory=self.pkid)
@@ -138,6 +151,7 @@ class FakeWorker(Task):
 
         Subroutine because emulates an import in BaseWorker
         """
+
         def getlog(self):
             return self.log.getvalue().decode('utf-8')
 
@@ -150,15 +164,16 @@ class FakeWorker(Task):
                 self.log.flush()
             logging.info(status)
             sleep(random.randint(1, 2))
-        
+
         self.log.flush()
         return True
-        
+
 
 app.register_task(FakeWorker())
+
 
 @app.task(bind=True, base=FakeWorker)
 def fakeworker(self, **kwargs):
     celeryid = self.request.id.__str__()
     worker = FakeWorker()
-    return worker.run(fkhistory = kwargs.get('fkhistory'), celeryid=celeryid)
+    return worker.run(fkhistory=kwargs.get('fkhistory'), celeryid=celeryid)

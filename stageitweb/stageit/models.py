@@ -1,7 +1,6 @@
+from uuid import uuid4
 from django.contrib.postgres.fields import JSONField
 from django.db import models
-from uuid import uuid4
-from django.urls import reverse
 
 # Create your models here.
 class BootstrapConfig(models.Model):
@@ -12,10 +11,10 @@ class BootstrapConfig(models.Model):
     values = JSONField()
 
     def __str__(self):
-        return('{} - {}'.format(self.name, self.description))
+        return '{} - {}'.format(self.name, self.description)
 
     def get_absolute_url(self):
-        return(str(self.pkid))
+        return str(self.pkid)
 
 class Template(models.Model):
     """Defines templates table."""
@@ -31,7 +30,7 @@ class Template(models.Model):
     fkbootstrapconfig = models.ForeignKey(BootstrapConfig, models.PROTECT, null=True)
 
     def __str__(self):
-        return('{} - {}'.format(str(self.pkid)[:5], self.name))
+        return '{} - {}'.format(str(self.pkid)[:5], self.name)
 
 class History(models.Model):
     """Defines history table."""
@@ -60,7 +59,7 @@ class Task(models.Model):
     taskvalues = JSONField(null=True)
 
     def __str__(self):
-        return('{} based on {}'.format(self.description, self.fktemplate))
+        return '{} based on {}'.format(self.description, self.fktemplate)
 
 class Log(models.Model):
     """Define staging Log format"""
@@ -79,7 +78,7 @@ class TerminalServer(models.Model):
     password = models.TextField()
 
     def __str__(self):
-        return('{} - {}'.format(self.name, self.hostname))
+        return '{} - {}'.format(self.name, self.hostname)
 
 class SerialPort(models.Model):
     pkid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
@@ -87,12 +86,12 @@ class SerialPort(models.Model):
     transport = models.TextField()
     port = models.IntegerField()
     line = models.IntegerField()
-    
+
     class Meta:
         unique_together = ('fkterminalserver', 'port',)
 
     def __str__(self):
-        return('{} - {}'.format(self.fkterminalserver, self.line))
+        return '{} - {}'.format(self.fkterminalserver, self.line)
 
 class Firmware(models.Model):
     pkid = models.UUIDField(primary_key=True, editable=False, default=uuid4)

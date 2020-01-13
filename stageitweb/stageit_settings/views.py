@@ -1,16 +1,16 @@
 import os
 
+from django.conf import settings
 from django.core.files.storage import default_storage
-from django.views.generic import FormView, TemplateView, CreateView, UpdateView, DeleteView
-from django.urls import reverse_lazy
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
-from django.conf import settings
-
-from .forms import TerminalServerForm, SerialPortForm, UploadFileForm, BootstrapConfigForm
+from django.views.generic import (CreateView, DeleteView, FormView,
+                                  UpdateView)
 
 import stageitweb.stageit.models as models
-import json
+
+from .forms import (BootstrapConfigForm, SerialPortForm, TerminalServerForm,
+                    UploadFileForm)
 
 
 class TerminalServerFormView(FormView):
@@ -77,5 +77,3 @@ class BootstrapConfigDelete(DeleteView):
     form_class = BootstrapConfigForm
     model = models.BootstrapConfig
     success_url = "/settings/bootstrapconfig"
-
-
