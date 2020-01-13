@@ -18,6 +18,14 @@ class FakeWorker(Task):
     """
     name = 'stageit.libs.fake_worker.fakeworker'
 
+    statuses = None
+    historydata = None
+    pkid = None
+    task = None
+    template = None
+    work = None
+    log = None
+
     def on_success(self, retval, task_id, args, kwargs):
         logging.info("Set task successful")
         logging.info(retval)
@@ -26,7 +34,8 @@ class FakeWorker(Task):
                      '/?format=json', data={'status': 'Success'})
 
     def on_failure(self, retval, task_id, args, kwargs):
-        logging.info("EPIC FAIL")
+        logging.fatal("EPIC FAIL")
+        logging.fatal(retval)
 
     def run(self, *args, **kwargs):
         logging.info("Initializing")

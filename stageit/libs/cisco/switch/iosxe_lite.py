@@ -59,6 +59,8 @@ class IOSXELiteSwitch(BaseDevice):
         verregex = r'^\** *(\d) (\d{1,2}) *([A-Za-z0-9\-]*) *([0-9\.]*) *([A-Za-z0-9\-_]*) *(\w*)$'
         switches = re.findall(verregex, showver, re.MULTILINE)
 
+        member = (None, None, None, None, None, None)
+
         for member in switches:
             if version not in member:
                 return (False, member[3], member[5])
@@ -80,7 +82,7 @@ class IOSXELiteSwitch(BaseDevice):
             flashuri)
         self.session.device.timeout = 1800
         self.session.device.write_channel(command)
-        output = self.session.device.read_until_pattern(
+        self.session.device.read_until_pattern(
             "This operation requires a reload of the system. Do you want to proceed?")
         self.session.device.write_channel("y\n")
 

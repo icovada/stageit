@@ -19,6 +19,23 @@ class BaseWorker(Task):
 
     name = "stageit.libs.base_worker.baseworker"
 
+    workerid = None
+    pkid = None
+    logbuffer = None
+    historydata = None
+    fktask = None
+    taskdata = None
+    templatedata = None
+    serialportdata = None
+    terminalserverdata = None
+    template = None
+    finalconfig = None
+    devicedata = None
+    tempconfig = None
+    tserver = None
+    driver = None
+
+
     def on_success(self, retval, task_id, *args, **kwargs):
         """
         Celery runs this if the task runs successfully
@@ -43,6 +60,7 @@ class BaseWorker(Task):
 
         url_base = "http://web:8000/api/"
         logging.error("EPIC FAIL")
+        logging.info(retval)
         data = {'status': 'Fail',
                 'dateend': datetime.utcnow()
                 }
@@ -143,7 +161,7 @@ class BaseWorker(Task):
         self.stageit(filepath=filepath, installmode=installmode,
                      url_base=url_base, fkbootstrapconfig=self.templatedata.get('fkbootstrapconfig'))
 
-        if poststaging != None and poststaging != '':
+        if poststaging is not None and poststaging != '':
             self.driver.poststaging(poststaging)
 
         self.driver.close()

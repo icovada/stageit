@@ -132,7 +132,7 @@ class BaseDevice():
         elif "bytes copied" in out:
             return
 
-    def upgrade_software(self, uri, mode_install):
+    def upgrade_software(self, uri, mode):
         """Not implemented."""
         self.session.close()
         raise NotImplementedError
@@ -161,7 +161,7 @@ class BaseDevice():
         sleep(30)
         self.checkavailable(1000)
 
-    def close(self, logname=None):
+    def close(self):
         """Wrap-up session."""
         self.session.close()
 
