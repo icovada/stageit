@@ -1,7 +1,7 @@
-
 # StageIT!
 
 Automatic staging tool Made in Italy
+
 StageIT eases staging operations of Cisco network devices and
 
 ## Contacts:
