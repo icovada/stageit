@@ -30,7 +30,7 @@ StageIT is made out of multiple pieces. The default way to install and run it is
 
 It is built to be able to run on a single machine, to interact with a central db or to have a central management point distributing jobs to remote workers
 
-For more info check out the [Architecture](architecture) page
+For more info check out the [Architecture](https://scm.dimensiondata.com/federico.tabbo/stageit/wikis/Architecture) page
 
 
 ## Contacts:
