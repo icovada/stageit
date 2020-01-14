@@ -1,5 +1,7 @@
 # StageIT!
 
+![StageIT logo](gitlab-media/logo.png?raw=true "StageIT logo")
+
 ## What
 StageIT is a web-based tool to stage Cisco network devices.
 
