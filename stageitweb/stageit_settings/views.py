@@ -12,37 +12,45 @@ import stageitweb.stageit.models as models
 from .forms import (BootstrapConfigForm, SerialPortForm, TerminalServerForm,
                     UploadFileForm)
 
-
-class TerminalServerFormView(FormView):
-    form_class = TerminalServerForm
-    template_name = 'stageit/terminalserver_add.html'
+baseform = 'stageit/baseform.html'
 
 def terminalserver(request):
     return render(request, 'stageit/terminalserver_list.html')
 
-def edit_terminal_server(request, uuid):
-    instance = get_object_or_404(models.TerminalServer, pkid=uuid)
-    form = TerminalServerForm(request.POST or None, instance=instance)
-    if form.is_valid():
-        form.save()
-        return redirect('next_view')
-    return render(request, 'stageit/terminalserver_edit.html', {'form': form})
+class TerminalServerCreate(CreateView):
+    form_class = TerminalServerForm
+    model = models.TerminalServer
+    template_name = baseform
 
+class TerminalServerUpdate(UpdateView):
+    form_class = TerminalServerForm
+    model = models.TerminalServer
+    template_name = baseform
 
-class SerialPortFormView(FormView):
-    form_class = SerialPortForm
-    template_name = 'stageit/serialport_add.html'
+class TerminalServerDelete(DeleteView):
+    form_class = TerminalServerForm
+    model = models.TerminalServer
+    template_name = baseform
+
 
 def serialport(request):
     return render(request, 'stageit/serialport_list.html')
 
-def edit_serial_port(request, uuid):
-    instance = get_object_or_404(models.SerialPort, pkid=uuid)
-    form = SerialPortForm(request.POST or None, instance=instance)
-    if form.is_valid():
-        form.save()
-        return redirect('next_view')
-    return render(request, 'stageit/serialport_edit.html', {'form': form})
+class SerialPortCreate(CreateView):
+    form_class = SerialPortForm
+    model = models.SerialPort
+    template_name = baseform
+
+class SerialPortUpdate(UpdateView):
+    form_class = SerialPortForm
+    model = models.SerialPort
+    template_name = baseform
+
+class SerialPortDelete(DeleteView):
+    form_class = SerialPortForm
+    model = models.SerialPort
+    template_name = baseform
+
 
 def filemanager(request):
     return render(request, 'stageit/filemanager.html')
@@ -65,15 +73,21 @@ def upload_file(request):
 def bootstrapconfig(request):
     return render(request, 'stageit/bootstrapconfig_list.html')
 
+
 class BootstrapConfigCreate(CreateView):
     form_class = BootstrapConfigForm
     model = models.BootstrapConfig
+    template_name = baseform
+    success_url = "/settings/bootstrapconfig"
 
 class BootstrapConfigUpdate(UpdateView):
     form_class = BootstrapConfigForm
     model = models.BootstrapConfig
+    template_name = baseform
+    success_url = "/settings/bootstrapconfig"
 
 class BootstrapConfigDelete(DeleteView):
     form_class = BootstrapConfigForm
     model = models.BootstrapConfig
+    template_name = baseform
     success_url = "/settings/bootstrapconfig"
