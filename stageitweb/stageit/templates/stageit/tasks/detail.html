@@ -170,7 +170,7 @@
             url: "/api/task/{{pkid}}/",
             data: {
                 description: $('#description').val(),
-                taskvalues: JSON.stringify($('#taskvalues').val()),
+                taskvalues: JSON.stringify(jsyaml.load($('#taskvalues').val())),
             }
         }).done(function (response) {
             var $toast = basecoat.toast('<span class="fa fa-check"></span>Task submitted', 'success');

@@ -5,7 +5,7 @@ $("#templaterender").on('show.bs.modal', function () {
         url: "/api/convertjinja",
         data: {
             template: $('#template').val(),
-            values: JSON.stringify($('#templatevalues').val())
+            values: JSON.stringify(jsyaml.load($('#templatevalues').val()))
         },
         success: function (msg) {
             $('#templaterenderview').html(msg);

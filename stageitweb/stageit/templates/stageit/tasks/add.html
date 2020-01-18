@@ -77,7 +77,7 @@
             data: {
                 fktemplate: "{{pkid}}",
                 description: $('#description').val(),
-                taskvalues: JSON.stringify($('#taskvalues').val()),
+                taskvalues: JSON.stringify(jsyaml.load($('#taskvalues').val())),
             }
         }).done(function (response) {
             fktask = response['pkid']
