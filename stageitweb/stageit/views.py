@@ -1,4 +1,5 @@
 import json
+import yaml
 
 from django.http import HttpResponseForbidden
 from django.shortcuts import redirect, render
@@ -19,7 +20,7 @@ def templates(request):
 def templatesdetail(request, uuid):
     template = models.Template.objects.get(pkid=uuid)
     templatedict = template
-    templatedict.templatevalues = json.dumps(template.templatevalues, indent=4, sort_keys=True)
+    templatedict.templatevalues = yaml.dump(template.templatevalues, indent=4, sort_keys=True)
     bootstrapconfig = models.BootstrapConfig.objects.all()
     data = {'template': templatedict,
             'bootstrapconfig': bootstrapconfig}
