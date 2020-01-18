@@ -228,7 +228,7 @@ transport_input: telnet ssh
                 description: $('#description').val(),
                 platform: $("input[name='platformRadio']:checked").val(),
                 template: $('#template').val(),
-                templatevalues: $('#templatevalues').val(),
+                templatevalues: JSON.stringify(jsyaml.load($('#templatevalues').val())),
                 filepath: $('#filepath').val(),
                 installmode: $("input[name='installmode']:checked").val(),
                 poststaging: $('#poststaging').val(),
