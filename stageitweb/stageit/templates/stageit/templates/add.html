@@ -1,8 +1,4 @@
-{% extends "stageit/layout.html" %}
-
-{% block title %}Add Detail | {% endblock %}
-
-{% block body %}
+{% extends "stageit/layout.html" %} {% block title %}Add Detail | {% endblock %} {% block body %}
 <div class="top-gutter bottom-gutter container-wrapper">
     <div class="content-area">
         <div class="container-lg">
@@ -43,33 +39,55 @@
                 <h4 class="mb-3">Final configuration details</h4>
                 <div class="form-row">
                     <div class="form-group col-xl-6 form-left">
-                        <label for="template">Template</label>
-                        {% verbatim %}
-                        <textarea class="form-control font-monospace" id="template" rows="6"
-                            aria-describedby="templateHelp">Hello {{name}}!
+                        <label for="template">Template</label> {% verbatim %}
+                        <textarea class="form-control font-monospace" id="template" rows="20" aria-describedby="templateHelp">hostname {{hostname}}
 
-{% if test -%}
-  How are you?
-{%- endif %}
-                        </textarea>
-                        {% endverbatim %}
+{% for int in interfaces %}
+interface {{int.name}}
+  switchport mode {{int.mode}}
+  {% if int.mode == "access" %}
+  {% if int.native_vlan %}
+  switchport access vlan {{int.native_vlan}}
+  {% endif %}
+  {% endif %}
+{% endfor %}
+
+{% for user in users %}
+username {{user[0]}} privilege 15 secret {{user[1]}}
+{% endfor %}
+
+line vty 0 15
+ login local
+ transport input {{transport_input}}
+                        </textarea> {% endverbatim %}
                         <small id="templateHelp" class="form-text text-muted">Leave empty to leave final device
                             config empty.<br />Pure text or Jinja2 templates accepted</small>
                     </div>
                     <div class="form-group col-xl-6 form-right">
                         <label for="templatevalues">Template values</label>
-                        <textarea class="form-control font-monospace" id="templatevalues" rows="6"
-                            aria-describedby="templatevaluesHelp">{
-  "name": "John",
-  "test": true
-}</textarea>
+                        <textarea class="form-control font-monospace" id="templatevalues" rows="20" aria-describedby="templatevaluesHelp">hostname: Mil-CORE-2
+
+interfaces:
+  - name: Gi 1/0/1
+    mode: access
+    native_vlan: 3
+  - name: Gi 1/0/2
+    mode: trunk
+  - name: range Gi 1/0/3 - 5
+    mode: access
+
+users:
+  - [cisco, cisco]
+  - [admin, D1datal4b2020!]
+
+transport_input: telnet ssh
+                        </textarea>
                         <small id="templatevaluesHelp" class="form-text text-muted">Insert variables required by
                             your template in yaml format</small>
                     </div>
                 </div>
 
-                <button class="btn btn-primary" type="button" data-toggle="modal"
-                    data-target="#templaterender">Test</button>
+                <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#templaterender">Test</button>
                 <div class="modal fade" tabindex="-1" role="dialog" id="templaterender">
                     <div class="modal-dialog modal-xl" role="document">
                         <div class="modal-content">
@@ -94,8 +112,7 @@
                 <div class="form-row">
                     <div class="form-group mb-3 col-xl-9 form-left">
                         <label for="filepath">Firmware file path</label>
-                        <input type="url" class="form-control" id="filepath" aria-describedby="filepathHelp"
-                            oninput="installmodecheck()">
+                        <input type="url" class="form-control" id="filepath" aria-describedby="filepathHelp" oninput="installmodecheck()">
                         <small id="filepathHelp" class="form-text text-muted">Insert URI to file image. Leave
                             empty to skip
                             image check</small>
@@ -122,8 +139,7 @@
                         <label class="control-label" for="fkbootstrapconfig">Bootstrap config</label>
                         <div class="dropdown" data-dropdown>
                             <input type="text" class="hidden">
-                            <button type="button" class="form-control dropdown-toggle" id="fkbootstrapconfig"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" required>
+                            <button type="button" class="form-control dropdown-toggle" id="fkbootstrapconfig" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" required>
                                 None
                                 <span class="caret"></span>
                             </button>
@@ -134,8 +150,7 @@
                                         No config
                                     </a>
                                 </li>
-                                {% endif %}
-                                {% for element in bootstrapconfig %}
+                                {% endif %} {% for element in bootstrapconfig %}
                                 <li>
                                     <a href="#" data-value="{{element.pkid}}">
                                         {{element.name}}
@@ -155,8 +170,7 @@
                 <h4 class="mb-3">Post-staging actions</h4>
                 <div class="form-group mb-3">
                     <label for="poststaging">Post-staging</label>
-                    <textarea class="form-control font-monospace" id="poststaging" rows="5"
-                        aria-describedby="poststagingHelp"></textarea>
+                    <textarea class="form-control font-monospace" id="poststaging" rows="5" aria-describedby="poststagingHelp"></textarea>
                     <small id="poststagingHelp" class="form-text text-muted">Insert commands to be run after
                         previous tasks
                         are finished. Enter one per line</small>
@@ -171,24 +185,22 @@
 </div>
 
 
-{% endblock %}
-
-{% block script %}
+{% endblock %} {% block script %}
 <script>
     function installmodecheck() {
         installmodeoptions = $('[name=installmode]').toArray();
         if ($('#filepath').val() == '') {
-            installmodeoptions.forEach(function (item) {
+            installmodeoptions.forEach(function(item) {
                 item.parentElement.classList.add('disabled');
             });
         } else {
-            installmodeoptions.forEach(function (item) {
+            installmodeoptions.forEach(function(item) {
                 item.parentElement.classList.remove('disabled');
             });
         }
     }
 
-    $("#templaterender").on('show.bs.modal', function () {
+    $("#templaterender").on('show.bs.modal', function() {
         $('#templaterenderview').html("");
         $.ajax({
             type: "POST",
@@ -197,16 +209,16 @@
                 template: $('#template').val(),
                 values: $('#templatevalues').val()
             },
-            success: function (msg) {
+            success: function(msg) {
                 $('#templaterenderview').html(msg);
             },
-            error: function (msg, exception) {
+            error: function(msg, exception) {
                 $('#templaterenderview').html(msg.responseText);
             }
         });
     })
 
-    $('#templateform').submit(function (event) {
+    $('#templateform').submit(function(event) {
         event.preventDefault();
         $.ajax({
             type: 'POST',
@@ -222,11 +234,11 @@
                 poststaging: $('#poststaging').val(),
                 fkbootstrapconfig: $('#fkbootstrapconfig')[0].value
             }
-        }).done(function (response) {
+        }).done(function(response) {
             var $toast = basecoat.toast('<span class="fa fa-check"></span>Task submitted', 'success');
             $toast.trigger('show', [5000]); // show toast for 5s
             window.location.href = "/templates/" + response['pkid'];
-        }).fail(function (response) {
+        }).fail(function(response) {
             var $toast = basecoat.toast(
                 '<span class="fa fa-exclamation-triangle"></span>' + response.responseText,
                 'warning');
