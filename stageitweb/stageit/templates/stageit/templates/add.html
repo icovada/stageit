@@ -80,8 +80,7 @@ users:
   - [cisco, cisco]
   - [admin, D1datal4b2020!]
 
-transport_input: telnet ssh
-                        </textarea>
+transport_input: telnet ssh</textarea>
                         <small id="templatevaluesHelp" class="form-text text-muted">Insert variables required by
                             your template in yaml format</small>
                     </div>
@@ -186,6 +185,7 @@ transport_input: telnet ssh
 
 
 {% endblock %} {% block script %}
+<script src="/static/js/templaterender.js"></script>
 <script>
     function installmodecheck() {
         installmodeoptions = $('[name=installmode]').toArray();
@@ -200,24 +200,6 @@ transport_input: telnet ssh
         }
     }
 
-    $("#templaterender").on('show.bs.modal', function() {
-        $('#templaterenderview').html("");
-        $.ajax({
-            type: "POST",
-            url: "/api/convertjinja",
-            data: {
-                template: $('#template').val(),
-                values: $('#templatevalues').val()
-            },
-            success: function(msg) {
-                $('#templaterenderview').html(msg);
-            },
-            error: function(msg, exception) {
-                $('#templaterenderview').html(msg.responseText);
-            }
-        });
-    })
-
     $('#templateform').submit(function(event) {
         event.preventDefault();
         $.ajax({
@@ -228,7 +210,7 @@ transport_input: telnet ssh
                 description: $('#description').val(),
                 platform: $("input[name='platformRadio']:checked").val(),
                 template: $('#template').val(),
-                templatevalues: JSON.stringify(jsyaml.load($('#templatevalues').val())),
+                templatevalues: $('#templatevalues').val(),
                 filepath: $('#filepath').val(),
                 installmode: $("input[name='installmode']:checked").val(),
                 poststaging: $('#poststaging').val(),

@@ -60,7 +60,7 @@
                     </div>
                     <div class="form-group col-xl-6 form-right">
                         <label for="taskvalues">Template values</label>
-                        <textarea class="form-control font-monospace" id="taskvalues" rows="6"
+                        <textarea class="form-control font-monospace" id="templatevalues" rows="6"
                             aria-describedby="taskvaluesHelp">{{taskvalues}}</textarea>
                         <small id="taskvaluesHelp" class="form-text text-muted">Insert variables required by
                             your template
@@ -161,25 +161,8 @@
 {% endblock %}
 
 {% block script %}
+<script src="/static/js/templaterender.js"></script>
 <script>
-    $("#templaterender").on('show.bs.modal', function () {
-        $('#templaterenderview').html("");
-        $.ajax({
-            type: "POST",
-            url: "/api/convertjinja",
-            data: {
-                template: $('#template').val(),
-                values: $('#templatevalues').val()
-            },
-            success: function (msg) {
-                $('#templaterenderview').html(msg);
-            },
-            error: function (msg, exception) {
-                $('#templaterenderview').html(msg.responseText);
-            }
-        });
-    })
-
     $('#btnsave').on('click', function (event) {
         event.preventDefault();
         $.ajax({

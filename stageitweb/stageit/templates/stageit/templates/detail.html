@@ -182,6 +182,7 @@
 {% endblock %}
 
 {% block script %}
+<script src="/static/js/templaterender.js"></script>
 <script>
     function installmodecheck() {
         installmodeoptions = $('[name=installmode]').toArray();
@@ -195,24 +196,6 @@
             });
         }
     }
-
-    $("#templaterender").on('show.bs.modal', function () {
-        $('#templaterenderview').html("");
-        $.ajax({
-            type: "POST",
-            url: "/api/convertjinja",
-            data: {
-                template: $('#template').val(),
-                values: $('#templatevalues').val()
-            },
-            success: function (msg) {
-                $('#templaterenderview').html(msg);
-            },
-            error: function (msg, exception) {
-                $('#templaterenderview').html(msg.responseText);
-            }
-        });
-    })
 
     $('#btnsave').on('click', function (event) {
         event.preventDefault();
