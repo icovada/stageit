@@ -27,24 +27,7 @@
                     </div>
                 </div>
 
-                <label for="platformRadio">Platform</label>
-                <div class="form-group" id="platform">
-                    <div class="radio">
-                        <label>
-                            <input type="radio" id="iosRadio" name="platformRadio" value="ios"
-                                {% if template.platform == 'ios'%}checked{%endif%}>Cisco IOS
-                        </label>
-                    </div>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="platformRadio" value="nx-os"
-                                {% if template.platform == 'nx-os'%}checked{%endif%}>Cisco NX-OS
-                        </label>
-                    </div>
-                </div>
-
                 <hr class="pt-3">
-                <h4 class="mb-3">Final configuration details</h4>
                 <div class="form-row">
                     <div class="form-group col-xl-6 form-left">
                         <label for="template">Template</label>
@@ -205,7 +188,7 @@
             data: {
                 name: $('#name').val(),
                 description: $('#description').val(),
-                platform: $("input[name='platformRadio']:checked").val(),
+                platform: 'ios',
                 template: $('#template').val(),
                 templatevalues: JSON.stringify(jsyaml.load($('#templatevalues').val())),
                 filepath: $('#filepath').val(),
