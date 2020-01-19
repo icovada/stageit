@@ -100,13 +100,7 @@
                                 <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="fkbootstrapconfig">
-                                {% if bootstrapconfig|length == 0 %}
-                                <li>
-                                    <a href="#" data-value="null">
-                                        No config
-                                    </a>
-                                </li>
-                                {% endif %} {% for element in bootstrapconfig %}
+                            {% for element in bootstrapconfig %}
                                 <li>
                                     <a href="#" data-value="{{element.pkid}}">
                                         {{element}}
