@@ -39,48 +39,14 @@
                 <h4 class="mb-3">Final configuration details</h4>
                 <div class="form-row">
                     <div class="form-group col-xl-6 form-left">
-                        <label for="template">Template</label> {% verbatim %}
-                        <textarea class="form-control font-monospace" id="template" rows="20" aria-describedby="templateHelp">hostname {{hostname}}
-
-{% for int in interfaces %}
-interface {{int.name}}
-  switchport mode {{int.mode}}
-  {% if int.mode == "access" %}
-  {% if int.native_vlan %}
-  switchport access vlan {{int.native_vlan}}
-  {% endif %}
-  {% endif %}
-{% endfor %}
-
-{% for user in users %}
-username {{user[0]}} privilege 15 secret {{user[1]}}
-{% endfor %}
-
-line vty 0 15
- login local
- transport input {{transport_input}}
-                        </textarea> {% endverbatim %}
+                        <label for="template">Template</label>
+                        <textarea class="form-control font-monospace" id="template" rows="20" aria-describedby="templateHelp">{% include "stageit/examples/config.jinja" %}</textarea>
                         <small id="templateHelp" class="form-text text-muted">Leave empty to leave final device
                             config empty.<br />Pure text or Jinja2 templates accepted</small>
                     </div>
                     <div class="form-group col-xl-6 form-right">
                         <label for="templatevalues">Template values</label>
-                        <textarea class="form-control font-monospace" id="templatevalues" rows="20" aria-describedby="templatevaluesHelp">hostname: Mil-CORE-2
-
-interfaces:
-  - name: Gi 1/0/1
-    mode: access
-    native_vlan: 3
-  - name: Gi 1/0/2
-    mode: trunk
-  - name: range Gi 1/0/3 - 5
-    mode: access
-
-users:
-  - [cisco, cisco]
-  - [admin, D1datal4b2020!]
-
-transport_input: telnet ssh</textarea>
+                        <textarea class="form-control font-monospace" id="templatevalues" rows="20" aria-describedby="templatevaluesHelp">{% include "stageit/examples/data.jinja" %}</textarea>
                         <small id="templatevaluesHelp" class="form-text text-muted">Insert variables required by
                             your template in yaml format</small>
                     </div>
