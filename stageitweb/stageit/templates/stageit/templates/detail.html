@@ -104,19 +104,14 @@
                             <input type="text" class="hidden">
                             <button type="button" class="form-control dropdown-toggle" id="fkbootstrapconfig"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" value="{% if template.fkbootstrapconfig %}{{template.fkbootstrapconfig.pkid}}{% else %}null{% endif %}">
-                                {% if template.fkbootstrapconfig %}{{template.fkbootstrapconfig.name}}{% else %}No config{% endif %}
+                                {% if template.fkbootstrapconfig %}{{template.fkbootstrapconfig.name}}{% else %}None{% endif %}
                                 <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="fkbootstrapconfig">
-                                <li>
-                                    <a href="#" data-value="null">
-                                        No config
-                                    </a>
-                                </li>
                                 {% for element in bootstrapconfig %}
                                 <li>
                                     <a href="#" data-value="{{element.pkid}}">
-                                        {{element.name}}
+                                        {{element}}
                                     </a>
                                 </li>
                                 {% endfor %}
