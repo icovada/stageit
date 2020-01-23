@@ -1,4 +1,5 @@
 import os
+import yaml
 
 from django.conf import settings
 from django.core.files.storage import default_storage
@@ -9,23 +10,27 @@ from django.views.generic import (CreateView, DeleteView, FormView,
 
 import stageitweb.stageit.models as models
 
-from .forms import (BootstrapConfigForm, SerialPortForm, TerminalServerForm,
+from .forms import (SerialPortForm, TerminalServerForm,
                     UploadFileForm)
 
 baseform = 'stageit/baseform.html'
 
+
 def terminalserver(request):
     return render(request, 'stageit/terminalserver_list.html')
+
 
 class TerminalServerCreate(CreateView):
     form_class = TerminalServerForm
     model = models.TerminalServer
     template_name = baseform
 
+
 class TerminalServerUpdate(UpdateView):
     form_class = TerminalServerForm
     model = models.TerminalServer
     template_name = baseform
+
 
 class TerminalServerDelete(DeleteView):
     form_class = TerminalServerForm
@@ -36,15 +41,18 @@ class TerminalServerDelete(DeleteView):
 def serialport(request):
     return render(request, 'stageit/serialport_list.html')
 
+
 class SerialPortCreate(CreateView):
     form_class = SerialPortForm
     model = models.SerialPort
     template_name = baseform
 
+
 class SerialPortUpdate(UpdateView):
     form_class = SerialPortForm
     model = models.SerialPort
     template_name = baseform
+
 
 class SerialPortDelete(DeleteView):
     form_class = SerialPortForm
@@ -54,6 +62,7 @@ class SerialPortDelete(DeleteView):
 
 def filemanager(request):
     return render(request, 'stageit/filemanager.html')
+
 
 def upload_file(request):
     if request.method == 'POST':
@@ -74,20 +83,11 @@ def bootstrapconfig(request):
     return render(request, 'stageit/bootstrapconfig_list.html')
 
 
-class BootstrapConfigCreate(CreateView):
-    form_class = BootstrapConfigForm
-    model = models.BootstrapConfig
-    template_name = baseform
-    success_url = "/settings/bootstrapconfig"
+def bootstrapconfigadd(request):
+    return render(request, 'stageit/bootstrapconfig/add.html')
 
-class BootstrapConfigUpdate(UpdateView):
-    form_class = BootstrapConfigForm
-    model = models.BootstrapConfig
-    template_name = baseform
-    success_url = "/settings/bootstrapconfig"
 
-class BootstrapConfigDelete(DeleteView):
-    form_class = BootstrapConfigForm
-    model = models.BootstrapConfig
-    template_name = baseform
-    success_url = "/settings/bootstrapconfig"
+def bootstrapconfigdetail(request, uuid):
+    data = models.BootstrapConfig.objects.get(pkid=uuid).__dict__
+    data['values'] = yaml.dump(data['values'], indent=4, sort_keys=True)
+    return render(request, 'stageit/bootstrapconfig/detail.html', data)

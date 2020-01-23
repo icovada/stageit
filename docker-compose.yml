@@ -10,7 +10,7 @@ services:
       - static:/code/static_cdn
       - media:/code/media_cdn
     ports: 
-      - "1221:80"
+      - "80:80"
     links:
       - web
 

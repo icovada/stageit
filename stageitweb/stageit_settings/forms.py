@@ -60,36 +60,3 @@ class UploadFileForm(forms.Form):
     helper = FormHelper()
     helper.add_input(Submit('submit', 'Submit', css_class='btn-primary'))
     helper.form_method = 'POST'
-
-
-class BootstrapConfigForm(forms.ModelForm):
-    name = forms.CharField()
-    description = forms.CharField()
-    bootstraptemplate = forms.CharField(widget=forms.Textarea(), label="Boostrap Config Template")
-    values = forms.CharField(widget=forms.Textarea())
-
-    def clean_values(self):
-        jdata = self.cleaned_data['values']
-        try:
-            json_data = ast.literal_eval(jdata)
-        except Exception as e:
-            raise forms.ValidationError(e)
-
-        return json_data
-
-    class Meta:
-        model = models.BootstrapConfig
-        fields = '__all__'
-
-    helper = FormHelper()
-    helper.layout = Layout(
-        Div('name', css_class="form-row"),
-        Div('description', css_class="form-row"),
-        Column('bootstraptemplate', css_class="col-xl-6 form-left"),
-        Column('values', css_class="col-xl-6 form-right"),
-        Div(
-            Submit('save', 'Save changes'),
-            Button("delete", "Delete", href="delete")
-        )
-    )
-    helper.form_method = 'POST'

@@ -28,9 +28,7 @@ def templatesdetail(request, uuid):
     return render(request, 'stageit/templates/detail.html', data)
 
 def templatesadd(request):
-    bootstrapconfig = models.BootstrapConfig.objects.all()
-    data = {'bootstrapconfig': bootstrapconfig}
-    return render(request, 'stageit/templates/add.html', data)
+    return render(request, 'stageit/templates/add.html')
 
 def history(request):
     return render(request, 'stageit/history.html')

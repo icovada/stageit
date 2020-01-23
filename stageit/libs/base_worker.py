@@ -141,9 +141,6 @@ class BaseWorker(Task):
                            'logbuffer': self.logbuffer
                            }
 
-        self.tempconfig = {"username": "cisco",
-                           "password": "cisco"}
-
         # Find driver for Terminal Server
         if self.terminalserverdata.get('model') == 'cisco':
             from stageit.libs.consoleserver.cisco import CiscoConsoleServer as tserver
