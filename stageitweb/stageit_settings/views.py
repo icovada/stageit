@@ -91,3 +91,9 @@ class BootstrapConfigDelete(DeleteView):
     model = models.BootstrapConfig
     template_name = baseform
     success_url = "/settings/bootstrapconfig"
+
+def bootstrapconfigadd(request):
+    return render(request, 'stageit/bootstrapconfig/add.html')
+
+def bootstrapconfigdetail(request):
+    return render(request, 'stageit/bootstrapconfig/add.html', data)
