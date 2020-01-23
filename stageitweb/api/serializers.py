@@ -10,7 +10,6 @@ class TemplateSerializer(serializers.ModelSerializer):
     filepath = serializers.CharField(max_length=256, required=False)
     installmode = serializers.CharField(max_length=20)
     name = serializers.CharField(max_length=50)
-    platform = serializers.CharField(max_length=30)
     poststaging = serializers.CharField(max_length=1000, required=False)
     template = serializers.CharField(max_length=500000)
     templatevalues = serializers.JSONField()

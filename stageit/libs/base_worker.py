@@ -120,7 +120,7 @@ class BaseWorker(Task):
         self.template = self.templatedata.get('template')
         rtemplate = Environment(loader=BaseLoader).from_string(self.template)
         self.finalconfig = rtemplate.render(taskvalues)
-        platform = self.templatedata.get('platform')
+        platform = 'ios'
         poststaging = self.templatedata.get('poststaging')
         filepath = self.templatedata.get('filepath')
         installmode = self.templatedata.get('installmode')

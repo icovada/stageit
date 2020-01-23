@@ -20,7 +20,7 @@ class BaseDevice():
         logging.info('Init')
         self._has_connectivity = False
 
-        self.driver = napalm.get_network_driver(kwargs.get('platform'))
+        self.driver = napalm.get_network_driver('ios')
         self.logbuffer = kwargs.get('logbuffer')
         self.sessiondata = {'hostname': kwargs.get('hostname'),
                             'username': kwargs.get('username'),

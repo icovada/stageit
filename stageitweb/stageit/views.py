@@ -83,7 +83,6 @@ def tasksdetail(request, uuid):
         data['taskvalues'], indent=4, sort_keys=True)
     data['filepath'] = task.fktemplate.filepath
     data['installmode'] = task.fktemplate.installmode
-    data['platform'] = task.fktemplate.platform
     data['poststaging'] = task.fktemplate.poststaging
     data['template'] = task.fktemplate.template
     data['name'] = task.fktemplate.name
