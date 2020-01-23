@@ -1,4 +1,5 @@
 import os
+import yaml
 
 from django.conf import settings
 from django.core.files.storage import default_storage
@@ -97,4 +98,5 @@ def bootstrapconfigadd(request):
 
 def bootstrapconfigdetail(request, uuid):
     data = models.BootstrapConfig.objects.get(pkid=uuid).__dict__
+    data['values'] = yaml.dump(data['values'], indent=4, sort_keys=True)
     return render(request, 'stageit/bootstrapconfig/detail.html', data)
