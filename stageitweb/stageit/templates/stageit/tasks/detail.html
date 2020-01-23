@@ -120,8 +120,8 @@
                 <div class="row">
                     <!-- TODO: Assign to worker -->
                     <div class="col-md-4 mb-3">
-                        <a id="btncreatetask" role="button" class="btn btn-primary btn-lg btn-block btn-success"
-                            href="/history/new/{{pkid}}">Enqueue</a>
+                        <a id="btnenqueue" role="button" class="btn btn-primary btn-lg btn-block btn-success"
+                            {% if taskbusy == True %}disabled{% else %}href="/history/new/{{pkid}}"{% endif %}>Enqueue</a>
                     </div>
                     <div class="col-md-4 mb-3">
                         <button id="btnsave" class="btn btn-primary btn-lg btn-block" type="submit">Save</button>
@@ -180,5 +180,13 @@
                     });
             });
     });
+
+    {% if taskbusy == True %}
+    $('#btnenqueue').popover({
+        placement: 'top',
+        title: 'Nope',
+        content: 'This task is already being worked on'
+    });
+    {% endif %}
 </script>
 {% endblock %}
