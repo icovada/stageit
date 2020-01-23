@@ -50,15 +50,16 @@ class IOSXELiteSwitch(BaseDevice):
         showver = self.session.device.send_command("show version")
 
         # This regex parses the following output
-        # Switch Ports Model              SW Version        SW Image              Mode   
-        # ------ ----- -----              ----------        ----------            ----   
+        # Switch Ports Model              SW Version        SW Image              Mode
+        # ------ ----- -----              ----------        ----------            ----
         # *    1 52    C9200L-48P-4G      16.12.1           CAT9K_LITE_IOSXE      INSTALL
         #      2 52    C9200L-48P-4G      16.12.1           CAT9K_LITE_IOSXE      INSTALL
         #      3 52    C9200L-48P-4G      16.12.1           CAT9K_LITE_IOSXE      INSTALL
 
-
         verregex = r'^\** *(\d) (\d{1,2}) *([A-Za-z0-9\-]*) *([0-9\.]*) *([A-Za-z0-9\-_]*) *(\w*)$'
         switches = re.findall(verregex, showver, re.MULTILINE)
+
+        member = (None, None, None, None, None, None)
 
         for member in switches:
             if version not in member:
@@ -67,7 +68,7 @@ class IOSXELiteSwitch(BaseDevice):
         return (True, member[3], member[5])
 
     def _upgrade_to_install(self, uri):
-        self._checksession() 
+        self._checksession()
         logging.info("Check file exists")
 
         flashuri = self.session._gen_full_path(uri.split("/")[-1])
@@ -81,7 +82,7 @@ class IOSXELiteSwitch(BaseDevice):
             flashuri)
         self.session.device.timeout = 1800
         self.session.device.write_channel(command)
-        output = self.session.device.read_until_pattern(
+        self.session.device.read_until_pattern(
             "This operation requires a reload of the system. Do you want to proceed?")
         self.session.device.write_channel("y\n")
 

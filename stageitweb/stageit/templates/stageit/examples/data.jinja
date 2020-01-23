@@ -1,0 +1,16 @@
+hostname: Mil-CORE-2
+
+interfaces:
+  - name: Gi 1/0/1
+    mode: access
+    native_vlan: 3
+  - name: Gi 1/0/2
+    mode: trunk
+  - name: range Gi 1/0/3 - 5
+    mode: access
+
+users:
+  - [cisco, cisco]
+  - [admin, D1datal4b2020!]
+
+transport_input: telnet ssh

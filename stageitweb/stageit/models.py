@@ -1,7 +1,6 @@
-import jsonfield
-from django.db import models
 from uuid import uuid4
-from django.urls import reverse
+from django.contrib.postgres.fields import JSONField
+from django.db import models
 
 # Create your models here.
 class BootstrapConfig(models.Model):
@@ -9,13 +8,13 @@ class BootstrapConfig(models.Model):
     name = models.TextField()
     description = models.TextField()
     bootstraptemplate = models.TextField()
-    values = jsonfield.JSONField()
+    values = JSONField()
 
     def __str__(self):
-        return('{} - {}'.format(self.name, self.description))
+        return '{} - {}'.format(self.name, self.description)
 
     def get_absolute_url(self):
-        return(str(self.pkid))
+        return str(self.pkid)
 
 class Template(models.Model):
     """Defines templates table."""
@@ -27,11 +26,14 @@ class Template(models.Model):
     platform = models.TextField(max_length=30, null=False)
     poststaging = models.TextField(max_length=1000)
     template = models.TextField(max_length=500000)
-    templatevalues = jsonfield.JSONField()
+    templatevalues = JSONField(null=True)
     fkbootstrapconfig = models.ForeignKey(BootstrapConfig, models.PROTECT, null=True)
 
     def __str__(self):
-        return('{} - {}'.format(str(self.pkid)[:5], self.name))
+        return '{} - {}'.format(str(self.pkid)[:5], self.name)
+
+    def get_absolute_url(self):
+        return(str(self.pkid))
 
 class History(models.Model):
     """Defines history table."""
@@ -45,22 +47,28 @@ class History(models.Model):
     rundata = models.BinaryField(max_length=1024000, editable=True, null=True)
     serial = models.TextField(max_length=20)
     template = models.TextField(max_length=20000)
-    templatevalues = jsonfield.JSONField(null=True)
+    templatevalues = JSONField(null=True)
     vendor = models.TextField(max_length=30)
     status = models.TextField(null=True)
     workerid = models.TextField(null=True)
     fktask = models.TextField(null=False)
     fkserialport = models.UUIDField()
 
+    def get_absolute_url(self):
+        return(str(self.pkid))
+
 class Task(models.Model):
     """Defines tasks table."""
     pkid = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     description = models.TextField(max_length=50)
     fktemplate = models.ForeignKey(Template, on_delete=models.CASCADE)
-    taskvalues = jsonfield.JSONField(null=True)
+    taskvalues = JSONField(null=True)
 
     def __str__(self):
         return('{} based on {}'.format(self.description, self.fktemplate))
+    
+    def get_absolute_url(self):
+        return(str(self.pkid))
 
 class Log(models.Model):
     """Define staging Log format"""
@@ -80,6 +88,9 @@ class TerminalServer(models.Model):
 
     def __str__(self):
         return('{} - {}'.format(self.name, self.hostname))
+    
+    def get_absolute_url(self):
+        return(str(self.pkid))
 
 class SerialPort(models.Model):
     pkid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
@@ -87,12 +98,15 @@ class SerialPort(models.Model):
     transport = models.TextField()
     port = models.IntegerField()
     line = models.IntegerField()
-    
+
     class Meta:
         unique_together = ('fkterminalserver', 'port',)
 
     def __str__(self):
         return('{} - {}'.format(self.fkterminalserver, self.line))
+    
+    def get_absolute_url(self):
+        return(str(self.pkid))
 
 class Firmware(models.Model):
     pkid = models.UUIDField(primary_key=True, editable=False, default=uuid4)

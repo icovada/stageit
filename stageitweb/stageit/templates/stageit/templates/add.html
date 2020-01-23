@@ -1,8 +1,4 @@
-{% extends "stageit/layout.html" %}
-
-{% block title %}Add Detail | {% endblock %}
-
-{% block body %}
+{% extends "stageit/layout.html" %} {% block title %}Add Detail | {% endblock %} {% block body %}
 <div class="top-gutter bottom-gutter container-wrapper">
     <div class="content-area">
         <div class="container-lg">
@@ -24,52 +20,23 @@
                         </div>
                     </div>
                 </div>
-
-                <label for="platformRadio">Platform</label>
-                <div class="form-group" id="platform">
-                    <div class="radio">
-                        <label>
-                            <input type="radio" id="iosRadio" name="platformRadio" value="ios" checked>Cisco IOS/IOS-XE
-                        </label>
-                    </div>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="platformRadio" value="nx-os">Cisco NX-OS
-                        </label>
-                    </div>
-                </div>
-
                 <hr class="pt-3">
-                <h4 class="mb-3">Final configuration details</h4>
                 <div class="form-row">
                     <div class="form-group col-xl-6 form-left">
                         <label for="template">Template</label>
-                        {% verbatim %}
-                        <textarea class="form-control font-monospace" id="template" rows="6"
-                            aria-describedby="templateHelp">Hello {{name}}!
-
-{% if test -%}
-  How are you?
-{%- endif %}
-                        </textarea>
-                        {% endverbatim %}
+                        <textarea class="form-control font-monospace" id="template" rows="20" aria-describedby="templateHelp">{% include "stageit/examples/config.jinja" %}</textarea>
                         <small id="templateHelp" class="form-text text-muted">Leave empty to leave final device
                             config empty.<br />Pure text or Jinja2 templates accepted</small>
                     </div>
                     <div class="form-group col-xl-6 form-right">
                         <label for="templatevalues">Template values</label>
-                        <textarea class="form-control font-monospace" id="templatevalues" rows="6"
-                            aria-describedby="templatevaluesHelp">{
-  "name": "John",
-  "test": true
-}</textarea>
+                        <textarea class="form-control font-monospace" id="templatevalues" rows="20" aria-describedby="templatevaluesHelp">{% include "stageit/examples/data.jinja" %}</textarea>
                         <small id="templatevaluesHelp" class="form-text text-muted">Insert variables required by
                             your template in yaml format</small>
                     </div>
                 </div>
 
-                <button class="btn btn-primary" type="button" data-toggle="modal"
-                    data-target="#templaterender">Test</button>
+                <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#templaterender">Test</button>
                 <div class="modal fade" tabindex="-1" role="dialog" id="templaterender">
                     <div class="modal-dialog modal-xl" role="document">
                         <div class="modal-content">
@@ -94,8 +61,7 @@
                 <div class="form-row">
                     <div class="form-group mb-3 col-xl-9 form-left">
                         <label for="filepath">Firmware file path</label>
-                        <input type="url" class="form-control" id="filepath" aria-describedby="filepathHelp"
-                            oninput="installmodecheck()">
+                        <input type="url" class="form-control" id="filepath" aria-describedby="filepathHelp" oninput="installmodecheck()">
                         <small id="filepathHelp" class="form-text text-muted">Insert URI to file image. Leave
                             empty to skip
                             image check</small>
@@ -105,12 +71,12 @@
                         <div class="form-group" id="installmode" aria-describedby="installmodeHelp">
                             <div class="radio">
                                 <label>
-                                    <input type="radio" name="installmode" value="INSTALL" disabled checked>Install
+                                    <input type="radio" name="installmode" value="INSTALL" checked>Install
                                 </label>
                             </div>
                             <div class="radio">
                                 <label>
-                                    <input type="radio" name="installmode" value="BUNDLE" disabled>Bundle
+                                    <input type="radio" name="installmode" value="BUNDLE">Bundle
                                 </label>
                             </div>
                             <small id="installmodeHelp" class="form-text text-muted">Does not apply to IOS. If unsure
@@ -122,21 +88,22 @@
                         <label class="control-label" for="fkbootstrapconfig">Bootstrap config</label>
                         <div class="dropdown" data-dropdown>
                             <input type="text" class="hidden">
-                            <button type="button" class="form-control dropdown-toggle" id="fkbootstrapconfig"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" value="null">
-                                No config
+                            <button type="button" class="form-control dropdown-toggle" id="fkbootstrapconfig" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" 
+                            {% if bootstrapconfig|length > 0 %}
+                                {% with bootstrapconfig|first as conf %}
+                                value="{{ conf.pkid }}"
+                                {% endwith %}
+                            {% endif %} 
+                            required>
+                                {% if bootstrapconfig|length > 0 %}{{ bootstrapconfig| first }}{% else %}None{% endif %}
+
                                 <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="fkbootstrapconfig">
-                                <li>
-                                    <a href="#" data-value="null">
-                                        No config
-                                    </a>
-                                </li>
-                                {% for element in bootstrapconfig %}
+                            {% for element in bootstrapconfig %}
                                 <li>
                                     <a href="#" data-value="{{element.pkid}}">
-                                        {{element.name}}
+                                        {{element}}
                                     </a>
                                 </li>
                                 {% endfor %}
@@ -153,8 +120,7 @@
                 <h4 class="mb-3">Post-staging actions</h4>
                 <div class="form-group mb-3">
                     <label for="poststaging">Post-staging</label>
-                    <textarea class="form-control font-monospace" id="poststaging" rows="5"
-                        aria-describedby="poststagingHelp"></textarea>
+                    <textarea class="form-control font-monospace" id="poststaging" rows="5" aria-describedby="poststagingHelp"></textarea>
                     <small id="poststagingHelp" class="form-text text-muted">Insert commands to be run after
                         previous tasks
                         are finished. Enter one per line</small>
@@ -169,42 +135,23 @@
 </div>
 
 
-{% endblock %}
-
-{% block script %}
+{% endblock %} {% block script %}
+<script src="/static/js/templaterender.js"></script>
 <script>
     function installmodecheck() {
         installmodeoptions = $('[name=installmode]').toArray();
         if ($('#filepath').val() == '') {
-            installmodeoptions.forEach(function (item) {
+            installmodeoptions.forEach(function(item) {
                 item.parentElement.classList.add('disabled');
             });
         } else {
-            installmodeoptions.forEach(function (item) {
+            installmodeoptions.forEach(function(item) {
                 item.parentElement.classList.remove('disabled');
             });
         }
     }
 
-    $("#templaterender").on('show.bs.modal', function () {
-        $('#templaterenderview').html("");
-        $.ajax({
-            type: "POST",
-            url: "/api/convertjinja",
-            data: {
-                template: $('#template').val(),
-                values: $('#templatevalues').val()
-            },
-            success: function (msg) {
-                $('#templaterenderview').html(msg);
-            },
-            error: function (msg, exception) {
-                $('#templaterenderview').html(msg.responseText);
-            }
-        });
-    })
-
-    $('#templateform').submit(function (event) {
+    $('#templateform').submit(function(event) {
         event.preventDefault();
         $.ajax({
             type: 'POST',
@@ -212,21 +159,21 @@
             data: {
                 name: $('#name').val(),
                 description: $('#description').val(),
-                platform: $("input[name='platformRadio']:checked").val(),
+                platform: 'ios',
                 template: $('#template').val(),
-                templatevalues: $('#templatevalues').val(),
+                templatevalues: JSON.stringify(jsyaml.load($('#templatevalues').val())),
                 filepath: $('#filepath').val(),
                 installmode: $("input[name='installmode']:checked").val(),
                 poststaging: $('#poststaging').val(),
                 fkbootstrapconfig: $('#fkbootstrapconfig')[0].value
             }
-        }).done(function (response) {
+        }).done(function(response) {
             var $toast = basecoat.toast('<span class="fa fa-check"></span>Task submitted', 'success');
             $toast.trigger('show', [5000]); // show toast for 5s
             window.location.href = "/templates/" + response['pkid'];
-        }).fail(function (response) {
+        }).fail(function(response) {
             var $toast = basecoat.toast(
-                '<span class="fa fa-exclamation-triangle"></span>There was an error submitting your template',
+                '<span class="fa fa-exclamation-triangle"></span>' + response.responseText,
                 'warning');
             $toast.trigger('show', [5000]); // show toast for 5s
         });

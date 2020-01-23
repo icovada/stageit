@@ -27,28 +27,11 @@
                     </div>
                 </div>
 
-                <label for="platformRadio">Platform</label>
-                <div class="form-group" id="platform">
-                    <div class="radio">
-                        <label>
-                            <input type="radio" id="iosRadio" name="platformRadio" value="ios"
-                                {% if template.platform == 'ios'%}checked{%endif%}>Cisco IOS
-                        </label>
-                    </div>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="platformRadio" value="nx-os"
-                                {% if template.platform == 'nx-os'%}checked{%endif%}>Cisco NX-OS
-                        </label>
-                    </div>
-                </div>
-
                 <hr class="pt-3">
-                <h4 class="mb-3">Final configuration details</h4>
                 <div class="form-row">
                     <div class="form-group col-xl-6 form-left">
                         <label for="template">Template</label>
-                        <textarea class="form-control font-monospace" id="template" rows="6"
+                        <textarea class="form-control font-monospace" id="template" rows="20"
                             aria-describedby="templateHelp">{{template.template}}</textarea>
                         <small id="templateHelp" class="form-text text-muted">Leave empty to leave final device
                             config
@@ -56,7 +39,7 @@
                     </div>
                     <div class="form-group col-xl-6 form-right">
                         <label for="templatevalues">Template values</label>
-                        <textarea class="form-control font-monospace" id="templatevalues" rows="6"
+                        <textarea class="form-control font-monospace" id="templatevalues" rows="20"
                             aria-describedby="templatevaluesHelp">{{template.templatevalues}}</textarea>
                         <small id="templatevaluesHelp" class="form-text text-muted">Insert variables required by
                             your template in yaml format</small>
@@ -121,19 +104,14 @@
                             <input type="text" class="hidden">
                             <button type="button" class="form-control dropdown-toggle" id="fkbootstrapconfig"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" value="{% if template.fkbootstrapconfig %}{{template.fkbootstrapconfig.pkid}}{% else %}null{% endif %}">
-                                {% if template.fkbootstrapconfig %}{{template.fkbootstrapconfig.name}}{% else %}No config{% endif %}
+                                {% if template.fkbootstrapconfig %}{{template.fkbootstrapconfig.name}}{% else %}None{% endif %}
                                 <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="fkbootstrapconfig">
-                                <li>
-                                    <a href="#" data-value="null">
-                                        No config
-                                    </a>
-                                </li>
                                 {% for element in bootstrapconfig %}
                                 <li>
                                     <a href="#" data-value="{{element.pkid}}">
-                                        {{element.name}}
+                                        {{element}}
                                     </a>
                                 </li>
                                 {% endfor %}
@@ -182,6 +160,7 @@
 {% endblock %}
 
 {% block script %}
+<script src="/static/js/templaterender.js"></script>
 <script>
     function installmodecheck() {
         installmodeoptions = $('[name=installmode]').toArray();
@@ -196,24 +175,6 @@
         }
     }
 
-    $("#templaterender").on('show.bs.modal', function () {
-        $('#templaterenderview').html("");
-        $.ajax({
-            type: "POST",
-            url: "/api/convertjinja",
-            data: {
-                template: $('#template').val(),
-                values: $('#templatevalues').val()
-            },
-            success: function (msg) {
-                $('#templaterenderview').html(msg);
-            },
-            error: function (msg, exception) {
-                $('#templaterenderview').html(msg.responseText);
-            }
-        });
-    })
-
     $('#btnsave').on('click', function (event) {
         event.preventDefault();
         $.ajax({
@@ -222,9 +183,9 @@
             data: {
                 name: $('#name').val(),
                 description: $('#description').val(),
-                platform: $("input[name='platformRadio']:checked").val(),
+                platform: 'ios',
                 template: $('#template').val(),
-                templatevalues: $('#templatevalues').val(),
+                templatevalues: JSON.stringify(jsyaml.load($('#templatevalues').val())),
                 filepath: $('#filepath').val(),
                 installmode: $("input[name='installmode']:checked").val(),
                 poststaging: $('#poststaging').val(),
@@ -234,7 +195,7 @@
             var $toast = basecoat.toast('<span class="fa fa-check"></span>Task submitted', 'success');
             $toast.trigger('show', [5000]); // show toast for 5s
         }).fail(function (response) {
-            var $toast = basecoat.toast('<span class="fa fa-fail"></span>There was an error submitting your template', 'warning');
+            var $toast = basecoat.toast('<span class="fa fa-fail"></span>' + response.responseText, 'danger');
             $toast.trigger('show', [5000]); // show toast for 5s
         });
     });

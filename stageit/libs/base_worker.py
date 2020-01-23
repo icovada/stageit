@@ -1,16 +1,15 @@
 """Base Worker thread from which BaseDevice is spawned."""
 
-from time import sleep
 import logging
-from uuid import uuid4
-import pickle
 from datetime import datetime
-from stageit.libs.fakeio import FakeIO
-from stageit.celery import app
-from celery import Task
-from jinja2 import Environment, BaseLoader
-from stageit.libs.base_device import BaseDevice
+
 import requests
+from celery import Task
+from jinja2 import BaseLoader, Environment
+
+from stageit.celery import app
+from stageit.libs.base_device import BaseDevice
+from stageit.libs.fakeio import FakeIO
 
 URL_SUFFIX = "/?format=json"
 
@@ -20,21 +19,38 @@ class BaseWorker(Task):
 
     name = "stageit.libs.base_worker.baseworker"
 
+    workerid = None
+    pkid = None
+    logbuffer = None
+    historydata = None
+    fktask = None
+    taskdata = None
+    templatedata = None
+    serialportdata = None
+    terminalserverdata = None
+    template = None
+    finalconfig = None
+    devicedata = None
+    tempconfig = None
+    tserver = None
+    driver = None
+
+
     def on_success(self, retval, task_id, *args, **kwargs):
         """
-        Celery runs this if the task runs successfully 
+        Celery runs this if the task runs successfully
         Update database, set history as successful and delete task.
         """
-        URL_BASE = "http://web:8000/api/"
+        url_base = "http://web:8000/api/"
         logging.info("Set task successful")
         logging.info(retval)
         logging.info(kwargs)
 
-        requests.delete(URL_BASE + 'templates/' + self.fktask + URL_SUFFIX)
+        requests.delete(url_base + 'templates/' + self.fktask + URL_SUFFIX)
         data = {'status': 'Completed',
                 'dateend': datetime.utcnow()
                 }
-        requests.put(URL_BASE + 'history/' + self.pkid + URL_SUFFIX, data=data)
+        requests.put(url_base + 'history/' + self.pkid + URL_SUFFIX, data=data)
 
     def on_failure(self, retval, task_id, *args, **kwargs):
         """
@@ -42,26 +58,27 @@ class BaseWorker(Task):
         Update database, set history as failed.
         """
 
-        URL_BASE = "http://web:8000/api/"
+        url_base = "http://web:8000/api/"
         logging.error("EPIC FAIL")
+        logging.info(retval)
         data = {'status': 'Fail',
                 'dateend': datetime.utcnow()
                 }
-        requests.put(URL_BASE + 'history/' + self.pkid + URL_SUFFIX, data=data)
+        requests.put(url_base + 'history/' + self.pkid + URL_SUFFIX, data=data)
 
     def run(self, *args, **kwargs):
         """Celery calls this to start the task."""
 
-        URL_BASE = "http://web:8000/api/"
+        url_base = "http://web:8000/api/"
 
         self.workerid = self.app.oid
         self.pkid = kwargs.get('fkhistory')
         self.logbuffer = FakeIO(self.pkid)
-        logging.info('Worker for {} ready'.format(self.pkid))
+        logging.info('Worker for %s ready', self.pkid)
 
         # Get History row from DB. From here, discover everything else
         self.historydata = requests.get(
-            URL_BASE + 'history/' + self.pkid + URL_SUFFIX).json()
+            url_base + 'history/' + self.pkid + URL_SUFFIX).json()
 
         if self.historydata.get('workerid') is not None:
             raise AssertionError(
@@ -70,26 +87,26 @@ class BaseWorker(Task):
             # Mark History row as being worked on by us
             data = {'workerid': self.workerid,
                     'status': 'Discovering'}
-            requests.put(URL_BASE + 'history/' +
+            requests.put(url_base + 'history/' +
                          self.pkid + URL_SUFFIX, data=data)
 
         # Now we have checked the task is OK to work on and marked it as ours, fetch task data
         self.fktask = self.historydata.get('fktask')
         self.taskdata = requests.get(
-            URL_BASE + 'task/' + self.fktask + URL_SUFFIX).json()
+            url_base + 'task/' + self.fktask + URL_SUFFIX).json()
 
         # From the task we find the template
         fktemplate = self.taskdata.get('fktemplate')
         self.templatedata = requests.get(
-            URL_BASE + 'template/' + fktemplate + URL_SUFFIX).json()
+            url_base + 'template/' + fktemplate + URL_SUFFIX).json()
 
         # Find the port to connect to
         self.serialportdata = requests.get(
-            URL_BASE + 'serialport/' + self.historydata.get('fkserialport') + URL_SUFFIX).json()
+            url_base + 'serialport/' + self.historydata.get('fkserialport') + URL_SUFFIX).json()
 
         # Find the terminal server to connect to
         self.terminalserverdata = requests.get(
-            URL_BASE + 'terminalserver/' + self.serialportdata.get('fkterminalserver') + URL_SUFFIX).json()
+            url_base + 'terminalserver/' + self.serialportdata.get('fkterminalserver') + URL_SUFFIX).json()
         logging.info('Successfully retrieved all data')
 
         hostname = self.terminalserverdata.get('hostname')
@@ -135,13 +152,13 @@ class BaseWorker(Task):
             **{**self.serialportdata, **self.terminalserverdata})
 
         logging.info('Discovering platform')
-        self.driver = self.find_model(URL_BASE)
+        self.driver = self.find_model(url_base)
 
         # Actually do the job (finally!)
         self.stageit(filepath=filepath, installmode=installmode,
-                     url_base=URL_BASE, fkbootstrapconfig=self.templatedata.get('fkbootstrapconfig'))
+                     url_base=url_base, fkbootstrapconfig=self.templatedata.get('fkbootstrapconfig'))
 
-        if poststaging is not None and poststaging is not '':
+        if poststaging is not None and poststaging != '':
             self.driver.poststaging(poststaging)
 
         self.driver.close()
@@ -157,7 +174,7 @@ class BaseWorker(Task):
         if any(model in device.facts["model"] for model in ("C3650", "C3850", "9300")):
             from stageit.libs.cisco.switch.iosxe import IOSXESwitch as specific_device
 
-        elif any(model in device.facts["model"] for model in ("9200L")):
+        elif any(model in device.facts["model"] for model in ("9200L",)):
             from stageit.libs.cisco.switch.iosxe_lite import IOSXELiteSwitch as specific_device
 
         elif any(model in device.facts["model"] for model in ("4221", "4321", "4331", "4351", "4431", "4451", "4461")):
@@ -193,15 +210,16 @@ class BaseWorker(Task):
                 # we push a custom config and try again
 
                 # Get bootstrap config from database
-                if fkbootstrapconfig is not 'null':
-                    bootstrapconfig = requests.get(url_base + 'bootstrapconfig/' + fkbootstrapconfig)
+                if fkbootstrapconfig != 'null':
+                    bootstrapconfig = requests.get(
+                        url_base + 'bootstrapconfig/' + fkbootstrapconfig)
                     self.driver.load_bootstrap_config(**bootstrapconfig.json())
                     self.driver.upgrade_software(uri=filepath,
                                                  mode=installmode)
                 else:
                     pass
 
-        self.driver.checkavailable()
+        self.driver.checkavailable(50)
         self.driver.load_final_config(self.finalconfig)
         self.driver.close()
 

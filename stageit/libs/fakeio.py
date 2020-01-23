@@ -12,6 +12,7 @@ class FakeIO(BytesIO):
         self.fkhistory = fkhistory
         self.buffer = BytesIO()
         self.lastflush = self.buffer.tell()
+        super().__init__()
 
     def close(self):
         return self.buffer.close()

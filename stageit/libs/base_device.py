@@ -1,7 +1,7 @@
 """BaseDevice to be expanded by subclasses."""
-import os
 import logging
 from time import sleep
+
 import napalm
 import netmiko
 import requests
@@ -46,10 +46,10 @@ class BaseDevice():
         while self.facts is None:
             if retries >= 0:
                 retries = retries - 1
-                logging.info('Waiting for device {}'.format(retries))
+                logging.info('Waiting for device %d', retries)
                 try:
                     self.getfacts()
-                except (netmiko.ssh_exception.NetMikoAuthenticationException, ValueError):
+                except (netmiko.ssh_exception.NetMikoAuthenticationException, ValueError, AttributeError):
                     if retries > 100:
                         # Chill. Still booting.
                         sleep(10)
@@ -116,7 +116,7 @@ class BaseDevice():
 
     def copy_file(self, uri):
         """Connect to device and issue copy command from uri."""
-        logging.info('Copying from {}'.format(uri))
+        logging.info('Copying from %s', uri)
         self._checksession()
         self.session.device.send_config_set(["file prompt quiet"])
         command = "copy " + uri + " flash:\n"
@@ -132,7 +132,7 @@ class BaseDevice():
         elif "bytes copied" in out:
             return
 
-    def upgrade_software(self, uri, mode_install):
+    def upgrade_software(self, uri, mode):
         """Not implemented."""
         self.session.close()
         raise NotImplementedError
@@ -161,7 +161,7 @@ class BaseDevice():
         sleep(30)
         self.checkavailable(1000)
 
-    def close(self, logname=None):
+    def close(self):
         """Wrap-up session."""
         self.session.close()
 
@@ -173,18 +173,18 @@ class BaseDevice():
 
     def _checksession(self):
         def _createsession():
-                driver = self.driver(**self.sessiondata)
-                try:
-                    driver.open()
-                    driver.device.send_command("ter len 0\n")
-                except (ConnectionRefusedError, NetMikoAuthenticationException):
-                    self.tserver.reset()
-                return driver
+            driver = self.driver(**self.sessiondata)
+            try:
+                driver.open()
+                driver.device.send_command("ter len 0\n")
+            except (ConnectionRefusedError, NetMikoAuthenticationException):
+                self.tserver.reset()
+            return driver
 
         # Cannot use session.is_alive()) because it interacts weirdly
         # with our terminal server and makes the switch kill the connection
-        if self.session is None: 
-                self.session = _createsession()
+        if self.session is None:
+            self.session = _createsession()
 
         try:
             self.session._netmiko_device.timeout = 3

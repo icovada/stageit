@@ -17,7 +17,7 @@ class IOSXERouter(BaseDevice):
             # isr4300-universalk9_npe.16.09.03.SPA.bin
             version = re.findall(
                 r'isr4300-universalk9(_npe)?(\.(\d{2})){3}\.SPA\.bin', uri)[0]
-        
+
         if re.search(r'cat9k_iosxe(ldpe)?(\.(\d{2})){3}\.SPA\.bin', uri):
             # Catalyst 9500, 9600
             # cat9k_iosxe.16.09.03.SPA.bin
@@ -29,21 +29,21 @@ class IOSXERouter(BaseDevice):
             raise Warning("Unsupported image file")
 
         if not self._check_rommon():
-            # TODO: Add firmware/minimum rommon version table
             self._checksession()
-            self.copy_file("http://10.82.135.9/ios-xe/isr4200_4300_rommon_169_1r_SPA.pkg")
+            self.copy_file(
+                "http://10.82.135.9/ios-xe/isr4200_4300_rommon_169_1r_SPA.pkg")
             logging.info("Upgrading ROMMON")
             self.session.device.timeout = 600  # Takes at least a good 5 min
             self.session.device.write_channel(
-                    "upgrade rom-monitor filename bootflash:isr4200_4300_rommon_169_1r_SPA.pkg all\n")
+                "upgrade rom-monitor filename bootflash:isr4200_4300_rommon_169_1r_SPA.pkg all\n")
             self.session.device.read_until_prompt_or_pattern(
-                    "ROMMON upgrade complete")
+                "ROMMON upgrade complete")
 
             self.reload_device()
 
         while not firmware[0]:
             firmware = self._firmware_ok(version, mode)
-            if not firmware[0]:  # If firmware is not ok
+            if not firmware[0]:  # If firmware != ok
                 if not self._has_connectivity:
                     raise ConnectionError("Cannot copy file, device has no IP")
                 # Check if firmware is version 03
@@ -124,7 +124,7 @@ class IOSXERouter(BaseDevice):
         self.session.device.timeout = 1800
         self.session.device.write_channel(command)
         output = self.session.device.read_until_prompt_or_pattern(
-                "SUCCESS: Finished expanding")
+            "SUCCESS: Finished expanding")
 
         if "FAILED:" in output:
             return False
@@ -137,7 +137,7 @@ class IOSXERouter(BaseDevice):
                 bootvaruri = "bootflash:packages.conf"
 
             confset = ["no boot system",
-                        "boot system {}".format(bootvaruri)]
+                       "boot system {}".format(bootvaruri)]
             self.session.device.send_config_set(confset)
             self.session.device.send_command("wr\n\n\n\n\n\n\n\n")
 
@@ -150,7 +150,7 @@ class IOSXERouter(BaseDevice):
 
         flashuri = self.session._gen_full_path(uri.split("/")[-1])
         if not self.session._check_file_exists(flashuri):
-                self.copy_file(uri)
+            self.copy_file(uri)
 
         logging.info("Upgrading IOS-XE to BUNDLE mode")
         confset = ["no boot system", "boot system {}".format(flashuri)]

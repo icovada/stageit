@@ -45,7 +45,7 @@ class IOSXESwitch(BaseDevice):
 
             return upgradestatus
 
-    def _firmware_ok(self, version, mode='INSTALL'):
+    def _firmware_ok(self, version, *args, **kwargs):
         # Strip leading zeroes from IOS version
         version = version.replace(".0", ".")
         self._checksession()
@@ -63,11 +63,13 @@ class IOSXESwitch(BaseDevice):
         for member in switches:
             if version not in member:
                 return (False, member[3], member[5])
+            else:
+                switchdata = member
 
-        return (True, member[3], member[5])
+        return (True, switchdata[3], switchdata[5])
 
     def _upgrade_to_install(self, uri):
-        self._checksession() 
+        self._checksession()
         logging.info("Check file exists")
 
         flashuri = self.session._gen_full_path(uri.split("/")[-1])

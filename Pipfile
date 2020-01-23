@@ -6,6 +6,7 @@ verify_ssl = true
 [dev-packages]
 pylint = "*"
 autopep8 = "*"
+rope = "*"
 
 [packages]
 djangorestframework = "*"
@@ -13,5 +14,5 @@ markdown = "*"
 django-filter = "*"
 napalm = "*"
 celery = "*"
-django-jsonfield = "*"
 django-crispy-forms = "*"
+psycopg2 = "*"

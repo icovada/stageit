@@ -1,12 +1,14 @@
-from django.shortcuts import render, redirect
+import json
+import yaml
+
 from django.http import HttpResponseForbidden
-from django.views.generic import FormView
+from django.shortcuts import redirect, render
+
+import stageitweb.stageit.models as models
+from stageit.libs.base_worker import baseworker as bw
 
 from . import forms as forms
 
-import stageitweb.stageit.models as models
-import pickle
-import json
 
 # Create your views here.
 def index(request):
@@ -18,7 +20,7 @@ def templates(request):
 def templatesdetail(request, uuid):
     template = models.Template.objects.get(pkid=uuid)
     templatedict = template
-    templatedict.templatevalues = json.dumps(template.templatevalues, indent=4, sort_keys=True)
+    templatedict.templatevalues = yaml.dump(template.templatevalues, indent=4, sort_keys=True)
     bootstrapconfig = models.BootstrapConfig.objects.all()
     data = {'template': templatedict,
             'bootstrapconfig': bootstrapconfig}
@@ -41,12 +43,11 @@ def historydetail(request, uuid):
     return render(request, 'stageit/history/detail.html', data)
 
 def historyadd(request, uuid):
-    from stageit.libs.base_worker import baseworker as bw
 
     # Check there are no other running workers for this task
-    if models.History.objects.filter(fktask = uuid, status = "In progress").count() > 0:
+    if models.History.objects.filter(fktask=uuid, status="In progress").count() > 0:
         return HttpResponseForbidden("A worker is already running for this task")
-    
+
     if request.method == 'POST':
         form = forms.EnqueueTask(request.POST)
         if form.is_valid():

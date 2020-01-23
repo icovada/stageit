@@ -16,24 +16,14 @@
 
                 <div class="form-group col-xl-6 form-left">
                     <label for="template">Template</label>
-                    {% verbatim %}
                     <textarea class="form-control font-monospace" id="template" rows="30"
-                        aria-describedby="templateHelp">Hello {{name}}!
-
-{% if test -%}
-  How are you?
-{%- endif %}
-                        </textarea>
-                    {% endverbatim %}
+                        aria-describedby="templateHelp">{% include "stageit/examples/config.jinja" %}</textarea>
                     <small id="templateHelp" class="form-text text-muted">Insert your template</small>
                 </div>
                 <div class="form-group col-xl-6 form-right">
                     <label for="templatevalues">Template values</label>
                     <textarea class="form-control font-monospace" id="templatevalues" rows="30"
-                        aria-describedby="templatevaluesHelp">{
-  "name": "John",
-  "test": true
-}</textarea>
+                        aria-describedby="templatevaluesHelp">{% include "stageit/examples/data.jinja" %}</textarea>
                     <small id="templatevaluesHelp" class="form-text text-muted">Insert variables required by
                         your template in yaml format</small>
                 </div>
@@ -68,23 +58,5 @@
 
 
 {% block script %}
-<script>
-    $("#templaterender").on('show.bs.modal', function () {
-        $('#templaterenderview').html("");
-        $.ajax({
-            type: "POST",
-            url: "/api/convertjinja",
-            data: {
-                template: $('#template').val(),
-                values: $('#templatevalues').val()
-            },
-            success: function (msg) {
-                $('#templaterenderview').html(msg);
-            },
-            error: function (msg, exception) {
-                $('#templaterenderview').html(msg.responseText);
-            }
-        });
-    })
-</script>
+<script src="/static/js/templaterender.js"></script>
 {% endblock %}
