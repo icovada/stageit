@@ -71,7 +71,7 @@ def tasksdetail(request, uuid):
     task = models.Task.objects.get(pkid=uuid)
     data = task.__dict__.copy()
 
-    data['taskvalues'] = json.dumps(data['taskvalues'], indent=4, sort_keys=True)
+    data['taskvalues'] = yaml.dump(data['taskvalues'], indent=4, sort_keys=True)
     data['filepath'] = task.fktemplate.filepath
     data['installmode'] = task.fktemplate.installmode
     data['platform'] = task.fktemplate.platform
