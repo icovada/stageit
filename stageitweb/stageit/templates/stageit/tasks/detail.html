@@ -42,7 +42,7 @@
                     </div>
                     <div class="form-group col-xl-6 form-right">
                         <label for="taskvalues">Template values</label>
-                        <textarea class="form-control font-monospace" id="templatevalues" rows="6"
+                        <textarea class="form-control font-monospace" id="taskvalues" rows="6"
                             aria-describedby="taskvaluesHelp">{{taskvalues}}</textarea>
                         <small id="taskvaluesHelp" class="form-text text-muted">Insert variables required by
                             your template
@@ -155,7 +155,7 @@
                 taskvalues: JSON.stringify(jsyaml.load($('#taskvalues').val())),
             }
         }).done(function (response) {
-            var $toast = basecoat.toast('<span class="fa fa-check"></span>Task submitted', 'success');
+            var $toast = basecoat.toast('<span class="fa fa-check"></span>Task saved', 'success');
             $toast.trigger('show', [5000]); // show toast for 5s
         }).fail(function (response) {
             var $toast = basecoat.toast('<span class="fa fa-fail"></span>' + response.responseText, 'danger');
