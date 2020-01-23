@@ -13,5 +13,5 @@ urlpatterns = [
     path('filemanager/', views.filemanager),
     path('bootstrapconfig/', views.bootstrapconfig),
     path('bootstrapconfig/add', views.bootstrapconfigadd),
-    path('bootstrapconfig/<uuid:pk>', views.bootstrapconfigdetail),
+    path('bootstrapconfig/<uuid:uuid>', views.bootstrapconfigdetail),
 ]

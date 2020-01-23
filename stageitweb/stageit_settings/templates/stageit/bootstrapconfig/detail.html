@@ -1,0 +1,135 @@
+{% extends "stageit/layout.html" %}
+
+{% block title %}Edit Bootstrap config | {% endblock %}
+
+{% block body %}
+<div class="top-gutter bottom-gutter container-wrapper">
+    <div class="content-area">
+        <div class="container-lg">
+
+            <form class="needs-validation" action="/api/bootstrapconfig/" id="bootstrapform" method="post">
+                <div class="form-group">
+                    <h2>Edit Bootstrap config</h2>
+                    <p>{{pkid}}</p>
+                </div>
+                {% csrf_token %}
+
+
+                <div class="form-group">
+                    <div class="form-row">
+                        <div class="form-group col-xl-6 form-left">
+                            <label class="control-label" for="name">Name</label>
+                            <input type="text" class="form-control" id="name" value="{{name}}" required>
+                        </div>
+                        <div class="form-group col-xl-6 form-right">
+                            <label for="description">Description</label>
+                            <input type="text" class="form-control" id="description" value="{{description}}"" required
+                        </div>
+                    </div>
+                </div>
+                <div class=" form-row">
+                            <div class="form-group col-xl-6 form-left">
+                                <label for="template">Bootstrap Template</label>
+                                <textarea class="form-control font-monospace" id="template" rows="6"
+                                    aria-describedby="templateHelp">{{bootstraptemplate}}</textarea>
+                                <small id="templateHelp" class="form-text text-muted"></small>
+                            </div>
+                            <div class="form-group col-xl-6 form-right">
+                                <label for="taskvalues">Template values</label>
+                                <textarea class="form-control font-monospace" id="templatevalues" rows="6"
+                                    aria-describedby="taskvaluesHelp">{{values}}</textarea>
+                                <small id="taskvaluesHelp" class="form-text text-muted">Insert variables required by
+                                    your
+                                    template
+                                    in
+                                    yaml format</small>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" type="button" data-toggle="modal"
+                            data-target="#templaterender">Test</button>
+                        <div class="modal fade" tabindex="-1" role="dialog" id="templaterender">
+                            <div class="modal-dialog modal-xl" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Rendered template</h5>
+                                    </div>
+                                    <div class="modal-body">
+                                        <pre><code id="templaterenderview"></code></pre>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <!-- use the .btn-link-toolbar for the correct padding if the footer only contains link buttons -->
+                                        <div class="btn-link-toolbar">
+                                            <button type="button" class="btn btn-link"
+                                                data-dismiss="modal">Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="mb-4">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <button id="btnsave" class="btn btn-primary btn-lg btn-block"
+                                    type="submit">Save</button>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <button id="btndelete" class="btn btn-primary btn-lg btn-block btn-danger"
+                                    type="button">Delete</button>
+                            </div>
+                        </div>
+                        <div id="submitalertspace" class="my-3">
+                        </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block script %}
+<script src="/static/js/templaterender.js"></script>
+<script>
+    $('#btnsave').on('click', function (event) {
+        event.preventDefault();
+        $.ajax({
+            type: 'PUT',
+            url: "/api/bootstrapconfig/{{pkid}}/",
+            data: {
+                name: $('#name').val(),
+                description: $('#description').val(),
+                bootstraptemplate: $('#template').val(),
+                values: JSON.stringify(jsyaml.load($('#templatevalues').val())),
+            }
+        }).done(function (response) {
+            var $toast = basecoat.toast('<span class="fa fa-check"></span>Bootstrap Config saved', 'success');
+            $toast.trigger('show', [5000]); // show toast for 5s
+        }).fail(function (response) {
+            var $toast = basecoat.toast('<span class="fa fa-fail"></span>' + response.responseText, 'danger');
+            $toast.trigger('show', [5000]); // show toast for 5s
+        });
+    });
+
+    // confirm dialog that goes into an alert dialog
+    $('#btndelete').on('click', function (event) {
+        basecoat.confirm('Are you sure you want to delete this bootstrap config?', null, 'Yes', 'No')
+            .on('reject', function () {
+                console.log('reject');
+            })
+            .on('accept', function () {
+                $.ajax({
+                    type: 'DELETE',
+                    url: "/api/bootstrapconfig/{{pkid}}/"
+                }).done(function (response) {
+                    basecoat.alert('Bootstrap config deleted')
+                    .on('hide.bs.modal', function () {
+                        window.location.href = "/settings/bootstrapconfig";
+                    });
+                }).fail(function (response) {
+                    basecoat.alert('Error. Maybe this config is referenced by a template?')
+                });
+                
+            });
+    });
+</script>
+{% endblock %}

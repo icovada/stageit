@@ -95,5 +95,6 @@ class BootstrapConfigDelete(DeleteView):
 def bootstrapconfigadd(request):
     return render(request, 'stageit/bootstrapconfig/add.html')
 
-def bootstrapconfigdetail(request):
-    return render(request, 'stageit/bootstrapconfig/add.html', data)
+def bootstrapconfigdetail(request, uuid):
+    data = models.BootstrapConfig.objects.get(pkid=uuid).__dict__
+    return render(request, 'stageit/bootstrapconfig/detail.html', data)
