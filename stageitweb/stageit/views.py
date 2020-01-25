@@ -6,6 +6,7 @@ from django.shortcuts import redirect, render
 
 import stageitweb.stageit.models as models
 from stageit.libs.base_worker import baseworker as bw
+from stageit.libs.fake_worker import fakeworker as fw
 
 from . import forms as forms
 
@@ -62,7 +63,10 @@ def historyadd(request, uuid):
             history.status = "Queued"
             history.fkserialport = request.POST.get('fkserialport')
             history.save()
-            bw.delay(fkhistory=str(history.pkid))
+            if models.Task.objects.get(pkid=uuid).fktemplate.platform == "fake":
+                fw.delay(fkhistory=str(history.pkid))
+            else:
+                bw.delay(fkhistory=str(history.pkid))
             return redirect('/history/' + str(history.pkid))
 
     else:
