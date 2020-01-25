@@ -157,7 +157,7 @@ class FakeWorker(Task):
 
     def stageit(self):
         """Choose random status"""
-        for i in range(random.randint(2, 3)):
+        for i in range(random.randint(5, 20)):
             status = self.statuses[random.randint(0, len(self.statuses)-1)]
             self.log.write(status.encode('utf-8') + "\n".encode('utf-8'))
             if (i % 2) == 0:
