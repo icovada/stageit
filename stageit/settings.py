@@ -32,7 +32,7 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'stageitweb.stageit',
-    'stageitweb.api',
+    'api',
     'stageitweb.stageit_settings',
     'rest_framework',
     'django_filters',
