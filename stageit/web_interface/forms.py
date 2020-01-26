@@ -2,7 +2,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django import forms
 
-import stageitweb.stageit.models as models
+import web_interface.models as models
 
 
 class EnqueueTask(forms.Form):

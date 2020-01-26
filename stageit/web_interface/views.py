@@ -4,7 +4,7 @@ import yaml
 from django.http import HttpResponseForbidden
 from django.shortcuts import redirect, render
 
-import stageitweb.stageit.models as models
+import web_interface.models as models
 from stageit.libs.base_worker import baseworker as bw
 from stageit.libs.fake_worker import fakeworker as fw
 

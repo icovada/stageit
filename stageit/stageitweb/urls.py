@@ -20,5 +20,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
     path('settings/', include('stageitweb.stageit_settings.urls')),
-    path('', include('stageitweb.stageit.urls')),
+    path('', include('web_interface.urls')),
 ]

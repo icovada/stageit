@@ -31,7 +31,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'stageitweb.stageit',
+    'web_interface',
     'api',
     'stageitweb.stageit_settings',
     'rest_framework',
