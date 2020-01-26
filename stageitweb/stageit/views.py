@@ -52,7 +52,7 @@ def historydetail(request, uuid):
 
 def historyadd(request, uuid):
     # Check there are no other running workers for this task
-    if models.History.objects.filter(fktask=uuid, status="In progress").count() > 0:
+    if models.History.objects.filter(fktask=uuid, status="In Progress").count() > 0:
         return HttpResponseForbidden("A worker is already running for this task")
 
     if request.method == 'POST':
@@ -91,7 +91,7 @@ def tasksdetail(request, uuid):
     data['template'] = task.fktemplate.template
     data['name'] = task.fktemplate.name
 
-    data['taskbusy'] = models.History.objects.filter(fktask=uuid, status="In progress").count() > 0
+    data['taskbusy'] = models.History.objects.filter(fktask=uuid, status="In Progress").count() > 0
 
     return render(request, 'stageit/tasks/detail.html', data)
 

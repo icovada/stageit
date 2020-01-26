@@ -127,7 +127,7 @@ class FakeWorker(Task):
                 "Task already being worked on by someone else")
 
         requests.put('http://web:8000/api/history/' + kwargs.get('fkhistory') + '/?format=json',
-                     data={'workerid': kwargs.get('celeryid'), 'status': 'In progress'})
+                     data={'workerid': kwargs.get('celeryid'), 'status': 'In Progress'})
 
         self.pkid = self.historydata.json().get('pkid')
         fktask = self.historydata.json().get('fktask')
@@ -157,7 +157,7 @@ class FakeWorker(Task):
 
     def stageit(self):
         """Choose random status"""
-        for i in range(random.randint(5, 20)):
+        for i in range(random.randint(30, 30)):
             status = self.statuses[random.randint(0, len(self.statuses)-1)]
             self.log.write(status.encode('utf-8') + "\n".encode('utf-8'))
             if (i % 2) == 0:
