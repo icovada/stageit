@@ -87,7 +87,7 @@ def loggenerator(uuid):
 
     history_row = models.History.objects.get(pkid=uuid)
     while history_row.status in ("In Progress", "Discovering"):
-        logs = models.Log.objects.filter(fkhistory=uuid, sequence__gt=lastlog)
+        logs = models.Log.objects.filter(fkhistory=uuid, sequence__gt=lastlog).order_by("sequence")
         for log in logs:
             lastlog = log.sequence
             yield(log.log)
