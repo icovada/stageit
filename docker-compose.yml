@@ -20,9 +20,8 @@ services:
       - postgres-data:/var/lib/postgresql/data
 
   web:
-    build: .
+    build: stageit/.
     volumes:
-      - .:/code
       - static:/code/static_cdn
       - media:/code/media_cdn
     ports:
@@ -32,10 +31,8 @@ services:
     command: bash -c "python manage.py collectstatic --no-input && python manage.py makemigrations && python manage.py migrate && gunicorn --workers=3 stageitweb.wsgi -b 0.0.0.0:8000"
 
   celery:
-    build: .
+    build: stageit/.
     command: celery -A stageit worker -l info
-    volumes:
-      - .:/code
     depends_on:
       - db
       - rabbit
