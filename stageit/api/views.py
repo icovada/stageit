@@ -7,8 +7,8 @@ from django.conf import settings
 import django_filters.rest_framework
 from rest_framework.parsers import JSONParser
 from rest_framework import viewsets, filters
-import stageitweb.stageit.models as models
-import stageitweb.api.serializers as serializers
+import web_interface.models as models
+import api.serializers as serializers
 from rest_framework import generics
 
 import glob

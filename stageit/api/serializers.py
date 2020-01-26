@@ -1,5 +1,5 @@
 from rest_framework import serializers
-import stageitweb.stageit.models as models
+import web_interface.models as models
 from rest_framework import generics
 
 

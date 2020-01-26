@@ -31,9 +31,9 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'stageitweb.stageit',
-    'stageitweb.api',
-    'stageitweb.stageit_settings',
+    'api',
+    'web_interface',
+    'web_settings',
     'rest_framework',
     'django_filters',
     'crispy_forms',
@@ -55,7 +55,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'stageitweb.urls'
+ROOT_URLCONF = 'urls'
 
 TEMPLATES = [
     {
@@ -73,7 +73,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'stageitweb.wsgi.application'
+WSGI_APPLICATION = 'wsgi.application'
 
 
 # Database

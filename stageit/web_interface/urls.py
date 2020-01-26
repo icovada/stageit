@@ -13,6 +13,6 @@ urlpatterns = [
     path('tasks/<uuid:uuid>', views.tasksdetail, name='tasksdetail'),
     path('tasks/new/<uuid:uuid>', views.tasksadd, name='tasksadd'),
     path('sandbox', views.sandbox),
-    path('settings/', include('stageitweb.stageit_settings.urls')),
+    path('settings/', include('web_settings.urls')),
     path('', views.index, name='index'),
 ]

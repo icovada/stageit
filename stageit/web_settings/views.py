@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import (CreateView, DeleteView, FormView,
                                   UpdateView)
 
-import stageitweb.stageit.models as models
+import web_interface.models as models
 
 from .forms import (SerialPortForm, TerminalServerForm,
                     UploadFileForm)

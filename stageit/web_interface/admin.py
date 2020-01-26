@@ -1,5 +1,5 @@
 from django.contrib import admin
-import stageitweb.stageit.models as models
+import web_interface.models as models
 # Register your models here.
 
 admin.site.register(models.Template)

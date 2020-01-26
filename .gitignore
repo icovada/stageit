@@ -129,5 +129,3 @@ stagedb.db
 
 .local/
 .scannerwork/
-
-stageitweb/stageit/migrations/
