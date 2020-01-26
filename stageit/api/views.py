@@ -83,6 +83,10 @@ def loggenerator(uuid):
     lastlog = 0
     for log in logs:
         lastlog = log.sequence
+        # Return newline before every new line because newlines
+        # are stripped by djangorestframework
+        # TODO: Fix this
+        yield("\n")
         yield(log.log)
 
     history_row = models.History.objects.get(pkid=uuid)
@@ -90,6 +94,10 @@ def loggenerator(uuid):
         logs = models.Log.objects.filter(fkhistory=uuid, sequence__gt=lastlog).order_by("sequence")
         for log in logs:
             lastlog = log.sequence
+            # Return newline before every new line because newlines
+            # are stripped by djangorestframework
+            # TODO: Fix this
+            yield("\n")
             yield(log.log)
         sleep(1)
         history_row.refresh_from_db()
