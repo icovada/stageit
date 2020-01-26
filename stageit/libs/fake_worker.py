@@ -8,7 +8,7 @@ import requests
 from celery import Task
 
 from stageit.celery import app
-from stageit.libs.fakeio import FakeIO
+from stageit.libs.netio import NetIO
 
 
 # @app.task(bind=True)
@@ -142,7 +142,7 @@ class FakeWorker(Task):
 
         self.work = kwargs.get('work')
 
-        self.log = FakeIO(fkhistory=self.pkid)
+        self.log = NetIO(fkhistory=self.pkid)
         self.stageit()
 
     def driver(self):

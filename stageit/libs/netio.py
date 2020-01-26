@@ -6,7 +6,7 @@ from io import BytesIO
 import requests
 
 
-class FakeIO(BytesIO):
+class NetIO(BytesIO):
     def __init__(self, fkhistory):
         self.sequence = 1
         self.fkhistory = fkhistory

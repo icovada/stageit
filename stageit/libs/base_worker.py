@@ -9,7 +9,7 @@ from jinja2 import BaseLoader, Environment
 
 from stageit.celery import app
 from stageit.libs.base_device import BaseDevice
-from stageit.libs.fakeio import FakeIO
+from stageit.libs.netio import NetIO
 
 URL_SUFFIX = "/?format=json"
 
@@ -73,7 +73,7 @@ class BaseWorker(Task):
 
         self.workerid = self.app.oid
         self.pkid = kwargs.get('fkhistory')
-        self.logbuffer = FakeIO(self.pkid)
+        self.logbuffer = NetIO(self.pkid)
         logging.info('Worker for %s ready', self.pkid)
 
         # Get History row from DB. From here, discover everything else
