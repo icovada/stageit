@@ -31,9 +31,9 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'web_interface',
     'api',
-    'stageitweb.stageit_settings',
+    'web_interface',
+    'web_settings',
     'rest_framework',
     'django_filters',
     'crispy_forms',
