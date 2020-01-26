@@ -28,7 +28,7 @@ services:
       - "8000:8000"
     depends_on:
       - db
-    command: bash -c "python manage.py collectstatic --no-input && python manage.py makemigrations && python manage.py migrate && gunicorn --workers=3 wsgi -b 0.0.0.0:8000"
+    command: bash -c "python manage.py collectstatic --no-input && python manage.py makemigrations && python manage.py migrate && gunicorn --workers=3 wsgi -k gevent -b 0.0.0.0:8000"
 
   celery:
     build: stageit/.
