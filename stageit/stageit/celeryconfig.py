@@ -1,4 +1,6 @@
-broker_url = 'amqp://rabbit'
+import os
+
+broker_url = os.environ.get("broker_url"),
 
 task_serializer = 'json'
 accept_content = ['json']

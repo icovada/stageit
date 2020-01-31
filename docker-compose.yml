@@ -35,7 +35,7 @@ services:
     networks:
       - inside
     env_file:
-      - stageit/.env.dev
+      - stageit/.env.web
 
   celery:
     build: stageit/.
@@ -46,6 +46,8 @@ services:
       - web
     networks:
       - inside
+    env_file:
+      - stageit/.env.celery
 
   rabbit:
     image: rabbitmq:3
