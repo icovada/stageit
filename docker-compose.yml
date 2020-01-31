@@ -11,24 +11,31 @@ services:
       - media:/code/media_cdn
     ports: 
       - "80:80"
-    links:
-      - web
+    networks:
+      - inside
 
   db:
     image: postgres
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    networks:
+        - inside
 
   web:
-    build: stageit/.
+    build: 
+      context: stageit/.
+      networks:
+        - inside
     volumes:
       - static:/code/static_cdn
       - media:/code/media_cdn
-    ports:
-      - "8000:8000"
     depends_on:
       - db
     command: bash -c "python manage.py collectstatic --no-input && python manage.py makemigrations && python manage.py migrate && gunicorn --workers=3 wsgi -k gevent -b 0.0.0.0:8000"
+    networks:
+      - inside
+    env_file:
+      - stageit/.env.dev
 
   celery:
     build: stageit/.
@@ -37,11 +44,18 @@ services:
       - db
       - rabbit
       - web
+    networks:
+      - inside
 
   rabbit:
     image: rabbitmq:3
+    networks:
+      - inside
 
 volumes:
   postgres-data:
   media:
   static:
+
+networks:
+  inside:
