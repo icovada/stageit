@@ -6,7 +6,6 @@ services:
     build: ./docker-files/nginx
     volumes: 
       - ./docker-files/nginx/:/etc/nginx/conf.d
-      - ./docker-files/nginx/logs/:/code/logs
       - static:/code/static_cdn
       - media:/code/media_cdn
     ports: 
@@ -32,7 +31,7 @@ services:
       - media:/code/media_cdn
     depends_on:
       - db
-    command: /usr/src/app/entrypoint.sh && bash -c "python manage.py collectstatic --no-input && python manage.py makemigrations && python manage.py migrate && gunicorn --workers=3 wsgi -k gevent -b 0.0.0.0:8000"
+    command: bash -c "/usr/src/app/entrypoint.sh && python manage.py collectstatic --no-input && python manage.py makemigrations && python manage.py migrate && gunicorn --workers=3 wsgi -k gevent -b 0.0.0.0:8000"
     networks:
       - inside
     env_file:
