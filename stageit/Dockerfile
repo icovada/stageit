@@ -8,4 +8,3 @@ RUN pip install -r requirements.txt --no-cache-dir
 COPY . /code/
 
 COPY entrypoint.sh /usr/src/app/entrypoint.sh
-ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
