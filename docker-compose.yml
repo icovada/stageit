@@ -5,7 +5,6 @@ services:
     restart: always
     build: ./docker-files/nginx
     volumes: 
-      - ./docker-files/nginx/:/etc/nginx/conf.d
       - static:/code/static_cdn
       - media:/code/media_cdn
     ports: 
@@ -25,7 +24,6 @@ services:
   web:
     build: 
       context: stageit/.
-
     volumes:
       - static:/code/static_cdn
       - media:/code/media_cdn
@@ -51,6 +49,10 @@ services:
 
   rabbit:
     image: rabbitmq:3
+    volumes:
+      - ./docker-files/rabbit:/etc/rabbitmq/
+    ports: 
+      - "15672:15672"
     networks:
       - inside
 
