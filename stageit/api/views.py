@@ -42,6 +42,10 @@ class LogViewSet(viewsets.ModelViewSet):
         'fkhistory': ['exact']
     }
 
+class RemoteWorkerViewSet(viewsets.ModelViewSet):
+    queryset = models.RemoteWorker.objects.all()
+    serializer_class = serializers.RemoteWorkerSerializer
+
 class TerminalServerViewSet(viewsets.ModelViewSet):
     queryset = models.TerminalServer.objects.all()
     serializer_class = serializers.TerminalServerSerializer

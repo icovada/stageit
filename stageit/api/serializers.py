@@ -76,9 +76,20 @@ class TerminalServerSerializer(serializers.ModelSerializer):
     transport = serializers.CharField()
     username = serializers.CharField()
     password = serializers.CharField()
+    fkremoteworker = serializers.PrimaryKeyRelatedField(queryset=models.RemoteWorker.objects)
 
     class Meta:
         model = models.TerminalServer
+        fields = '__all__'
+
+
+class RemoteWorkerSerializer(serializers.ModelSerializer):
+    pkid = serializers.UUIDField(format='hex_verbose', required=False)
+    name = serializers.CharField()
+    token = serializers.CharField()
+
+    class Meta:
+        model = models.RemoteWorker
         fields = '__all__'
 
 class SerialPortSerializer(serializers.ModelSerializer):
