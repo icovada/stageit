@@ -77,8 +77,17 @@ class Log(models.Model):
     log = models.TextField(null=True)
     logdate = models.DateTimeField(auto_now_add=True)
 
+class RemoteWorker(models.Model):
+    pkid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    name = models.TextField()
+    token = models.TextField()
+
+    def __str__(self):
+        return('{}'.format(self.name))
+
 class TerminalServer(models.Model):
     pkid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    fkremoteworker = models.ForeignKey(RemoteWorker, on_delete=models.PROTECT)
     name = models.TextField()
     model = models.TextField()
     hostname = models.TextField(unique=True)
