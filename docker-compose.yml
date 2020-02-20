@@ -47,15 +47,6 @@ services:
     env_file:
       - stageit/.env.celery
 
-  rabbit:
-    image: rabbitmq:3
-    volumes:
-      - ./docker-files/rabbit:/etc/rabbitmq/
-    ports: 
-      - "15672:15672"
-    networks:
-      - inside
-
 volumes:
   postgres-data:
   media:
