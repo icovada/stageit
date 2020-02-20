@@ -36,7 +36,7 @@ class LogViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.LogSerializer
     # https://stackoverflow.com/questions/57479402/choosing-column-to-search-by-in-django-rest-framework
     lookup_field = 'fkhistory'
-    kookup_url_kwarg = 'fkhistory'
+    lookup_url_kwarg = 'fkhistory'
     filter_fields = {
         'sequence': ['gte', 'lte'],
         'fkhistory': ['exact']
