@@ -46,6 +46,11 @@ class LogViewSet(viewsets.ModelViewSet):
 class RemoteWorkerViewSet(viewsets.ModelViewSet):
     queryset = models.RemoteWorker.objects.all()
     serializer_class = serializers.RemoteWorkerSerializer
+    lookup_field = 'name'
+    lookup_url_kwarg = 'name'
+    filter_fields = {
+        'name': ['exact']
+    }
 
 class TerminalServerViewSet(viewsets.ModelViewSet):
     queryset = models.TerminalServer.objects.all()
