@@ -11,7 +11,7 @@ from django.views.generic import (CreateView, DeleteView, FormView,
 import web_interface.models as models
 
 from .forms import (SerialPortForm, TerminalServerForm,
-                    UploadFileForm)
+                    UploadFileForm, RemoteWorkerForm)
 
 baseform = 'stageit/baseform.html'
 
@@ -59,6 +59,24 @@ class SerialPortDelete(DeleteView):
     model = models.SerialPort
     template_name = baseform
 
+
+def remoteworker(request):
+    return render(request, 'stageit/remoteworker_list.html')
+
+class RemoteWorkerCreate(CreateView):
+    form_class = RemoteWorkerForm
+    model = models.RemoteWorker
+    template_name = baseform
+
+class RemoteWorkerUpdate(UpdateView):
+    form_class = RemoteWorkerForm
+    model = models.RemoteWorker
+    template_name = baseform
+
+class RemoteWorkerDelete(DeleteView):
+    form_class = RemoteWorkerForm
+    model = models.RemoteWorker
+    template_name = baseform
 
 def filemanager(request):
     return render(request, 'stageit/filemanager.html')

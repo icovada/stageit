@@ -56,6 +56,25 @@ class SerialPortForm(forms.ModelForm):
             visible.field.widget.attrs['class'] = 'form-control'
 
 
+class RemoteWorkerForm(forms.ModelForm):
+    name = forms.CharField()
+    # TODO: disable field and auto generate token
+    token = forms.CharField()
+
+    helper = FormHelper()
+    helper.add_input(Submit('submit', 'Submit', css_class='btn-primary'))
+    helper.form_method = 'POST'
+
+    class Meta:
+        model = models.RemoteWorker
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(RemoteWorkerForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
+
+
 class UploadFileForm(forms.Form):
     file = forms.FileField()
 

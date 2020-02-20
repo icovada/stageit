@@ -79,11 +79,14 @@ class Log(models.Model):
 
 class RemoteWorker(models.Model):
     pkid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
-    name = models.TextField()
+    name = models.TextField(unique=True)
     token = models.TextField()
 
     def __str__(self):
         return('{}'.format(self.name))
+
+    def get_absolute_url(self):
+        return(str(self.pkid))
 
 class TerminalServer(models.Model):
     pkid = models.UUIDField(primary_key=True, editable=False, default=uuid4)

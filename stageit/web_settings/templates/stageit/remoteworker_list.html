@@ -1,0 +1,64 @@
+{% extends "stageit/layout.html" %}
+
+{% block title %}Remote Workers{% endblock %}
+{% block header %}Remote Workers{% endblock %}
+
+{% block body %}
+<header class="jumbotron">
+    <div class="container-lg">
+        <div class="row">
+            <div class="col-xs-12">
+                <h2>Remote Workers</h2>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="content-area">
+    <div class="container-lg">
+        <div class="col-xs-12 col-md-6 col-lg-4 text-center">
+            <a type="button" class="btn btn-primary btn-block bottom-gutter" href="/settings/remoteworker/add">Add</a>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <table id="maintable" class="table" width="100%">
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+
+    $(document).ready(function () {
+        var dataSet = $.getJSON({
+            url: '/api/remoteworker?format=json',
+            async: false
+        }).responseJSON;
+
+        dataSet.forEach(function (element) {
+            element['ID'] = "<a href='/settings/remoteworker/" + element['pkid'] + "'>" + element['pkid'].substring(0, 5) + "</a>"
+        });
+
+
+        $('#maintable').DataTable({
+            data: dataSet,
+            rowId: 'pkid',
+            columns: [
+                { title: "pkid", data: 'pkid' },
+                { title: "ID", data: 'ID' },
+                { title: "name", data: 'name' },
+            ],
+            columnDefs: [
+                {
+                    "targets": [0],
+                    "visible": false,
+                    "searchable": false
+                }]
+        });
+    });
+
+</script>
+{% endblock %}
