@@ -26,9 +26,10 @@ class TaskViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.TaskSerializer
     
 class HistoryViewSet(viewsets.ModelViewSet):
+    search_fields = ['status']
+    filter_backends = (filters.OrderingFilter, filters.SearchFilter,)
     queryset = models.History.objects.all()
     serializer_class = serializers.HistorySerializer
-    filter_backends = [filters.OrderingFilter]
     ordering = ['status']
 
 class LogViewSet(viewsets.ModelViewSet):
