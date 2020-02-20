@@ -60,6 +60,7 @@ def historyadd(request, uuid):
             history.fktask = uuid
             history.status = "Queued"
             history.fkserialport = request.POST.get('fkserialport')
+            history.fkremoteworker = history.fkserialport.fkterminalserver.fkremoteworker
             history.save()
             return redirect('/history/' + str(history.pkid))
 

@@ -35,6 +35,18 @@ class Template(models.Model):
     def get_absolute_url(self):
         return(str(self.pkid))
 
+
+class RemoteWorker(models.Model):
+    pkid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    name = models.TextField(unique=True)
+    token = models.TextField()
+
+    def __str__(self):
+        return('{}'.format(self.name))
+
+    def get_absolute_url(self):
+        return(str(self.pkid))
+
 class History(models.Model):
     """Defines history table."""
     pkid = models.UUIDField(primary_key=True, default=uuid4, editable=False)
@@ -53,6 +65,7 @@ class History(models.Model):
     workerid = models.TextField(null=True)
     fktask = models.TextField(null=False)
     fkserialport = models.UUIDField()
+    fkremoteworker = models.ForeignKey(RemoteWorker, on_delete=models.PROTECT)
 
     def get_absolute_url(self):
         return(str(self.pkid))
@@ -76,17 +89,6 @@ class Log(models.Model):
     sequence = models.PositiveIntegerField()
     log = models.TextField(null=True)
     logdate = models.DateTimeField(auto_now_add=True)
-
-class RemoteWorker(models.Model):
-    pkid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
-    name = models.TextField(unique=True)
-    token = models.TextField()
-
-    def __str__(self):
-        return('{}'.format(self.name))
-
-    def get_absolute_url(self):
-        return(str(self.pkid))
 
 class TerminalServer(models.Model):
     pkid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
