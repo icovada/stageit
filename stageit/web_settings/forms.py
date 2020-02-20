@@ -12,6 +12,8 @@ separator = """<hr class="mb-4">"""
 class TerminalServerForm(forms.ModelForm):
     name = forms.CharField()
     model = forms.ChoiceField(choices=(('cisco', 'Cisco'),))
+    fkremoteworker = forms.ModelChoiceField(
+        queryset=models.RemoteWorker.objects, label="Remote Worker that will process tasks on this Terminal Server")
     hostname = forms.CharField()
     transport = forms.ChoiceField(
         choices=(('telnet', 'Telnet'), ('ssh', 'SSH')))
