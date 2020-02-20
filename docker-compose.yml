@@ -23,7 +23,7 @@ services:
 
   web:
     build: 
-      context: stageit/.
+      context: stageit-web/.
     volumes:
       - static:/code/static_cdn
       - media:/code/media_cdn
