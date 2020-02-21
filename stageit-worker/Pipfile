@@ -8,6 +8,7 @@ verify_ssl = true
 [packages]
 napalm = "*"
 jinja2 = "*"
+schedule = "*"
 
 [requires]
 python_version = "3.8"
