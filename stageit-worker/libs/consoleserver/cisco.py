@@ -1,7 +1,7 @@
 """Cisco Console Server class"""
 
 from netmiko import Netmiko as netmiko
-from stageit.libs.consoleserver import BaseConsoleServer
+from libs.consoleserver import BaseConsoleServer
 
 
 class CiscoConsoleServer(BaseConsoleServer):

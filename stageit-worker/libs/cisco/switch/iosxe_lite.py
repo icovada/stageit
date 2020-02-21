@@ -1,7 +1,7 @@
 """Use with IOS-XE switches such as 3650 and 3850."""
 import re
 import logging
-from stageit.libs.base_device import BaseDevice
+from libs.base_device import BaseDevice
 
 
 class IOSXELiteSwitch(BaseDevice):

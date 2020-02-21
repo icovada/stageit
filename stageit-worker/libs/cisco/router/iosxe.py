@@ -1,7 +1,7 @@
 """Use with IOS-XE routers such as ISR 4000."""
 import re
 import logging
-from stageit.libs.base_device import BaseDevice
+from libs.base_device import BaseDevice
 
 
 class IOSXERouter(BaseDevice):

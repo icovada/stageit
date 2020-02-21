@@ -5,7 +5,7 @@ To be used with any Cisco device running old-style IOS
 """
 import re
 import logging
-from stageit.libs.base_device import BaseDevice
+from libs.base_device import BaseDevice
 
 
 class IOSSwitch(BaseDevice):
