@@ -127,10 +127,10 @@ class FakeWorker():
             requests.put(f'{self.endpoint}/api/history/{self.pkid}/?format=json',
                          data={'workerid': self.worker_id, 'status': 'In Progress'})
             self.stageit()
+            self.on_success(self.pkid)
         except Exception as e:
             self.on_failure(self.pkid, e)
 
-        self.on_success(self.pkid)
 
     def on_success(self, fkhistory):
         logging.info("Set task successful")
@@ -164,5 +164,3 @@ class FakeWorker():
 
         self.log.flush()
         return True
-
-
