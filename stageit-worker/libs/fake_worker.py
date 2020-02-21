@@ -5,19 +5,13 @@ import random
 from time import sleep
 
 import requests
-from celery import Task
-
-from stageit.celery import app
-from stageit.libs.netio import NetIO
+from libs.netio import NetIO
 
 
-# @app.task(bind=True)
-class FakeWorker(Task):
+class FakeWorker():
     """
     Fake for test
     """
-    name = 'stageit.libs.fake_worker.fakeworker'
-
     statuses = None
     historydata = None
     pkid = None
@@ -26,18 +20,8 @@ class FakeWorker(Task):
     work = None
     log = None
 
-    def on_success(self, retval, task_id, args, kwargs):
-        logging.info("Set task successful")
-        logging.info(retval)
-        logging.info(kwargs)
-        requests.put('http://web:8000/api/history/' + kwargs.get('fkhistory') +
-                     '/?format=json', data={'status': 'Success'})
 
-    def on_failure(self, retval, task_id, args, kwargs):
-        logging.fatal("EPIC FAIL")
-        logging.fatal(retval)
-
-    def run(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         logging.info("Initializing")
 
         # Adapted from Sim City 4 loading screen to fit network
@@ -120,30 +104,43 @@ class FakeWorker(Task):
         logging.info("Fake Worker ready")
         logging.info(kwargs.get('fkhistory'))
 
-        self.historydata = requests.get(
-            'http://web:8000/api/history/' + kwargs.get('fkhistory') + '/?format=json')
-        if self.historydata.json().get('workerid') is not None:
+        self.historydata = kwargs.get('historydata')
+        self.endpoint = kwargs.get('endpoint')
+        self.worker_id = kwargs.get('worker_id')
+
+        if self.historydata['workerid'] is not None:
             raise AssertionError(
                 "Task already being worked on by someone else")
 
-        requests.put('http://web:8000/api/history/' + kwargs.get('fkhistory') + '/?format=json',
-                     data={'workerid': kwargs.get('celeryid'), 'status': 'In Progress'})
+        self.pkid = self.historydata['pkid']
+        fktask = self.historydata['fktask']
 
-        self.pkid = self.historydata.json().get('pkid')
-        fktask = self.historydata.json().get('fktask')
-
-        self.task = requests.get(
-            'http://web:8000/api/task/' + fktask + '/?format=json')
+        self.task = requests.get(f'{self.endpoint}/api/task/{fktask}/?format=json')
         fktemplate = self.task.json().get('fktemplate')
-        self.template = requests.get(
-            'http://web:8000/api/template/' + fktemplate + '/?format=json')
+        self.template = requests.get(f'{self.endpoint}/api/template/{fktemplate}/?format=json')
 
         logging.info(self.template.json().get('template'))
 
-        self.work = kwargs.get('work')
-
         self.log = NetIO(fkhistory=self.pkid)
-        self.stageit()
+
+        try:
+            requests.put(f'{self.endpoint}/api/history/{self.pkid}/?format=json',
+                         data={'workerid': self.worker_id, 'status': 'In Progress'})
+            self.stageit()
+        except Exception as e:
+            self.on_failure(self.pkid, e)
+
+        self.on_success(self.pkid)
+
+    def on_success(self, fkhistory):
+        logging.info("Set task successful")
+        requests.put(f'{self.endpoint}/api/history/{fkhistory}/?format=json', data={'status': 'Success'})
+
+    def on_failure(self, fkhistory, exception):
+        logging.fatal("EPIC FAIL")
+        requests.put(f'{self.endpoint}/api/history/{fkhistory}/?format=json', data={'status': 'Fail'})
+        logging.fatal(exception)
+
 
     def driver(self):
         """
@@ -169,11 +166,3 @@ class FakeWorker(Task):
         return True
 
 
-app.register_task(FakeWorker())
-
-
-@app.task(bind=True, base=FakeWorker)
-def fakeworker(self, **kwargs):
-    celeryid = self.request.id.__str__()
-    worker = FakeWorker()
-    return worker.run(fkhistory=kwargs.get('fkhistory'), celeryid=celeryid)
