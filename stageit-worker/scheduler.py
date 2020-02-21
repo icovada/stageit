@@ -2,10 +2,10 @@ import time
 import schedule
 import os
 from requests import get
-from libs.base_device import base_device
-from libs.fake_device import fake_device
+#from libs.base_worker import BaseWorker
+from libs.fake_worker import FakeWorker
 
-worker_id = os.environ['WORKER_ID']
+worker_name = os.environ['WORKER_ID']
 stageit_endpoint = os.environ['STAGEIT_ENDPOINT']
 token = os.environ['TOKEN']
 history_url = stageit_endpoint + "/api/history/?format=json&search=Queued"
@@ -16,16 +16,18 @@ def check_tasks():
     except:
         pass
 
-    if len(history_list) == 0:
+    if len(history_list.json()) == 0:
+        print("Nothing")
         return True
 
-    for history in history_list:
-        if history['status'] == 'Queued' and history['fkremoteworker'] == worker_id:
-            fake_device()
+    for history in history_list.json():
+        if history['status'] == 'Queued':
+            FakeWorker(historydata=history, endpoint=stageit_endpoint, worker_id=worker_pkid)
 
 
 
-my_pkid = get(stageit_endpoint + "/?name=" + worker_id)
+worker_pkid = get(f'{stageit_endpoint}/api/remoteworker/?name={worker_name}').json()[0]['pkid']
+print(worker_pkid)
 
 schedule.every(10).seconds.do(check_tasks)
 
