@@ -7,11 +7,12 @@ import requests
 
 
 class NetIO(BytesIO):
-    def __init__(self, fkhistory):
+    def __init__(self, fkhistory, endpoint):
         self.sequence = 1
         self.fkhistory = fkhistory
         self.buffer = BytesIO()
         self.lastflush = self.buffer.tell()
+        self.endpoint = endpoint
         super().__init__()
 
     def close(self):
@@ -30,7 +31,7 @@ class NetIO(BytesIO):
                     'sequence': self.sequence,
                     'log': binlog}
 
-        requests.post('http://web:8000/api/log/?format=json',
+        requests.post(self.endpoint + '/api/log/?format=json',
                       data=postdata)
 
         self.sequence += 1

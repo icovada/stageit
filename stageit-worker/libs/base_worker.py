@@ -40,7 +40,7 @@ class BaseWorker():
         self.worker_id = kwargs.get('worker_id')
         self.pkid = self.historydata['pkid']
 
-        self.logbuffer = NetIO(self.pkid)
+        self.logbuffer = NetIO(fkhistory=self.pkid, endpoint=self.endpoint)
         logging.info('Worker for %s ready', self.pkid)
 
         if self.historydata['workerid'] is not None:

@@ -121,7 +121,7 @@ class FakeWorker():
 
         logging.info(self.template.json().get('template'))
 
-        self.log = NetIO(fkhistory=self.pkid)
+        self.log = NetIO(fkhistory=self.pkid, endpoint=self.endpoint)
 
         try:
             requests.put(f'{self.endpoint}/api/history/{self.pkid}/?format=json',
