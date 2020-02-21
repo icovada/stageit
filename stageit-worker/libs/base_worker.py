@@ -163,7 +163,7 @@ class BaseWorker():
     def find_model(self, url_base):
         """Find device type and return appropriate class to deal with
         upgrading, version checking and else."""
-        device = BaseDevice(tserver=self.tserver, **
+        device = BaseDevice(tserver=self.tserver, endpoint=self.endpoint, **
                             self.devicedata, pkid=self.pkid)
         device.checkavailable(300)
 

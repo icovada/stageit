@@ -8,14 +8,13 @@ import requests
 from napalm.base.exceptions import ConnectionClosedException
 from netmiko.ssh_exception import NetMikoAuthenticationException
 
-URL_BASE = "http://web:8000/api/"
 URL_SUFFIX = "/?format=json"
 
 
 class BaseDevice():
     """BaseDevice to be expanded by subclasses."""
 
-    def __init__(self, tserver, pkid, **kwargs):
+    def __init__(self, tserver, endpoint, pkid, **kwargs):
         """Define all class data."""
         logging.info('Init')
         self._has_connectivity = False
@@ -31,6 +30,7 @@ class BaseDevice():
                                               'secret': 'cisco'}}
         self.session = None
         self.tserver = tserver
+        self.endpoint = endpoint
 
         self._checksession()
 
@@ -72,7 +72,7 @@ class BaseDevice():
                 'model': self.facts['model']}
 
         # Update history line with new facts we found
-        requests.put(URL_BASE + 'history/' + self.pkid + URL_SUFFIX, data=data)
+        requests.put(self.endpoint + '/api/history/' + self.pkid + URL_SUFFIX, data=data)
         logging.info('Getting facts done')
 
     def load_bootstrap_config(self, bootstraptemplate, values, **kwargs):
