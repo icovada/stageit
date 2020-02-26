@@ -1,0 +1,166 @@
+"""Fake worker returning Sim City 4 loading screen messages"""
+
+import logging
+import random
+from time import sleep
+
+import requests
+from libs.netio import NetIO
+
+
+class FakeWorker():
+    """
+    Fake for test
+    """
+    statuses = None
+    historydata = None
+    pkid = None
+    task = None
+    template = None
+    work = None
+    log = None
+
+
+    def __init__(self, *args, **kwargs):
+        logging.info("Initializing")
+
+        # Adapted from Sim City 4 loading screen to fit network
+        self.statuses = ["Adding Maliciuous Config",
+                         "Adjusting Burst Curves",
+                         "Aesthesizing QoS Mappings",
+                         "Aligning Fiber Connectors",
+                         "Attempting to Lock Back-Buffer",
+                         "Calculating Packet Loss",
+                         "Calibrating Blue Lasers",
+                         "Charging Capacitors",
+                         "Coalescing Cloud Formations",
+                         "Cohorting Templates",
+                         "Compounding Inert Tessellations",
+                         "Compressing Fish Files",
+                         "Computing Optimal Bin Packing",
+                         "Concatenating Sub-Contractors",
+                         "Containing Existential Buffer",
+                         "Deciding What Message to Display Next",
+                         "Decomposing Singular Values",
+                         "Decrementing TCAM Entries",
+                         "Deleting Routes",
+                         "Destabilizing Routing Protocols",
+                         "Determining Width of Band",
+                         "Dicing Models",
+                         "Exposing Flash Variables to Streak System",
+                         "Extracting Resources",
+                         "Factoring Pay Scale",
+                         "Fixing Stack Election Outcome Matrix",
+                         "Flushing Pipe Network",
+                         "Generating Jobs",
+                         "Hiding Subnet Masks",
+                         "Implementing Impeachment Routine",
+                         "Increasing Accuracy of ACI Simulators",
+                         "Increasing Automatisation",
+                         "Initializing MAC Tracking Mechanism",
+                         "Initializing Rhinoceros Breeding Timetable",
+                         "Initializing Robotic Click-Path AI",
+                         "Inserting Sublimated Messages",
+                         "Integrating Curves",
+                         "Integrating Desktop Form Factors",
+                         "Lecturing Errant Subsystems",
+                         "Mopping Occupant Leaks",
+                         "Normalizing Power",
+                         "Obfuscating Quigley Matrix",
+                         "Overconstraining Industrial Ethernet",
+                         "Perturbing Port Channels",
+                         "Planting Spanning Trees",
+                         "Populating Int Templates",
+                         "Preparing Stacks for Random Reboots",
+                         "Prioritizing Pings",
+                         "Realigning Plesiosynchronous links",
+                         "Reconfiguring User Mental Processes",
+                         "Relaxing Splines",
+                         "Removing Collision Avoidance Behavior",
+                         "Removing Network Speed Bumps",
+                         "Removing NTP strata",
+                         "Removing Smart Licenses",
+                         "Resolving GUID Conflict",
+                         "Reticulating Splines",
+                         "Retrieving from Back Store",
+                         "Reverse Engineering STP Protocols",
+                         "Routing Neural Network Infrastructure",
+                         "Scattering Rhino Food Sources",
+                         "Scratching Chassis",
+                         "Screwing rack mounts",
+                         "Sequencing Particles",
+                         "Setting Inner Deity Indicators",
+                         "Setting Universal Physical Constants",
+                         "Splatting Transforms",
+                         "Stratifying PCBs",
+                         "Sub-Sampling Data",
+                         "Synthesizing Packets",
+                         "Time-Compressing Simulator Clock",
+                         "Unable to Reveal Current Activity",
+                         "Upgrading Macrocode",
+                         "Weaving Data Fabrics",
+                         "Zeroing nvram"]
+
+        logging.info("Fake Worker ready")
+        logging.info(kwargs.get('fkhistory'))
+
+        self.historydata = kwargs.get('historydata')
+        self.endpoint = kwargs.get('endpoint')
+        self.worker_id = kwargs.get('worker_id')
+
+        if self.historydata['workerid'] is not None:
+            raise AssertionError(
+                "Task already being worked on by someone else")
+
+        self.pkid = self.historydata['pkid']
+        fktask = self.historydata['fktask']
+
+        self.task = requests.get(f'{self.endpoint}/api/task/{fktask}/?format=json')
+        fktemplate = self.task.json().get('fktemplate')
+        self.template = requests.get(f'{self.endpoint}/api/template/{fktemplate}/?format=json')
+
+        logging.info(self.template.json().get('template'))
+
+        self.log = NetIO(fkhistory=self.pkid, endpoint=self.endpoint)
+
+        try:
+            requests.put(f'{self.endpoint}/api/history/{self.pkid}/?format=json',
+                         data={'workerid': self.worker_id, 'status': 'In Progress'})
+            self.stageit()
+            self.on_success(self.pkid)
+        except Exception as e:
+            self.on_failure(self.pkid, e)
+
+
+    def on_success(self, fkhistory):
+        logging.info("Set task successful")
+        requests.put(f'{self.endpoint}/api/history/{fkhistory}/?format=json', data={'status': 'Success'})
+
+    def on_failure(self, fkhistory, exception):
+        logging.fatal("EPIC FAIL")
+        requests.put(f'{self.endpoint}/api/history/{fkhistory}/?format=json', data={'status': 'Fail'})
+        logging.fatal(exception)
+
+
+    def driver(self):
+        """
+        Return complete log.
+
+        Subroutine because emulates an import in BaseWorker
+        """
+
+        def getlog(self):
+            return self.log.getvalue().decode('utf-8')
+
+    def stageit(self):
+        """Choose random status"""
+        for i in range(random.randint(30, 30)):
+            status = self.statuses[random.randint(0, len(self.statuses)-1)]
+            self.log.write(status.encode('utf-8') + "\n".encode('utf-8'))
+            if (i % 2) == 0:
+                self.log.flush()
+            logging.info(status)
+            sleep(random.randint(1, 2))
+
+        self.log.flush()
+        return True

@@ -23,7 +23,7 @@ services:
 
   web:
     build: 
-      context: stageit/.
+      context: stageit-web/.
     volumes:
       - static:/code/static_cdn
       - media:/code/media_cdn
@@ -33,28 +33,15 @@ services:
     networks:
       - inside
     env_file:
-      - stageit/.env.web
+      - stageit-web/.env
 
-  celery:
-    build: stageit/.
-    command: celery -A stageit worker -l info
-    depends_on:
-      - db
-      - rabbit
-      - web
+  worker:
+    build: stageit-worker/.
+    command: python scheduler.py
     networks:
       - inside
     env_file:
-      - stageit/.env.celery
-
-  rabbit:
-    image: rabbitmq:3
-    volumes:
-      - ./docker-files/rabbit:/etc/rabbitmq/
-    ports: 
-      - "15672:15672"
-    networks:
-      - inside
+      - stageit-worker/.env
 
 volumes:
   postgres-data:
