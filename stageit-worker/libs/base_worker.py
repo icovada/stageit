@@ -9,8 +9,6 @@ from jinja2 import BaseLoader, Environment
 from libs.base_device import BaseDevice
 from libs.netio import NetIO
 
-URL_SUFFIX = "/?format=json"
-
 
 class BaseWorker():
     """Base class to connect to network device."""
@@ -31,7 +29,6 @@ class BaseWorker():
     tserver = None
     driver = None
 
-
     def __init__(self, *args, **kwargs):
         """Celery calls this to start the task."""
 
@@ -40,37 +37,39 @@ class BaseWorker():
         self.worker_id = kwargs.get('worker_id')
         self.pkid = self.historydata['pkid']
 
-        self.logbuffer = NetIO(fkhistory=self.pkid, endpoint=self.endpoint)
-        logging.info('Worker for %s ready', self.pkid)
-
         if self.historydata['workerid'] is not None:
             raise AssertionError(
                 "Task already being worked on by someone else")
-        
+
+        self.logbuffer = NetIO(fkhistory=self.pkid, endpoint=self.endpoint)
+        logging.info('Worker for %s ready', self.pkid)
+
         try:
             # Mark History row as being worked on by us
             data = {'workerid': self.worker_id,
                     'status': 'Discovering'}
-            requests.put(self.endpoint + '/api/history/' +
-                         self.pkid + URL_SUFFIX, data=data)
+            requests.put(
+                f'{self.endpoint}/api/history/{self.pkid}/?format=json', data=data)
 
             # Now we have checked the task is OK to work on and marked it as ours, fetch task data
             self.fktask = self.historydata['fktask']
             self.taskdata = requests.get(
-                self.endpoint + '/api/task/' + self.fktask + URL_SUFFIX).json()
+                f'{self.endpoint}/api/task/{self.fktask}/?format=json').json()
 
             # From the task we find the template
             fktemplate = self.taskdata.get('fktemplate')
             self.templatedata = requests.get(
-                self.endpoint + '/api/template/' + fktemplate + URL_SUFFIX).json()
+                f'{self.endpoint}/api/template/{fktemplate}/?format=json').json()
 
             # Find the port to connect to
+            fkserialport = self.historydata.get('fkserialport')
             self.serialportdata = requests.get(
-                self.endpoint + '/api/serialport/' + self.historydata.get('fkserialport') + URL_SUFFIX).json()
+                f'{self.endpoint}/api/serialport/{fkserialport}/?format=json').json()
 
             # Find the terminal server to connect to
+            fkterminalserver = self.serialportdata.get('fkterminalserver')
             self.terminalserverdata = requests.get(
-                self.endpoint + '/api/terminalserver/' + self.serialportdata.get('fkterminalserver') + URL_SUFFIX).json()
+                f'{self.endpoint}/api/terminalserver/{fkterminalserver}/?format=json').json()
             logging.info('Successfully retrieved all data')
 
             hostname = self.terminalserverdata.get('hostname')
@@ -82,7 +81,8 @@ class BaseWorker():
             description = self.taskdata.get('description')
             taskvalues = self.taskdata.get('taskvalues')
             self.template = self.templatedata.get('template')
-            rtemplate = Environment(loader=BaseLoader).from_string(self.template)
+            rtemplate = Environment(
+                loader=BaseLoader).from_string(self.template)
             self.finalconfig = rtemplate.render(taskvalues)
             platform = 'ios'
             poststaging = self.templatedata.get('poststaging')
@@ -97,13 +97,13 @@ class BaseWorker():
 
             # Data to pass to Worker class
             self.devicedata = {'hostname': hostname,
-                            'port': port,
-                            'transport': transport,
-                            'username': username,
-                            'password': password,
-                            'platform': platform,
-                            'logbuffer': self.logbuffer
-                            }
+                               'port': port,
+                               'transport': transport,
+                               'username': username,
+                               'password': password,
+                               'platform': platform,
+                               'logbuffer': self.logbuffer
+                               }
 
             # Find driver for Terminal Server
             if self.terminalserverdata.get('model') == 'cisco':
@@ -120,45 +120,47 @@ class BaseWorker():
 
             # Actually do the job (finally!)
             self.stageit(filepath=filepath, installmode=installmode,
-                        fkbootstrapconfig=self.templatedata.get('fkbootstrapconfig'))
+                         fkbootstrapconfig=self.templatedata.get('fkbootstrapconfig'))
 
             if poststaging is not None and poststaging != '':
                 self.driver.poststaging(poststaging)
 
             self.driver.close()
-            
+
             self.on_success(self.pkid)
         except Exception as e:
-            self.on_failure(self.pkid, e)
+            self.on_failure(e)
+        
+        self.on_success()
 
-
-    def on_success(self, fkhistory):
+    def on_success(self):
         """
         Celery runs this if the task runs successfully
         Update database, set history as successful and delete task.
         """
         logging.info("Set task successful")
-        logging.info(retval)
-        logging.info(kwargs)
 
-        requests.delete(self.endpoint + '/api/templates/' + self.fktask + URL_SUFFIX)
+        requests.delete(
+            f'{self.endpoint}/api/templates/{self.fktask}/?format=json')
         data = {'status': 'Completed',
                 'dateend': datetime.utcnow()
                 }
-        requests.put(self.endpoint + '/api/history/' + self.pkid + URL_SUFFIX, data=data)
+        requests.put(
+            f'{self.endpoint}/api/history/{self.pkid}/?format=json', data=data)
 
-    def on_failure(self, fkhistory, exception):
+    def on_failure(self, exception):
         """
         Celery runs this if the task fails
         Update database, set history as failed.
         """
 
         logging.error("EPIC FAIL")
-        logging.info(retval)
         data = {'status': 'Fail',
                 'dateend': datetime.utcnow()
                 }
-        requests.put(self.endpoint + '/api/history/' + self.pkid + URL_SUFFIX, data=data)
+        requests.put(
+            f'{self.endpoint}/api/history/{self.pkid}/?format=json', data=data)
+        self.logbuffer.write(exception)
 
     def find_model(self, url_base):
         """Find device type and return appropriate class to deal with
@@ -186,8 +188,8 @@ class BaseWorker():
 
         # Update database row
         data = {'status': 'In Progress'}
-        requests.put(url_base + '/api/history/' +
-                     self.pkid + URL_SUFFIX, data=data)
+        requests.put(
+            f'{url_base}/api/history/{self.pkid}/?format=json', data=data)
 
         device.close()
         return specific_device(**self.devicedata, tserver=self.tserver, pkid=self.pkid)

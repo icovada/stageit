@@ -3,7 +3,7 @@ import schedule
 import os
 import threading
 from requests import get
-#from libs.base_worker import BaseWorker
+from libs.base_worker import BaseWorker
 from libs.fake_worker import FakeWorker
 
 worker_name = os.environ['WORKER_ID']
@@ -28,7 +28,7 @@ def check_tasks():
 
 
 def run_threaded(history):
-    FakeWorker(historydata=history, endpoint=stageit_endpoint, worker_id=worker_pkid)
+    BaseWorker(historydata=history, endpoint=stageit_endpoint, worker_id=worker_pkid)
 
 worker_pkid = get(f'{stageit_endpoint}/api/remoteworker/?name={worker_name}').json()[0]['pkid']
 print(worker_pkid)
