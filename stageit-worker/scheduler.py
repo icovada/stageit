@@ -1,6 +1,7 @@
 import time
 import schedule
 import os
+import threading
 from requests import get
 #from libs.base_worker import BaseWorker
 from libs.fake_worker import FakeWorker
@@ -22,9 +23,12 @@ def check_tasks():
 
     for history in history_list.json():
         if history['status'] == 'Queued':
-            FakeWorker(historydata=history, endpoint=stageit_endpoint, worker_id=worker_pkid)
+            job_thread = threading.Thread(target=run_threaded, args=(history,))
+            job_thread.start()
 
 
+def run_threaded(history):
+    FakeWorker(historydata=history, endpoint=stageit_endpoint, worker_id=worker_pkid)
 
 worker_pkid = get(f'{stageit_endpoint}/api/remoteworker/?name={worker_name}').json()[0]['pkid']
 print(worker_pkid)
