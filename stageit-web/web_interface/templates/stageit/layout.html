@@ -53,46 +53,67 @@
                                 <div class="horizontal-logo" data-toggle="mobile-menu" title="Close menu">
                                     <div class="logo-image" title="NTT"></div>
                                     <div class="logo-title"><span>Stage<br>IT!</span></div>
-                                </div>
+                            <li class="dropdown hidden-mobile">
+                                <a href="#" data-toggle="dropdown" role="button" aria-haspopup="true"
+                                    aria-expanded="false" class="dropdown-toggle">
+                                    <span class="fa fa-user"></span> Bill M <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#">My account</a></li>
+                                    <li><a href="#">Application settings</a></li>
+                                    <li><a href="#">Status updates</a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li><a href="#">Sign out</a></li>
+                                </ul>
                             </li>
-                            {% include 'stageit/menulist.html' %}
-                        </ul>
-                    </nav>
                 </div>
+                </li>
+                {% include 'stageit/menulist.html' %}
+                </ul>
+                </nav>
             </div>
         </div>
+    </div>
 
-        <header class="site-header">
-            <nav class="navbar navbar-fixed-top">
-                <!-- Left utility nav -->
-                <ul class="nav navbar-nav navbar-left">
-                    <!-- Desktop menu toggle -->
-                    <li class="desktop-menu-toggle hidden-mobile">
-                        <a href="#" data-toggle="desktop-menu" title="Desktop menu">
-                            <div class="hidden-closed">Close</div>
-                            <div class="hidden-opened"></div>
-                        </a>
-                    </li>
-                    <li>
-                        <!-- Company logo -->
-                        <a class="horizontal-logo" href="/" title="Return home">
-                            <div class="logo-image" title="NTT"></div>
-                            <div class="logo-title"><span>Stage<br>it!</span></div>
-                        </a>
-                    </li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="mobile-menu-toggle hidden-desktop" data-toggle="mobile-menu" title="Mobile menu">
-                        <button type="button" class="navbar-btn btn"><i aria-hidden="true"
-                                class="fa fa-bars"></i></button>
-                    </li>
-                </ul>
-            </nav>
-        </header>
+    <header class="site-header">
+        <nav class="navbar navbar-fixed-top">
+            <!-- Left utility nav -->
+            <ul class="nav navbar-nav navbar-left">
+                <!-- Desktop menu toggle -->
+                <li class="desktop-menu-toggle hidden-mobile">
+                    <a href="#" data-toggle="desktop-menu" title="Desktop menu">
+                        <div class="hidden-closed">Close</div>
+                        <div class="hidden-opened"></div>
+                    </a>
+                </li>
+                <li>
+                    <!-- Company logo -->
+                    <a class="horizontal-logo" href="/" title="Return home">
+                        <div class="logo-image" title="NTT"></div>
+                        <div class="logo-title"><span>Stage<br>it!</span></div>
+                    </a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown hidden-mobile">
+                    <a href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
+                        class="dropdown-toggle">
+                        <span class="fa fa-user"></span> Bill M <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Sign out</a></li>
+                    </ul>
+                </li>
+                <li class="mobile-menu-toggle hidden-desktop" data-toggle="mobile-menu" title="Mobile menu">
+                    <button type="button" class="navbar-btn btn"><i aria-hidden="true" class="fa fa-bars"></i></button>
+                </li>
+            </ul>
+        </nav>
+    </header>
 
-        <main class="page-wrapper">
-            {% block body %}{% endblock %}
-        </main>
+    <main class="page-wrapper">
+        {% block body %}{% endblock %}
+    </main>
 
     </div>
 
