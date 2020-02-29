@@ -7,6 +7,11 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import (CreateView, DeleteView, FormView,
                                   UpdateView)
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+
+
 
 import web_interface.models as models
 
@@ -15,73 +20,77 @@ from .forms import (SerialPortForm, TerminalServerForm,
 
 baseform = 'stageit/baseform.html'
 
-
+@login_required
 def terminalserver(request):
     return render(request, 'stageit/terminalserver_list.html')
 
 
-class TerminalServerCreate(CreateView):
+class TerminalServerCreate(LoginRequiredMixin, CreateView):
     form_class = TerminalServerForm
     model = models.TerminalServer
     template_name = baseform
 
 
-class TerminalServerUpdate(UpdateView):
+class TerminalServerUpdate(LoginRequiredMixin, UpdateView):
     form_class = TerminalServerForm
     model = models.TerminalServer
     template_name = baseform
 
 
-class TerminalServerDelete(DeleteView):
+class TerminalServerDelete(LoginRequiredMixin, DeleteView):
     form_class = TerminalServerForm
     model = models.TerminalServer
     template_name = baseform
 
 
+@login_required
 def serialport(request):
     return render(request, 'stageit/serialport_list.html')
 
 
-class SerialPortCreate(CreateView):
+class SerialPortCreate(LoginRequiredMixin, CreateView):
     form_class = SerialPortForm
     model = models.SerialPort
     template_name = baseform
 
 
-class SerialPortUpdate(UpdateView):
+class SerialPortUpdate(LoginRequiredMixin, UpdateView):
     form_class = SerialPortForm
     model = models.SerialPort
     template_name = baseform
 
 
-class SerialPortDelete(DeleteView):
+class SerialPortDelete(LoginRequiredMixin, DeleteView):
     form_class = SerialPortForm
     model = models.SerialPort
     template_name = baseform
 
 
+@login_required
 def remoteworker(request):
     return render(request, 'stageit/remoteworker_list.html')
 
-class RemoteWorkerCreate(CreateView):
+class RemoteWorkerCreate(LoginRequiredMixin, CreateView):
     form_class = RemoteWorkerForm
     model = models.RemoteWorker
     template_name = baseform
 
-class RemoteWorkerUpdate(UpdateView):
+class RemoteWorkerUpdate(LoginRequiredMixin, UpdateView):
     form_class = RemoteWorkerForm
     model = models.RemoteWorker
     template_name = baseform
 
-class RemoteWorkerDelete(DeleteView):
+class RemoteWorkerDelete(LoginRequiredMixin, DeleteView):
     form_class = RemoteWorkerForm
     model = models.RemoteWorker
     template_name = baseform
 
+@login_required
 def filemanager(request):
     return render(request, 'stageit/filemanager.html')
 
 
+@login_required
 def upload_file(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
@@ -97,14 +106,17 @@ def upload_file(request):
     return render(request, 'stageit/upload.html', {'form': form})
 
 
+@login_required
 def bootstrapconfig(request):
     return render(request, 'stageit/bootstrapconfig_list.html')
 
 
+@login_required
 def bootstrapconfigadd(request):
     return render(request, 'stageit/bootstrapconfig/add.html')
 
 
+@login_required
 def bootstrapconfigdetail(request, uuid):
     data = models.BootstrapConfig.objects.get(pkid=uuid).__dict__
     data['values'] = yaml.dump(data['values'], indent=4, sort_keys=True)
