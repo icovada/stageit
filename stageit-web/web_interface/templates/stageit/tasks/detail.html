@@ -150,6 +150,9 @@
         $.ajax({
             type: 'PUT',
             url: "/api/task/{{pkid}}/",
+            beforeSend: function(request) {
+                request.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+            },
             data: {
                 description: $('#description').val(),
                 taskvalues: JSON.stringify(jsyaml.load($('#taskvalues').val())),
@@ -172,7 +175,10 @@
             .on('accept', function () {
                 $.ajax({
                     type: 'DELETE',
-                    url: "/api/task/{{pkid}}/"
+                    url: "/api/task/{{pkid}}/",
+                    beforeSend: function(request) {
+                        request.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                    },
                 });
                 basecoat.alert('Task deleted')
                     .on('hide.bs.modal', function () {

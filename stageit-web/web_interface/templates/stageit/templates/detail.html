@@ -180,6 +180,9 @@
         $.ajax({
             type: 'PUT',
             url: "/api/template/{{template.pkid}}/",
+            beforeSend: function(request) {
+                request.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+            },
             data: {
                 name: $('#name').val(),
                 description: $('#description').val(),
@@ -208,7 +211,10 @@
             .on('accept', function () {
                 $.ajax({
                     type: 'DELETE',
-                    url: "/api/template/{{template.pkid}}/"});
+                    url: "/api/template/{{template.pkid}}/",
+                    beforeSend: function(request) {
+                        request.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                    }});
                 basecoat.alert('Template deleted')
                     .on('hide.bs.modal', function () {
                         window.location.href = "/templates";
