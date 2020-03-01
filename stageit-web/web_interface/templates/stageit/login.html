@@ -8,7 +8,7 @@
         <h1 class="main-heading">Login</h1>
         <p>Looking for <a href="/admin">Admin pages</a>?</p>
 
-        <form class="needs-validation" action="/login" id="loginform" method="post">
+        <form class="needs-validation" action="/login" id="loginform" name="loginform" method="post">
             <div class="form-group">
                 {% csrf_token %}
                 <div class="form-row">
@@ -16,7 +16,7 @@
                         <div class="form-group has-icon">
                             <label class="control-label" for="loginUsername">Username or Email</label>
                             <input type="text" placeholder="Enter your username or email address"
-                                class="form-control" id="loginUsername" required>
+                                class="form-control" id="loginUsername" name="loginUsername" required>
                             <span class="form-control-feedback fa-user"></span>
                         </div>
                     </div>
@@ -24,15 +24,15 @@
                         <div class="form-group has-icon has-password-toggle">
                             <label class="control-label" for="loginPassword">Password</label>
                             <input type="password" placeholder="Enter your password" class="form-control"
-                                id="loginPassword" required>
+                                id="loginPassword" name="loginPassword" required>
                             <span class="password-toggle"></span>
                             <span class="form-control-feedback fa-lock"></span>
                         </div>
                     </div>
                 </div>
-                <div class="form-row">
-                    <button type="submit" class="btn btn-block btn-primary bottom-gutter">Submit</button>
-                </div>
+            </div>
+            <div class="form-row">
+                <button type="submit" class="btn btn-block btn-primary bottom-gutter">Submit</button>
             </div>
         </form>
     </div>
