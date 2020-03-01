@@ -14,6 +14,6 @@ urlpatterns = [
     path('tasks/new/<uuid:uuid>', views.tasksadd, name='tasksadd'),
     path('sandbox', views.sandbox),
     path('settings/', include('web_settings.urls')),
-    path('login', views.login, name='login'),
+    path('login', views.login_view, name='login'),
     path('', views.index, name='index'),
 ]

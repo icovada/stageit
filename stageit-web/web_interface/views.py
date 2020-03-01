@@ -4,6 +4,7 @@ import yaml
 from django.http import HttpResponseForbidden
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login
 from django.utils.decorators import method_decorator
 
 import web_interface.models as models
@@ -116,5 +117,20 @@ def tasksadd(request, uuid):
 def sandbox(request):
     return render(request, 'stageit/jinja_sandbox.html')
 
-def login(request):
-    return render(request, 'stageit/login.html')
+def login_view(request):
+
+    if request.user.is_authenticated:
+        return redirect('/')
+    else:
+        if request.method == 'POST':
+            # Trying to log in
+            username = request.POST['loginUsername']
+            password = request.POST['loginPassword']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('/')
+            else:
+                return render(request, 'stageit/login.html')
+        else:    
+            return render(request, 'stageit/login.html')
