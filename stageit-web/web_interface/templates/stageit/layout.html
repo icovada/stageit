@@ -94,11 +94,12 @@
                     </a>
                 </li>
             </ul>
+            {% if user.is_authenticated %}
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown hidden-mobile">
                     <a href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
                         class="dropdown-toggle">
-                        <span class="fa fa-user"></span> Bill M <span class="caret"></span>
+                        <span class="fa fa-user"></span>{{user.first_name}} {{user.last_name}}<span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
                         <li><a href="/logout">Logout</a></li>
@@ -108,6 +109,7 @@
                     <button type="button" class="navbar-btn btn"><i aria-hidden="true" class="fa fa-bars"></i></button>
                 </li>
             </ul>
+            {% endif %}
         </nav>
     </header>
 
