@@ -4,7 +4,7 @@ import yaml
 from django.http import HttpResponseForbidden
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.utils.decorators import method_decorator
 
 import web_interface.models as models
@@ -134,3 +134,8 @@ def login_view(request):
                 return render(request, 'stageit/login.html')
         else:    
             return render(request, 'stageit/login.html')
+
+def logout_view(request):
+    logout(request)
+    # Redirect to a success page.
+    return redirect('/login')
