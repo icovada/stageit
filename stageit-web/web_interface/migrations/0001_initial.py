@@ -61,6 +61,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('pkid', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ('fkuser', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('name', models.CharField(max_length=30, unique=True)),
             ],
         ),
         migrations.CreateModel(
