@@ -1,6 +1,7 @@
 from uuid import uuid4
 from django.contrib.postgres.fields import JSONField
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 class BootstrapConfig(models.Model):
@@ -38,8 +39,7 @@ class Template(models.Model):
 
 class RemoteWorker(models.Model):
     pkid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
-    name = models.TextField(unique=True)
-    token = models.TextField()
+    fkuser = models.OneToOneField(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return('{}'.format(self.name))
