@@ -1,12 +1,28 @@
-from django.contrib.auth.models import Permission
-from django.db import migrations
+from django.db import migrations, models
 from django.conf import settings
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import Group, User, Permission
+from django.apps import apps as django_apps
 
 
-def add_workers_group(apps, schema_editor):
+# https://stackoverflow.com/questions/50114505/why-i-cant-assign-new-permission-to-group-in-the-same-migration-in-django
+def post_migrate_signal(apps, schema_editor):
+    config = django_apps.get_app_config('web_interface')
+    models.signals.post_migrate.send(
+        sender=config,
+        app_config=config,
+        verbosity=2,
+        interactive=False,
+        using=schema_editor.connection.alias,
+    )
+
+
+def add_groups(apps, schema_editor):
 
     Group.objects.create(name="Workers")
+    Group.objects.create(name="Users")
+
+
+def assign_permissions(apps, schema_editor):
     # get_or_create returns a tuple, not a Group
     group = Group.objects.get(name="Workers")
     permissions = Permission.objects.filter(codename__in=[
@@ -26,9 +42,8 @@ def add_workers_group(apps, schema_editor):
     group.permissions.add(*permissions)
 
 
-def add_users_group(apps, schema_editor):
 
-    Group.objects.create(name="Users")
+    
     # get_or_create returns a tuple, not a Group
     group = Group.objects.get(name="Users")
     permissions = Permission.objects.filter(codename__in=[
@@ -79,6 +94,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(add_workers_group),
-        migrations.RunPython(add_users_group),
+        migrations.RunPython(add_groups),
+        migrations.RunPython(post_migrate_signal),
+        migrations.RunPython(assign_permissions),
     ]
