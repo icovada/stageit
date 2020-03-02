@@ -128,8 +128,12 @@ def login_view(request):
             password = request.POST['loginPassword']
             user = authenticate(request, username=username, password=password)
             if user is not None:
-                login(request, user)
-                return redirect('/')
+                # Do not authenticate Workers
+                if user.groups.filter(name__in=['Users',]).exists():
+                    login(request, user)
+                    return redirect('/')
+                else:
+                    return HttpResponseForbidden("Only users in 'Users' group can login to the site")
             else:
                 return render(request, 'stageit/login.html')
         else:    
