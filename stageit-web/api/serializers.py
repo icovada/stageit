@@ -86,7 +86,6 @@ class TerminalServerSerializer(serializers.ModelSerializer):
 class RemoteWorkerSerializer(serializers.ModelSerializer):
     pkid = serializers.UUIDField(format='hex_verbose', required=False)
     name = serializers.CharField()
-    token = serializers.CharField()
 
     class Meta:
         model = models.RemoteWorker
