@@ -107,6 +107,7 @@ class FakeWorker():
         self.historydata = kwargs.get('historydata')
         self.endpoint = kwargs.get('endpoint')
         self.worker_id = kwargs.get('worker_id')
+        self.headers = kwargs.get('headers')
 
         if self.historydata['workerid'] is not None:
             raise AssertionError(
@@ -115,17 +116,19 @@ class FakeWorker():
         self.pkid = self.historydata['pkid']
         fktask = self.historydata['fktask']
 
-        self.task = requests.get(f'{self.endpoint}/api/task/{fktask}/?format=json')
+        self.task = requests.get(f'{self.endpoint}/api/task/{fktask}/?format=json', headers=self.headers)
         fktemplate = self.task.json().get('fktemplate')
-        self.template = requests.get(f'{self.endpoint}/api/template/{fktemplate}/?format=json')
+        self.template = requests.get(f'{self.endpoint}/api/template/{fktemplate}/?format=json', headers=self.headers)
 
         logging.info(self.template.json().get('template'))
 
-        self.log = NetIO(fkhistory=self.pkid, endpoint=self.endpoint)
+        self.log = NetIO(fkhistory=self.pkid, endpoint=self.endpoint, headers=self.headers)
 
         try:
-            requests.put(f'{self.endpoint}/api/history/{self.pkid}/?format=json',
-                         data={'workerid': self.worker_id, 'status': 'In Progress'})
+            historydata = requests.get(f'{self.endpoint}/api/history/{self.pkid}/?format=json', headers=self.headers).json()
+            historydata['status'] = 'In Progress'
+            updatestate = requests.put(f'{self.endpoint}/api/history/{self.pkid}/?format=json',
+                         data=historydata, headers=self.headers)
             self.stageit()
             self.on_success(self.pkid)
         except Exception as e:
@@ -133,12 +136,16 @@ class FakeWorker():
 
 
     def on_success(self, fkhistory):
+        historydata = requests.get(f'{self.endpoint}/api/history/{self.pkid}/?format=json', headers=self.headers).json()
         logging.info("Set task successful")
-        requests.put(f'{self.endpoint}/api/history/{fkhistory}/?format=json', data={'status': 'Success'})
+        historydata['status'] = 'Success'
+        requests.put(f'{self.endpoint}/api/history/{fkhistory}/?format=json', data=historydata, headers=self.headers)
 
     def on_failure(self, fkhistory, exception):
+        historydata = requests.get(f'{self.endpoint}/api/history/{self.pkid}/?format=json', headers=self.headers).json()
         logging.fatal("EPIC FAIL")
-        requests.put(f'{self.endpoint}/api/history/{fkhistory}/?format=json', data={'status': 'Fail'})
+        historydata['status'] = 'Fail'
+        requests.put(f'{self.endpoint}/api/history/{fkhistory}/?format=json', data=historydata, headers=self.headers)
         logging.fatal(exception)
 
 
