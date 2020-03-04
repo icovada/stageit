@@ -111,11 +111,6 @@ class Migration(migrations.Migration):
                 ('fkhistory', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='web_interface.History')),
             ],
         ),
-        migrations.AddField(
-            model_name='history',
-            name='fkremoteworker',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='web_interface.RemoteWorker'),
-        ),
         migrations.CreateModel(
             name='SerialPort',
             fields=[

@@ -66,7 +66,6 @@ class History(models.Model):
     workerid = models.TextField(null=True)
     fktask = models.TextField(null=False)
     fkserialport = models.UUIDField()
-    fkremoteworker = models.ForeignKey(RemoteWorker, on_delete=models.PROTECT)
 
     def get_absolute_url(self):
         return(str(self.pkid))
