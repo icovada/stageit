@@ -38,8 +38,7 @@ services:
   worker:
     build: stageit-worker/.
     command: python scheduler.py
-    networks:
-      - inside
+    network_mode: host
     env_file:
       - stageit-worker/.env
 
