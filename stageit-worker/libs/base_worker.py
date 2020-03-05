@@ -192,7 +192,7 @@ class BaseWorker():
             f'{url_base}/api/history/{self.pkid}/?format=json', data=data)
 
         device.close()
-        return specific_device(**self.devicedata, tserver=self.tserver, pkid=self.pkid)
+        return specific_device(**self.devicedata, tserver=self.tserver, endpoint=self.endpoint, pkid=self.pkid)
 
     def stageit(self, filepath, installmode, fkbootstrapconfig):
         """Do the job."""
