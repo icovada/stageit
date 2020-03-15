@@ -132,6 +132,7 @@ class BaseWorker():
             self.on_success(self.pkid)
         except Exception as e:
             self.on_failure(e)
+            raise e
 
         self.on_success()
 
@@ -151,6 +152,7 @@ class BaseWorker():
         historydata['dateend'] = datetime.utcnow()
         requests.put(
             f'{self.endpoint}/api/history/{self.pkid}/?format=json', data=historydata)
+        self.logbuffer.close()
 
     def on_failure(self, exception):
         """
@@ -166,6 +168,7 @@ class BaseWorker():
         requests.put(
             f'{self.endpoint}/api/history/{self.pkid}/?format=json', data=historydata)
         self.logbuffer.write(str(exception).encode('utf-8'))
+        self.logbuffer.close()
 
     def find_model(self, url_base):
         """Find device type and return appropriate class to deal with
