@@ -1,6 +1,7 @@
 from uuid import uuid4
 from django.contrib.postgres.fields import JSONField
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 class BootstrapConfig(models.Model):
@@ -38,8 +39,8 @@ class Template(models.Model):
 
 class RemoteWorker(models.Model):
     pkid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
-    name = models.TextField(unique=True)
-    token = models.TextField()
+    name = models.CharField(unique=True, null=False, max_length=30)
+    fkuser = models.OneToOneField(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return('{}'.format(self.name))
@@ -65,7 +66,6 @@ class History(models.Model):
     workerid = models.TextField(null=True)
     fktask = models.TextField(null=False)
     fkserialport = models.UUIDField()
-    fkremoteworker = models.ForeignKey(RemoteWorker, on_delete=models.PROTECT)
 
     def get_absolute_url(self):
         return(str(self.pkid))

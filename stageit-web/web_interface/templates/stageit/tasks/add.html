@@ -74,6 +74,9 @@
         $.ajax({
             type: 'POST',
             url: $('#taskform').attr('action'),
+            beforeSend: function(request) {
+                request.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+            },
             data: {
                 fktemplate: "{{pkid}}",
                 description: $('#description').val(),

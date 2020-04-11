@@ -3,6 +3,9 @@ import yaml
 
 from django.http import HttpResponseForbidden
 from django.shortcuts import redirect, render
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
+from django.utils.decorators import method_decorator
 
 import web_interface.models as models
 
@@ -10,14 +13,17 @@ from . import forms as forms
 
 
 # Create your views here.
+@login_required
 def index(request):
     return render(request, 'stageit/home.html')
 
 
+@login_required
 def templates(request):
     return render(request, 'stageit/templates.html')
 
 
+@login_required
 def templatesdetail(request, uuid):
     template = models.Template.objects.get(pkid=uuid)
     templatedict = template
@@ -30,16 +36,19 @@ def templatesdetail(request, uuid):
     return render(request, 'stageit/templates/detail.html', data)
 
 
+@login_required
 def templatesadd(request):
     bootstrapconfig = models.BootstrapConfig.objects.all()
     data = {'bootstrapconfig': bootstrapconfig}
     return render(request, 'stageit/templates/add.html', data)
 
 
+@login_required
 def history(request):
     return render(request, 'stageit/history.html')
 
 
+@login_required
 def historydetail(request, uuid):
     bootstrapconfig = models.BootstrapConfig.objects.all()
     instance = models.History.objects.get(pkid=uuid)
@@ -48,6 +57,7 @@ def historydetail(request, uuid):
     return render(request, 'stageit/history/detail.html', data)
 
 
+@login_required
 def historyadd(request, uuid):
     # Check there are no other running workers for this task
     if models.History.objects.filter(fktask=uuid, status="In Progress").count() > 0:
@@ -70,10 +80,12 @@ def historyadd(request, uuid):
         return render(request, 'stageit/history/add.html', {'form': form, 'uuid': uuid})
 
 
+@login_required
 def tasks(request):
     return render(request, 'stageit/tasks.html')
 
 
+@login_required
 def tasksdetail(request, uuid):
     task = models.Task.objects.get(pkid=uuid)
     data = task.__dict__.copy()
@@ -91,6 +103,7 @@ def tasksdetail(request, uuid):
     return render(request, 'stageit/tasks/detail.html', data)
 
 
+@login_required
 def tasksadd(request, uuid):
     data = models.Template.objects.get(pkid=uuid).__dict__
     data['templatevalues'] = yaml.dump(
@@ -100,5 +113,33 @@ def tasksadd(request, uuid):
     return render(request, 'stageit/tasks/add.html', data)
 
 
+@login_required
 def sandbox(request):
     return render(request, 'stageit/jinja_sandbox.html')
+
+def login_view(request):
+
+    if request.user.is_authenticated:
+        return redirect('/')
+    else:
+        if request.method == 'POST':
+            # Trying to log in
+            username = request.POST['loginUsername']
+            password = request.POST['loginPassword']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                # Do not authenticate Workers
+                if user.groups.filter(name__in=['Users',]).exists():
+                    login(request, user)
+                    return redirect('/')
+                else:
+                    return HttpResponseForbidden("Only users in 'Users' group can login to the site")
+            else:
+                return render(request, 'stageit/login.html')
+        else:    
+            return render(request, 'stageit/login.html')
+
+def logout_view(request):
+    logout(request)
+    # Redirect to a success page.
+    return redirect('/login')
