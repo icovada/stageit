@@ -38,7 +38,7 @@ class HistorySerializer(serializers.ModelSerializer):
     status = serializers.CharField(required=False)
     workerid = serializers.CharField(required=False)
     fktask = serializers.CharField(required=False)
-    fkserialport = serializers.PrimaryKeyRelatedField(queryset=models.SerialPort.objects, required=False)
+    fkserialport = serializers.CharField(required=False)
 
     class Meta:
         model = models.History

@@ -17,6 +17,7 @@ class NetIO(BytesIO):
         super().__init__()
 
     def close(self):
+        self.flush()
         return self.buffer.close()
 
     def closed(self):

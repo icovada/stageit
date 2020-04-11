@@ -46,10 +46,12 @@ class BaseWorker():
 
         try:
             # Mark History row as being worked on by us
-            data = {'workerid': self.worker_id,
-                    'status': 'Discovering'}
+            historydata = requests.get(
+                f'{self.endpoint}/api/history/{self.pkid}/?format=json').json()
+            historydata['workerid'] = self.worker_id
+            historydata['status'] = 'Discovering'
             requests.put(
-                f'{self.endpoint}/api/history/{self.pkid}/?format=json', data=data)
+                f'{self.endpoint}/api/history/{self.pkid}/?format=json', data=historydata)
 
             # Now we have checked the task is OK to work on and marked it as ours, fetch task data
             self.fktask = self.historydata['fktask']
@@ -130,7 +132,8 @@ class BaseWorker():
             self.on_success(self.pkid)
         except Exception as e:
             self.on_failure(e)
-        
+            raise e
+
         self.on_success()
 
     def on_success(self):
@@ -142,11 +145,14 @@ class BaseWorker():
 
         requests.delete(
             f'{self.endpoint}/api/templates/{self.fktask}/?format=json')
-        data = {'status': 'Completed',
-                'dateend': datetime.utcnow()
-                }
+
+        historydata = requests.get(
+            f'{self.endpoint}/api/history/{self.pkid}/?format=json').json()
+        historydata['status'] = 'Completed'
+        historydata['dateend'] = datetime.utcnow()
         requests.put(
-            f'{self.endpoint}/api/history/{self.pkid}/?format=json', data=data)
+            f'{self.endpoint}/api/history/{self.pkid}/?format=json', data=historydata)
+        self.logbuffer.close()
 
     def on_failure(self, exception):
         """
@@ -155,12 +161,14 @@ class BaseWorker():
         """
 
         logging.error("EPIC FAIL")
-        data = {'status': 'Fail',
-                'dateend': datetime.utcnow()
-                }
+        historydata = requests.get(
+            f'{self.endpoint}/api/history/{self.pkid}/?format=json').json()
+        historydata['status'] = 'Fail'
+        historydata['dateend'] = datetime.utcnow()
         requests.put(
-            f'{self.endpoint}/api/history/{self.pkid}/?format=json', data=data)
-        self.logbuffer.write(exception)
+            f'{self.endpoint}/api/history/{self.pkid}/?format=json', data=historydata)
+        self.logbuffer.write(str(exception).encode('utf-8'))
+        self.logbuffer.close()
 
     def find_model(self, url_base):
         """Find device type and return appropriate class to deal with
@@ -187,12 +195,15 @@ class BaseWorker():
             raise ValueError("Unrecognised model")
 
         # Update database row
-        data = {'status': 'In Progress'}
+        
+        historydata = requests.get(
+            f'{self.endpoint}/api/history/{self.pkid}/?format=json').json()
+        historydata['status'] = 'In Progress'
         requests.put(
-            f'{url_base}/api/history/{self.pkid}/?format=json', data=data)
+            f'{url_base}/api/history/{self.pkid}/?format=json', data=historydata)
 
         device.close()
-        return specific_device(**self.devicedata, tserver=self.tserver, pkid=self.pkid)
+        return specific_device(**self.devicedata, tserver=self.tserver, endpoint=self.endpoint, pkid=self.pkid)
 
     def stageit(self, filepath, installmode, fkbootstrapconfig):
         """Do the job."""
