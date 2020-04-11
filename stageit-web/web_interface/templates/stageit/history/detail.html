@@ -114,7 +114,10 @@
             .on('accept', function () {
                 $.ajax({
                     type: 'DELETE',
-                    url: "/api/history/{{instance.pkid}}/"
+                    url: "/api/history/{{instance.pkid}}/",
+                    beforeSend: function(request) {
+                        request.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                    },
                 });
                 basecoat.alert('History deleted')
                     .on('hide.bs.modal', function () {

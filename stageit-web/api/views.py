@@ -28,9 +28,23 @@ class TaskViewSet(viewsets.ModelViewSet):
 class HistoryViewSet(viewsets.ModelViewSet):
     search_fields = ['status']
     filter_backends = (filters.OrderingFilter, filters.SearchFilter,)
-    queryset = models.History.objects.all()
     serializer_class = serializers.HistorySerializer
     ordering = ['status']
+
+    def get_queryset(self):
+        """
+        Filter results for worker group users, only showing
+        objects related to them
+        """
+
+        queryset = models.History.objects.all()
+        user = self.request.user
+        if user.groups.filter(name__in=['Workers',]).exists():
+            terminalserver_set = models.TerminalServer.objects.filter(fkremoteworker=user.remoteworker)
+            serialport_set = models.SerialPort.objects.filter(fkterminalserver__in=terminalserver_set)
+            history_set = models.History.objects.filter(fkserialport__in=serialport_set)
+            queryset = history_set
+        return queryset
 
 class LogViewSet(viewsets.ModelViewSet):
     queryset = models.Log.objects.all()

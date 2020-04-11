@@ -95,6 +95,9 @@
         $.ajax({
             type: 'PUT',
             url: "/api/bootstrapconfig/{{pkid}}/",
+            beforeSend: function(request) {
+                request.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+            },
             data: {
                 name: $('#name').val(),
                 description: $('#description').val(),
@@ -119,7 +122,10 @@
             .on('accept', function () {
                 $.ajax({
                     type: 'DELETE',
-                    url: "/api/bootstrapconfig/{{pkid}}/"
+                    url: "/api/bootstrapconfig/{{pkid}}/",
+                    beforeSend: function(request) {
+                    request.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                    }
                 }).done(function (response) {
                     basecoat.alert('Bootstrap config deleted')
                     .on('hide.bs.modal', function () {

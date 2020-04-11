@@ -10,10 +10,11 @@ worker_name = os.environ['WORKER_ID']
 stageit_endpoint = os.environ['STAGEIT_ENDPOINT']
 token = os.environ['TOKEN']
 history_url = stageit_endpoint + "/api/history/?format=json&search=Queued"
+headers={'Authorization': f'Token {token}'}
 
 def check_tasks():
     try:
-        history_list = get(history_url)
+        history_list = get(history_url, headers=headers)
     except:
         pass
 
@@ -28,9 +29,12 @@ def check_tasks():
 
 
 def run_threaded(history):
-    BaseWorker(historydata=history, endpoint=stageit_endpoint, worker_id=worker_pkid)
+    FakeWorker(historydata=history, endpoint=stageit_endpoint, worker_id=worker_pkid, headers=headers)
 
-worker_pkid = get(f'{stageit_endpoint}/api/remoteworker/?name={worker_name}').json()[0]['pkid']
+workerlistplain = get(f'{stageit_endpoint}/api/remoteworker/?name={worker_name}', headers=headers)
+workerlist = workerlistplain.json()
+
+worker_pkid = workerlist[0]['pkid']
 print(worker_pkid)
 
 schedule.every(10).seconds.do(check_tasks)
