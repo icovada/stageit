@@ -22,7 +22,9 @@ baseform = 'stageit/baseform.html'
 
 @login_required
 def terminalserver(request):
-    return render(request, 'stageit/terminalserver_list.html')
+    data = {'settingsmenu': True,
+            'pagename': 'terminalserver'}
+    return render(request, 'stageit/terminalserver_list.html', data)
 
 
 class TerminalServerCreate(LoginRequiredMixin, CreateView):
@@ -45,7 +47,9 @@ class TerminalServerDelete(LoginRequiredMixin, DeleteView):
 
 @login_required
 def serialport(request):
-    return render(request, 'stageit/serialport_list.html')
+    data = {'settingsmenu': True,
+            'pagename': 'serialport'}
+    return render(request, 'stageit/serialport_list.html', data)
 
 
 class SerialPortCreate(LoginRequiredMixin, CreateView):
@@ -68,7 +72,9 @@ class SerialPortDelete(LoginRequiredMixin, DeleteView):
 
 @login_required
 def remoteworker(request):
-    return render(request, 'stageit/remoteworker_list.html')
+    data = {'settingsmenu': True,
+            'pagename': 'remoteworker'}
+    return render(request, 'stageit/remoteworker_list.html', data)
 
 class RemoteWorkerCreate(LoginRequiredMixin, CreateView):
     form_class = RemoteWorkerForm
@@ -108,16 +114,22 @@ def upload_file(request):
 
 @login_required
 def bootstrapconfig(request):
-    return render(request, 'stageit/bootstrapconfig_list.html')
+    data = {'settingsmenu': True,
+            'pagename': 'bootstrapconfig'}
+    return render(request, 'stageit/bootstrapconfig_list.html', data)
 
 
 @login_required
 def bootstrapconfigadd(request):
-    return render(request, 'stageit/bootstrapconfig/add.html')
+    data = {'settingsmenu': True,
+            'pagename': 'bootstrapconfig'}
+    return render(request, 'stageit/bootstrapconfig/add.html', data)
 
 
 @login_required
 def bootstrapconfigdetail(request, uuid):
     data = models.BootstrapConfig.objects.get(pkid=uuid).__dict__
     data['values'] = yaml.dump(data['values'], indent=4, sort_keys=True)
+    data['settingsmenu'] = True
+    data['pagename'] = 'bootstrapconfig'
     return render(request, 'stageit/bootstrapconfig/detail.html', data)

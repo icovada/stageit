@@ -15,12 +15,14 @@ from . import forms as forms
 # Create your views here.
 @login_required
 def index(request):
-    return render(request, 'stageit/home.html')
+    data = {'pagename': 'home'}
+    return render(request, 'stageit/home.html', data)
 
 
 @login_required
 def templates(request):
-    return render(request, 'stageit/templates.html')
+    data = {'pagename': 'templates'}
+    return render(request, 'stageit/templates.html', data)
 
 
 @login_required
@@ -31,7 +33,8 @@ def templatesdetail(request, uuid):
         template.templatevalues, indent=4, sort_keys=True)
     bootstrapconfig = models.BootstrapConfig.objects.all()
     data = {'template': templatedict,
-            'bootstrapconfig': bootstrapconfig}
+            'bootstrapconfig': bootstrapconfig,
+            'pagename': 'templates'}
 
     return render(request, 'stageit/templates/detail.html', data)
 
@@ -39,13 +42,15 @@ def templatesdetail(request, uuid):
 @login_required
 def templatesadd(request):
     bootstrapconfig = models.BootstrapConfig.objects.all()
-    data = {'bootstrapconfig': bootstrapconfig}
+    data = {'bootstrapconfig': bootstrapconfig,
+            'pagename': 'templates'}
     return render(request, 'stageit/templates/add.html', data)
 
 
 @login_required
 def history(request):
-    return render(request, 'stageit/history.html')
+    data = {'pagename': 'history'}
+    return render(request, 'stageit/history.html', data)
 
 
 @login_required
@@ -53,7 +58,8 @@ def historydetail(request, uuid):
     bootstrapconfig = models.BootstrapConfig.objects.all()
     instance = models.History.objects.get(pkid=uuid)
     data = {'instance': instance,
-            'bootstrapconfig': bootstrapconfig}
+            'bootstrapconfig': bootstrapconfig,
+            'pagename': 'history'}
     return render(request, 'stageit/history/detail.html', data)
 
 
@@ -77,12 +83,16 @@ def historyadd(request, uuid):
     else:
         form = forms.EnqueueTask()
 
-        return render(request, 'stageit/history/add.html', {'form': form, 'uuid': uuid})
+        data = {'form': form,
+                'uuid': uuid,
+                'pagename': 'history'}
+        return render(request, 'stageit/history/add.html', data)
 
 
 @login_required
 def tasks(request):
-    return render(request, 'stageit/tasks.html')
+    data = {'pagename': 'tasks'}
+    return render(request, 'stageit/tasks.html', data)
 
 
 @login_required
@@ -99,6 +109,7 @@ def tasksdetail(request, uuid):
     data['name'] = task.fktemplate.name
 
     data['taskbusy'] = models.History.objects.filter(fktask=uuid, status="In Progress").count() > 0
+    data['pagename'] = 'tasks'
 
     return render(request, 'stageit/tasks/detail.html', data)
 
@@ -110,12 +121,14 @@ def tasksadd(request, uuid):
         data['templatevalues'], indent=4, sort_keys=True)
     data['fktemplate'] = str(uuid)
     data['slug'] = str(uuid)[:5]
+    data['pagename'] = 'tasks'
     return render(request, 'stageit/tasks/add.html', data)
 
 
 @login_required
 def sandbox(request):
-    return render(request, 'stageit/jinja_sandbox.html')
+    data = {'pagename': 'sandbox'}
+    return render(request, 'stageit/jinja_sandbox.html', data)
 
 def login_view(request):
 
