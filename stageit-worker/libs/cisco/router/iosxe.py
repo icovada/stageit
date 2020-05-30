@@ -19,7 +19,8 @@ class IOSXERouter(BaseDevice):
                 r'isr4300-universalk9(_npe)?(\.(\d{2})){3}\.SPA\.bin', uri)[0]
         else:
             self.session.close()
-            raise Warning("Unsupported image file")
+            logging.error(f"Unsupported image file {uri}")
+            raise Warning(f"Unsupported image file {uri}")
 
         if not self._check_rommon():
             self._checksession()
@@ -37,6 +38,7 @@ class IOSXERouter(BaseDevice):
         while not firmware[0]:
             firmware = self._firmware_ok(version, mode)
             if not firmware[0]:  # If firmware != ok
+                logging.info("Firmware needs to be upgraded")
                 if not self._has_connectivity:
                     raise ConnectionError("Cannot copy file, device has no IP")
                 # Check if firmware is version 03
@@ -72,7 +74,9 @@ class IOSXERouter(BaseDevice):
         modemapping = {'bin': 'BUNDLE',
                        'conf': 'INSTALL'}
 
+        logging.debug(f'File type is {curmode[0]}')
         installmode = modemapping[curmode[0]]
+        logging.debug(f'Install mode: {installmode}')
 
         # This regex parses the following output
         # Cisco IOS XE Software, Version 03.13.04.S - $(release_mode)
@@ -81,8 +85,12 @@ class IOSXERouter(BaseDevice):
         verregex = r'IOS XE Software, Version (\d\d\.\d\d\.\d\d\w*)'
         curversion = re.findall(verregex, showver, re.MULTILINE)[0]
 
+        logging.debug(f'Current version is {curversion}')
+
         verok = True if version == curversion else False
+        logging.debug(f'Version check {verok}')
         modeok = True if installmode == mode else False
+        logging.debug(f'Mode check {modeok}')
 
         if verok and modeok:
             return (True, curversion, installmode)
@@ -109,18 +117,21 @@ class IOSXERouter(BaseDevice):
 
         flashuri = self.session._gen_full_path(uri.split("/")[-1])
         if not self.session._check_file_exists(flashuri):
+            logging.info('File does not exist on flash, start copy')
             self.copy_file(uri)
 
         logging.info("Upgrading IOS-XE to INSTALL mode")
         command = "request platform software package expand file {}\n".format(
             flashuri)
         self.session.device.timeout = 1800
+        logging.debug(f'send command {command}')
         self.session.device.write_channel(command)
         output = self.session.device.read_until_prompt_or_pattern(
             "SUCCESS: Finished expanding")
 
         if "FAILED:" in output:
             return False
+            logging.error('Upgrade failed')
         else:
             if "different version of provisioning file packages.conf already exists" in output:
                 # TODO: Add output of command in comments
@@ -129,8 +140,11 @@ class IOSXERouter(BaseDevice):
             else:
                 bootvaruri = "bootflash:packages.conf"
 
+            logging.info(f'bootvaruri: {bootvaruri}')
+
             confset = ["no boot system",
                        "boot system {}".format(bootvaruri)]
+            logging.info('Setting bootvar and reloading')
             self.session.device.send_config_set(confset)
             self.session.device.send_command("wr\n\n\n\n\n\n\n\n")
 
@@ -148,6 +162,7 @@ class IOSXERouter(BaseDevice):
         logging.info("Upgrading IOS-XE to BUNDLE mode")
         confset = ["no boot system", "boot system {}".format(flashuri)]
         self.session.device.send_config_set(confset)
+        logging.info('Setting bootvar and reloading')
         self.session.device.send_command("wr\n\n\n\n\n\n\n\n")
         self.reload_device()
         return True
