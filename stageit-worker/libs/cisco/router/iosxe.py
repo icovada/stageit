@@ -22,19 +22,6 @@ class IOSXERouter(BaseDevice):
             logging.error(f"Unsupported image file {uri}")
             raise Warning(f"Unsupported image file {uri}")
 
-        if not self._check_rommon():
-            self._checksession()
-            self.copy_file(
-                "http://10.82.135.9/ios-xe/isr4200_4300_rommon_169_1r_SPA.pkg")
-            logging.info("Upgrading ROMMON")
-            self.session.device.timeout = 600  # Takes at least a good 5 min
-            self.session.device.write_channel(
-                "upgrade rom-monitor filename bootflash:isr4200_4300_rommon_169_1r_SPA.pkg all\n")
-            self.session.device.read_until_prompt_or_pattern(
-                "ROMMON upgrade complete")
-
-            self.reload_device()
-
         while not firmware[0]:
             firmware = self._firmware_ok(version, mode)
             if not firmware[0]:  # If firmware != ok
@@ -96,20 +83,6 @@ class IOSXERouter(BaseDevice):
             return (True, curversion, installmode)
         else:
             return (False, version, installmode)
-
-    def _check_rommon(self):
-        self._checksession()
-        logging.info("Checking ROMMON version")
-        command = "show rom-monitor RP active\n"
-        showrommon = self.session.device.send_command(command)
-
-        # This regex parses this output:
-        # System Bootstrap, Version 16.7(3r), RELEASE SOFTWARE
-
-        romregex = r'Version (\d*\.\d)'
-        currommon = re.findall(romregex, showrommon, re.MULTILINE)[0]
-
-        return float(currommon) > 16
 
     def _upgrade_to_install(self, uri):
         self._checksession()
