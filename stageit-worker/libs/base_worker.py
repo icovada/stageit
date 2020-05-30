@@ -178,7 +178,7 @@ class BaseWorker():
         device.checkavailable(300)
 
         # Load appropriate class based on discovered device
-        if any(model in device.facts["model"] for model in ("C3650", "C3850", "9300")):
+        if any(model in device.facts["model"] for model in ("C3650", "C3850", "9300", "9400", "9500", "9600")):
             from libs.cisco.switch.iosxe import IOSXESwitch as specific_device
 
         elif any(model in device.facts["model"] for model in ("9200L",)):
