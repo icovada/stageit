@@ -46,7 +46,8 @@ class BaseDevice():
         while self.facts is None:
             if retries >= 0:
                 retries = retries - 1
-                logging.info('Waiting for device %d', retries)
+                logging.debug(f'Availability check')
+                logging.info(f'Waiting for device, {retries} more tries before failure')
                 try:
                     self.getfacts()
                 except (netmiko.ssh_exception.NetMikoAuthenticationException, ValueError, AttributeError):
@@ -54,10 +55,11 @@ class BaseDevice():
                         # Chill. Still booting.
                         sleep(10)
                 except ConnectionRefusedError:
-                    logging.info("Connection refused, resetting line")
+                    logging.info('Connection refused, resetting line')
                     self.tserver.reset()
 
             else:
+                logging.error("Device unavailable")
                 raise IOError("Device unavailable")
 
     def getfacts(self):
@@ -65,6 +67,7 @@ class BaseDevice():
         logging.info('Getting facts')
         self._checksession()
         self.facts = self.session.get_facts()
+        logging.debug(f'Session facts: {self.facts}')
 
         data = {'vendor': self.facts['vendor'],
                 'serial': self.facts['serial_number'],
@@ -72,7 +75,10 @@ class BaseDevice():
                 'model': self.facts['model']}
 
         # Update history line with new facts we found
+        logging.debug('About to update history with new facts')
+        # TODO: Manage network error
         requests.put(self.endpoint + '/api/history/' + self.pkid + URL_SUFFIX, data=data)
+        logging.debug('Successful history update')
         logging.info('Getting facts done')
 
     def load_bootstrap_config(self, bootstraptemplate, values, **kwargs):
@@ -96,8 +102,11 @@ class BaseDevice():
         # Wait for device to grab ip.
         int_ip = {}
         while True not in ["ipv4" in x for x in int_ip.values()]:
+            logging.info('Checking if device has IP')
             # While there are no interfaces with an 'ipv4' address type
             int_ip = self.session.get_interfaces_ip()
+        logging.info('Device acquired IP')
+        logging.debug(int_ip)
 
         self.session.auto_rollback_on_error = True
         self._has_connectivity = True
