@@ -35,8 +35,10 @@ class IOSXELiteSwitch(BaseDevice):
                 if self.facts['hostname'] == "Switch":
                     # hostname "Switch" breaks read_until_prompt with log:
                     # %IOSXE-5-PLATFORM: Switch 1 R0/0: Apr  8 12:28:31 packtool.sh: %INSTALL-5-OPERATION_COMPLETED_INFO: Completed expand package flash:cat3k_caa-universalk9.16.03.07.SPA.bin
+                    logging.debug('Changing hostname form Switch to Upgrading')
                     self.session.load_merge_candidate(
                         config='hostname Upgrading')
+                    self.session.commit_config()
 
                 # No support for bundle mode on ios-xe-lite
                 upgradestatus = self._upgrade_to_install(uri)
