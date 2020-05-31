@@ -20,19 +20,19 @@
                     <h2>Run data</h2>
                     <table class="table">
                         <tr>
-                            <td><strong>Status</strong>  {{instance.status}}</td>
+                            <td><strong>Status</strong> {{instance.status}}</td>
                             <td id="statusfield"></td>
                         </tr>
                         <tr>
-                            <td><strong>Task start time</strong>  {{instance.datestart}}</td>
+                            <td><strong>Task start time</strong> {{instance.datestart}}</td>
                             <td id="datestartfield"></td>
                         </tr>
                         <tr>
-                            <td><strong>Task finish time</strong>  {{instance.dateend}}</td>
+                            <td><strong>Task finish time</strong> {{instance.dateend}}</td>
                             <td id="dateendfield"></td>
                         </tr>
                         <tr>
-                            <td><strong>Task description</strong>  {{instance.description}}</td>
+                            <td><strong>Task description</strong> {{instance.description}}</td>
                             <td id="descriptionfield"></td>
                         </tr>
                     </table>
@@ -43,15 +43,15 @@
                     <h2>Hardware</h2>
                     <table class="table">
                         <tr>
-                            <td><strong>Vendor</strong>  {{instance.vendor}}</td>
+                            <td><strong>Vendor</strong> {{instance.vendor}}</td>
                             <td id="vendorfield"></td>
                         </tr>
                         <tr>
-                            <td><strong>Model</strong>  {{instance.model}}</td>
+                            <td><strong>Model</strong> {{instance.model}}</td>
                             <td id="modelfield"></td>
                         </tr>
                         <tr>
-                            <td><strong>Serial</strong>  {{instance.serial}}</td>
+                            <td><strong>Serial</strong> {{instance.serial}}</td>
                             <td id="serialfield"></td>
                         </tr>
                     </table>
@@ -60,23 +60,21 @@
                     <h2>Software</h2>
                     <table class="table">
                         <tr>
-                            <td><strong>Install mode</strong>  {{instance.installmode}}</td>
+                            <td><strong>Install mode</strong> {{instance.installmode}}</td>
                             <td id="installmodefield"></td>
                         </tr>
                         <tr>
-                            <td><strong>OS Version</strong>  {{instance.os_version}}</td>
+                            <td><strong>OS Version</strong> {{instance.os_version}}</td>
                             <td id="os_versionfield"></td>
                         </tr>
                     </table>
                 </div>
             </div>
 
-
-
             <div class="row">
                 <div class="col-xl-12">
                     <h2>Session log</h2>
-                    <textarea class="form-control font-monospace" id="runlog" rows="25" disabled></textarea>
+                    <pre><code id="runlog" class="scrollbars html hljs scrollbar-inner scroll-content scroll-scrollx_visible scroll-scrolly_visible" data-disable-body-scroll="false" style="height: auto; margin-bottom: -12px; margin-right: -12px; max-height: 412px;"></code></pre>
                 </div>
             </div>
             <hr class="mb-4">
@@ -101,7 +99,7 @@
     client.send();
     client.onprogress = function () {
         var textarea = $('#runlog')
-        textarea.val(this.responseText);
+        textarea.html(this.responseText);
         textarea.scrollTop(textarea[0].scrollHeight);
     }
 
@@ -115,7 +113,7 @@
                 $.ajax({
                     type: 'DELETE',
                     url: "/api/history/{{instance.pkid}}/",
-                    beforeSend: function(request) {
+                    beforeSend: function (request) {
                         request.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
                     },
                 });
