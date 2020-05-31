@@ -17,7 +17,7 @@ class IOSXESwitch(BaseDevice):
             # cat3k_caa-universalk9ldpe.16.06.06.SPA.bin
             version = re.findall(
                 r'cat3k_caa-universalk9(?:ldpe)*\.(\d*\w*\.\d*\w*\.\d*\w*)\.', uri)[0]
-        else if re.search(r'cat9k_iosxe(ldpe)?(\.(\d{2})){3}\.SPA\.bin', uri):
+        elif re.search(r'cat9k_iosxe(ldpe)?(\.(\d{2})){3}\.SPA\.bin', uri):
             # Catalyst >= 9300
             # cat9k_iosxe.16.09.03.SPA.bin
             # cat9k_iosxeldpe.16.09.03.SPA.bin
