@@ -16,10 +16,13 @@ class IOSSwitch(BaseDevice):
         logging.info("Checking firmware version")
         firmware = (False, None, None)
         version = uri.split("/")[-1]
+        logging.debug('Desired firmware: %s', version)
 
         while not firmware[0]:
             firmware = self._firmware_ok(version)
+            logging.debug('Current firmware: %s', firmware)
             if not firmware[0]:
+                logging.debug('Connectivity status: %s', self._has_connectivity)
                 if not self._has_connectivity:
                     raise ConnectionError("Cannot copy file, device has no IP")
 
@@ -51,18 +54,23 @@ class IOSSwitch(BaseDevice):
         logging.info("Check file exists")
 
         flashuri = self.session._gen_full_path(uri.split("/")[-1])
+        logging.debug('flash uri: %s', flashuri)
         if not self.session._check_file_exists(flashuri):
+            logging.debug('File not found in flash, starting copy')
             self.copy_file(uri)
         self._manage_stack(uri)
         logging.info("Upgrading IOS")
         confset = ["no boot system", "boot system {}".format(flashuri)]
+        logging.debug('Sending boot system commands')
         self.session.device.send_config_set(confset)
+        logging.debug('Sending save command')
         self.session.device.send_command("wr\n\n\n\n\n\n\n")
         self.reload_device()
         return True
 
     def _manage_stack(self, uri):
         """Connect to device and issue copy command from uri."""
+        # TODO: Copy files from first flash to other device flashes
         logging.info('Copying from %s', uri)
         self._checksession()
         self.session.device.send_config_set(["file prompt quiet"])
