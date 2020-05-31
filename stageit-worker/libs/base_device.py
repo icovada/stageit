@@ -48,6 +48,7 @@ class BaseDevice():
                 retries = retries - 1
                 logging.info('Waiting for device, %s more tries before failure', retries)
                 try:
+                    # TODO: Try a less invasive command, getfacts takes ages
                     self.getfacts()
                 except (netmiko.ssh_exception.NetMikoAuthenticationException, ValueError, AttributeError):
                     if retries > 100:
@@ -174,6 +175,7 @@ class BaseDevice():
         self.session.device.write_channel("reload")
         self.session.device.write_channel("\n\n\n")
         logging.debug('Reload sent, waiting for reboot')
+        self.session.device.read_until_prompt_or_pattern('Press RETURN to get started')
         sleep(30)
         self.checkavailable(1000)
 
