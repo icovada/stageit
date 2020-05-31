@@ -12,13 +12,16 @@ class IOSXELiteSwitch(BaseDevice):
         logging.info("Checking firmware version")
         firmware = (False, None, None)
 
+        logging.debug('About to detect version from file name')
         if re.search(r'cat9k_lite_iosxe(?:_npe)*\.(\d*\w*\.\d*\w*\.\d*\w*)\.', uri):
             # Catalyst 9200, 9300
             # cat9k_lite_iosxe.16.12.01.SPA.bin
             # cat9k_lite_iosxe_npe.16.12.01.SPA.bin
             version = re.findall(
                 r'cat9k_lite_iosxe(?:_npe)*\.(\d*\w*\.\d*\w*\.\d*\w*)\.', uri)[0]
+            logging.debug('Detected version: %s', version)
         else:
+            logging.debug('Version not found, unsupported image file')
             self.session.close()
             raise Warning("Unsupported image file")
 
@@ -39,13 +42,16 @@ class IOSXELiteSwitch(BaseDevice):
                 upgradestatus = self._upgrade_to_install(uri)
 
             else:
+                logging.info('Already upgraded')
                 upgradestatus = True
 
+            logging.info('Finished upgrading, status: %s', upgradestatus)
             return upgradestatus
 
     def _firmware_ok(self, version, mode='INSTALL'):
         # Strip leading zeroes from IOS version
         version = version.replace(".0", ".")
+        logging.debug('Desired version: %s', version)
         self._checksession()
         showver = self.session.device.send_command("show version")
 
@@ -61,10 +67,14 @@ class IOSXELiteSwitch(BaseDevice):
 
         member = (None, None, None, None, None, None)
 
+        logging.debug('Stack versions:')
         for member in switches:
+            logging.debug('%s', member)
             if version not in member:
+                logging.info('One or more switches are not running the correct version')
                 return (False, member[3], member[5])
 
+        logging.info('All switches are runnin the correct version')
         return (True, member[3], member[5])
 
     def _upgrade_to_install(self, uri):
@@ -72,8 +82,12 @@ class IOSXELiteSwitch(BaseDevice):
         logging.info("Check file exists")
 
         flashuri = self.session._gen_full_path(uri.split("/")[-1])
+        logging.debug('Checking if %s exists', flashuri)
         if not self.session._check_file_exists(flashuri):
+            logging.debug('File does not exist, starting copy')
             self.copy_file(uri)
+        else:
+            logging.debug('File exists, proceeding')
 
         self.save_config()
 
