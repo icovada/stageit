@@ -78,8 +78,12 @@ class IOSXESwitch(BaseDevice):
         logging.info("Check file exists")
 
         flashuri = self.session._gen_full_path(uri.split("/")[-1])
+        logging.debug('Checking if %s exists', flashuri)
         if not self.session._check_file_exists(flashuri):
+            logging.debug('File does not exist, starting copy')
             self.copy_file(uri)
+        else:
+            logging.debug('File exists, proceeding')
 
         logging.info("Upgrading IOS XE to INSTALL mode")
         command = "request platform software package install switch all file {} force new auto-copy\n".format(
