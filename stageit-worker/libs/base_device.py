@@ -46,8 +46,7 @@ class BaseDevice():
         while self.facts is None:
             if retries >= 0:
                 retries = retries - 1
-                logging.debug(f'Availability check')
-                logging.info(f'Waiting for device, {retries} more tries before failure')
+                logging.info('Waiting for device, %s more tries before failure', retries)
                 try:
                     self.getfacts()
                 except (netmiko.ssh_exception.NetMikoAuthenticationException, ValueError, AttributeError):
@@ -55,7 +54,7 @@ class BaseDevice():
                         # Chill. Still booting.
                         sleep(10)
                 except ConnectionRefusedError:
-                    logging.info('Connection refused, resetting line')
+                    logging.warning('Connection refused, resetting line')
                     self.tserver.reset()
 
             else:
@@ -67,7 +66,7 @@ class BaseDevice():
         logging.info('Getting facts')
         self._checksession()
         self.facts = self.session.get_facts()
-        logging.debug(f'Session facts: {self.facts}')
+        logging.debug('Session facts: %s', self.facts)
 
         data = {'vendor': self.facts['vendor'],
                 'serial': self.facts['serial_number'],
@@ -75,9 +74,10 @@ class BaseDevice():
                 'model': self.facts['model']}
 
         # Update history line with new facts we found
-        logging.debug('About to update history with new facts')
         # TODO: Manage network error
-        requests.put(self.endpoint + '/api/history/' + self.pkid + URL_SUFFIX, data=data)
+        url = self.endpoint + '/api/history/' + self.pkid + URL_SUFFIX
+        logging.debug('PUT %s, data: %s', url, data)
+        requests.put(url, data=data)
         logging.debug('Successful history update')
         logging.info('Getting facts done')
 
@@ -97,12 +97,13 @@ class BaseDevice():
                                    template_name="stdin",
                                    **values)
         self.session.commit_config()
+        logging.info('Loaded bootstrap config')
 
-        logging.info("Checking device got an IP")
+        logging.info("Checking device has an IP")
         # Wait for device to grab ip.
         int_ip = {}
         while True not in ["ipv4" in x for x in int_ip.values()]:
-            logging.info('Checking if device has IP')
+            logging.info('Checking again if device has IP')
             # While there are no interfaces with an 'ipv4' address type
             int_ip = self.session.get_interfaces_ip()
         logging.info('Device acquired IP')
@@ -119,6 +120,7 @@ class BaseDevice():
                                    template_name="stdin",
                                    **values)
 
+        logging.info('Loaded final config')
         self.session.commit_config()
 
         self.save_config()
@@ -136,13 +138,16 @@ class BaseDevice():
         out = self.session.device.read_until_prompt_or_pattern("Error")
         self.session.device.send_config_set(["no file prompt quiet"])
         if "Error" in out:
+            logging.error('File failed to copy')
             self.session.close()
             raise ValueError("File transfer failed")
         elif "bytes copied" in out:
+            logging.info('File copy complete')
             return
 
-    def upgrade_software(self, uri, mode):
+    def upgrade_software(self, **kwargs):
         """Not implemented."""
+        logging.error('Called base_device.upgrade_software, which is undefined')
         self.session.close()
         raise NotImplementedError
 
@@ -154,19 +159,21 @@ class BaseDevice():
         """Issue write command."""
         logging.info('Saving config')
         self._checksession()
+        logging.debug('Sending wr\\n\\n\\n\\n')
         self.session.device.write_channel("wr\n")
         self.session.device.write_channel("\n\n\n")
+        logging.debug('Waiting for prompt')
         self.session.device.read_until_prompt()
+        logging.debug('Save config complete')
 
     def reload_device(self):
         """Issue reload command."""
         logging.info('Sending reload command')
-        self._checksession()
-        self.session.device.write_channel("wr\n")
-        self.session.device.write_channel("\n\n\n")
-        self.session.device.read_until_prompt()
+        self.save_config()
+        logging.debug('Sending reload\\n\\n\\n')
         self.session.device.write_channel("reload")
         self.session.device.write_channel("\n\n\n")
+        logging.debug('Reload sent, waiting for reboot')
         sleep(30)
         self.checkavailable(1000)
 
@@ -177,31 +184,40 @@ class BaseDevice():
     def poststaging(self, commands):
         """Run commands after staging the device"""
         self._checksession()
+        logging.info('Starting post-staging phase')
         for line in commands.split("\n"):
+            logging.debug('Sending command %s', line)
             self.session.device.send_command(line)
 
     def _checksession(self):
         def _createsession():
+            logging.debug('Creating new driver')
             driver = self.driver(**self.sessiondata)
             try:
+                logging.debug('Opening new connection')
                 driver.open()
                 driver.device.send_command("ter len 0\n")
             except (ConnectionRefusedError, NetMikoAuthenticationException):
+                logging.warning('Connection failed, resetting terminal server')
                 self.tserver.reset()
             return driver
 
         # Cannot use session.is_alive()) because it interacts weirdly
         # with our terminal server and makes the switch kill the connection
         if self.session is None:
+            logging.warning('Session dead, creating new one')
             self.session = _createsession()
 
         try:
+            logging.debug('Running test command on session')
             self.session._netmiko_device.timeout = 3
             self.session.get_users()
         except (OSError, AttributeError, ConnectionClosedException) as e:
+            logging.warning('Session dead, creating new one')
             self.session = _createsession()
 
         try:
             self.session._netmiko_device.timeout = 60
         except (OSError, AttributeError, ConnectionClosedException) as e:
+            logging.warning('Session dead, creating new one')
             self.session = _createsession()

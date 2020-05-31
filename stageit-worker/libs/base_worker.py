@@ -50,26 +50,31 @@ class BaseWorker():
                 f'{self.endpoint}/api/history/{self.pkid}/?format=json').json()
             historydata['workerid'] = self.worker_id
             historydata['status'] = 'Discovering'
+            logging.debug('Retrieving history data')
             requests.put(
                 f'{self.endpoint}/api/history/{self.pkid}/?format=json', data=historydata)
 
             # Now we have checked the task is OK to work on and marked it as ours, fetch task data
             self.fktask = self.historydata['fktask']
+            logging.debug('Retrieving task data')
             self.taskdata = requests.get(
                 f'{self.endpoint}/api/task/{self.fktask}/?format=json').json()
 
             # From the task we find the template
             fktemplate = self.taskdata.get('fktemplate')
+            logging.debug('Retrieving template data')
             self.templatedata = requests.get(
                 f'{self.endpoint}/api/template/{fktemplate}/?format=json').json()
 
             # Find the port to connect to
             fkserialport = self.historydata.get('fkserialport')
+            logging.debug('Retrieving serial port data')
             self.serialportdata = requests.get(
                 f'{self.endpoint}/api/serialport/{fkserialport}/?format=json').json()
 
             # Find the terminal server to connect to
             fkterminalserver = self.serialportdata.get('fkterminalserver')
+            logging.debug('Retrieving terminal server data')
             self.terminalserverdata = requests.get(
                 f'{self.endpoint}/api/terminalserver/{fkterminalserver}/?format=json').json()
             logging.info('Successfully retrieved all data')
@@ -109,11 +114,14 @@ class BaseWorker():
 
             # Find driver for Terminal Server
             if self.terminalserverdata.get('model') == 'cisco':
+                logging.debug('Terminal server driver: CiscoConsoleServer')
                 from libs.consoleserver.cisco import CiscoConsoleServer as tserver
             else:
+                logging.debug('Terminal server driver: BaseConsoleServer')
                 from libs.consoleserver import BaseConsoleServer as tserver
 
             # Instantiate terminal server class
+            logging.debug('Instantiate terminal server class')
             self.tserver = tserver(
                 **{**self.serialportdata, **self.terminalserverdata})
 
@@ -121,12 +129,15 @@ class BaseWorker():
             self.driver = self.find_model(self.endpoint)
 
             # Actually do the job (finally!)
+            logging.info('Running main stageit routine')
             self.stageit(filepath=filepath, installmode=installmode,
                          fkbootstrapconfig=self.templatedata.get('fkbootstrapconfig'))
 
             if poststaging is not None and poststaging != '':
+                logging.info('Starting poststaging routine')
                 self.driver.poststaging(poststaging)
 
+            logging.info('Task complete')
             self.driver.close()
 
             self.on_success(self.pkid)
@@ -152,6 +163,7 @@ class BaseWorker():
         historydata['dateend'] = datetime.utcnow()
         requests.put(
             f'{self.endpoint}/api/history/{self.pkid}/?format=json', data=historydata)
+
         self.logbuffer.close()
 
     def on_failure(self, exception):
@@ -173,32 +185,40 @@ class BaseWorker():
     def find_model(self, url_base):
         """Find device type and return appropriate class to deal with
         upgrading, version checking and else."""
+        logging.debug('Instantiating BaseDevice driver')
         device = BaseDevice(tserver=self.tserver, endpoint=self.endpoint, **
                             self.devicedata, pkid=self.pkid)
+        logging.info('Discovering model')
         device.checkavailable(300)
 
+        logging.debug('Discovered model: %s', device.facts['model'])
         # Load appropriate class based on discovered device
         if any(model in device.facts["model"] for model in ("C3650", "C3850", "9300", "9400", "9500", "9600")):
+            logging.debug('Using IOSXESwitch driver')
             from libs.cisco.switch.iosxe import IOSXESwitch as specific_device
 
         elif any(model in device.facts["model"] for model in ("9200L",)):
+            logging.debug('Using IOSXELiteSwitch driver')
             from libs.cisco.switch.iosxe_lite import IOSXELiteSwitch as specific_device
 
         elif any(model in device.facts["model"] for model in ("4221", "4321", "4331", "4351", "4431", "4451", "4461")):
+            logging.debug('Using IOSXERouter driver')
             from libs.cisco.router.iosxe import IOSXERouter as specific_device
 
         elif any(model in device.facts["model"] for model in ("2960", "3560CX", "1841", "CDB")):
+            logging.debug('Using IOSSwitch driver')
             from libs.cisco.switch.ios import IOSSwitch as specific_device
 
         else:
             device.close()
+            logging.error("Unrecognised model")
             raise ValueError("Unrecognised model")
 
         # Update database row
-        
         historydata = requests.get(
             f'{self.endpoint}/api/history/{self.pkid}/?format=json').json()
         historydata['status'] = 'In Progress'
+        logging.debug('Updating history, status: In Progress')
         requests.put(
             f'{url_base}/api/history/{self.pkid}/?format=json', data=historydata)
 
@@ -207,20 +227,24 @@ class BaseWorker():
 
     def stageit(self, filepath, installmode, fkbootstrapconfig):
         """Do the job."""
+        logging.debug('Checking availability of device with new driver')
         self.driver.checkavailable(1000)
 
         # Skip upgrade if file path not provided
         if filepath != '':
+            logging.debug('url not empty, starting upgrade')
             try:
                 self.driver.upgrade_software(uri=filepath,
                                              mode=installmode)
             except ConnectionError:
+                logging.warning('Device has no IP, loading bootstrap config')
                 # Connection initiates from the device back to the storage
                 # If the device hasn't received an IP via DHCP on its own
                 # we push a custom config and try again
 
                 # Get bootstrap config from database
                 if fkbootstrapconfig != 'null':
+                    logging.debug('Retrieving bootstrap config')
                     bootstrapconfig = requests.get(
                         self.endpoint + '/api/bootstrapconfig/' + fkbootstrapconfig)
                     self.driver.load_bootstrap_config(**bootstrapconfig.json())
