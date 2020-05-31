@@ -163,6 +163,8 @@ class BaseWorker():
         historydata['dateend'] = datetime.utcnow()
         requests.put(
             f'{self.endpoint}/api/history/{self.pkid}/?format=json', data=historydata)
+        requests.delete(
+            f'{self.endpoint}/api/task/{self.fktask}')
 
         self.logbuffer.close()
 
