@@ -86,7 +86,7 @@ class BaseDevice():
         """
         Load temporary configuration to transfer files.
 
-        Is called by upgrade_software if self._has_connectivity is False.
+        Is called before upgrade_software if automatic DHCP has failed
         """
 
         logging.info('Loading temp config')
