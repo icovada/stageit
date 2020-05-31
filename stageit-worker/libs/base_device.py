@@ -174,10 +174,10 @@ class BaseDevice():
         logging.debug('Sending reload\\n\\n\\n')
         self.session.device.write_channel("reload")
         self.session.device.write_channel("\n\n\n")
+        self.session.device.timeout = 900   # 15 minutes of reboot time is not unheard of
         logging.debug('Reload sent, waiting for reboot')
         self.session.device.read_until_prompt_or_pattern('Press RETURN to get started')
-        sleep(30)
-        self.checkavailable(1000)
+        self.checkavailable(20)
 
     def close(self):
         """Wrap-up session."""
