@@ -19,8 +19,8 @@ class IOSXERouter(BaseDevice):
                 r'isr4300-universalk9(_npe)?(\.(\d{2})){3}\.SPA\.bin', uri)[0]
         else:
             self.session.close()
-            logging.error(f"Unsupported image file {uri}")
-            raise Warning(f"Unsupported image file {uri}")
+            logging.error('Unsupported image file %s', uri)
+            raise Warning(f'Unsupported image file {uri}')
 
         while not firmware[0]:
             firmware = self._firmware_ok(version, mode)
@@ -61,9 +61,9 @@ class IOSXERouter(BaseDevice):
         modemapping = {'bin': 'BUNDLE',
                        'conf': 'INSTALL'}
 
-        logging.debug(f'File type is {curmode[0]}')
+        logging.debug('File type is %s', curmode[0])
         installmode = modemapping[curmode[0]]
-        logging.debug(f'Install mode: {installmode}')
+        logging.debug('Install mode: %s', installmode)
 
         # This regex parses the following output
         # Cisco IOS XE Software, Version 03.13.04.S - $(release_mode)
@@ -72,12 +72,12 @@ class IOSXERouter(BaseDevice):
         verregex = r'IOS XE Software, Version (\d\d\.\d\d\.\d\d\w*)'
         curversion = re.findall(verregex, showver, re.MULTILINE)[0]
 
-        logging.debug(f'Current version is {curversion}')
+        logging.debug('Current version is %s', curversion)
 
         verok = True if version == curversion else False
-        logging.debug(f'Version check {verok}')
+        logging.debug('Version check %s', verok)
         modeok = True if installmode == mode else False
-        logging.debug(f'Mode check {modeok}')
+        logging.debug('Mode check %s', modeok)
 
         if verok and modeok:
             return (True, curversion, installmode)
@@ -97,14 +97,14 @@ class IOSXERouter(BaseDevice):
         command = "request platform software package expand file {}\n".format(
             flashuri)
         self.session.device.timeout = 1800
-        logging.debug(f'send command {command}')
+        logging.debug('send command %s', command)
         self.session.device.write_channel(command)
         output = self.session.device.read_until_prompt_or_pattern(
             "SUCCESS: Finished expanding")
 
         if "FAILED:" in output:
-            return False
             logging.error('Upgrade failed')
+            return False
         else:
             if "different version of provisioning file packages.conf already exists" in output:
                 # TODO: Add output of command in comments
@@ -113,7 +113,7 @@ class IOSXERouter(BaseDevice):
             else:
                 bootvaruri = "bootflash:packages.conf"
 
-            logging.info(f'bootvaruri: {bootvaruri}')
+            logging.info('bootvaruri: %s', bootvaruri)
 
             confset = ["no boot system",
                        "boot system {}".format(bootvaruri)]
