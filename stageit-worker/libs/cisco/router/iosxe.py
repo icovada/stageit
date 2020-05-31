@@ -11,13 +11,16 @@ class IOSXERouter(BaseDevice):
         """Verify software version and if necessary upgrade through proper path."""
         logging.info("Checking firmware versions")
         firmware = (False, None, None)
+        logging.debug('About to detect version from file name')
         if re.search(r'isr4300-universalk9(_npe)?(\.(\d{2})){3}\.SPA\.bin', uri):
             # ISR 4000
             # isr4300-universalk9.16.09.03.SPA.bin
             # isr4300-universalk9_npe.16.09.03.SPA.bin
             version = re.findall(
                 r'isr4300-universalk9(_npe)?(\.(\d{2})){3}\.SPA\.bin', uri)[0]
+            logging.debug('Detected version: %s', version)
         else:
+            logging.debug('Version not found, unsupported image file')
             self.session.close()
             logging.error('Unsupported image file %s', uri)
             raise Warning(f'Unsupported image file {uri}')
@@ -129,8 +132,12 @@ class IOSXERouter(BaseDevice):
         logging.info("Check file exists")
 
         flashuri = self.session._gen_full_path(uri.split("/")[-1])
+        logging.debug('Checking if %s exists', flashuri)
         if not self.session._check_file_exists(flashuri):
+            logging.debug('File does not exist, starting copy')
             self.copy_file(uri)
+        else:
+            logging.debug('File exists, proceeding')
 
         logging.info("Upgrading IOS-XE to BUNDLE mode")
         confset = ["no boot system", "boot system {}".format(flashuri)]
