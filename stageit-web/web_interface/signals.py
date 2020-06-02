@@ -41,7 +41,7 @@ def history_table_refresh(sender, instance, created, **kwargs):
             'vendor': instance.vendor,
             'model': instance.model,
             'serial': instance.serial,
-            'install_mode': instance.installmode,
+            'installmode': instance.installmode,
             'os_version': instance.os_version,
             }
 

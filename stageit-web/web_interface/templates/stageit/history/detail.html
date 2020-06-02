@@ -130,6 +130,11 @@
 
     tableinfo.addEventListener('table-refresh', function (e) {
         console.log(e.data);
+        jsondata = JSON.parse(e.data);
+        for (let [key, value] of Object.entries(jsondata)) {
+            var currentfield = $('#' + key + 'field');
+            currentfield.html(value);
+        }
     }, false);
 
 </script>
