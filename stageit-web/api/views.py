@@ -114,7 +114,7 @@ def loggenerator(uuid):
         yield(log.log)
 
     history_row = models.History.objects.get(pkid=uuid)
-    while history_row.status in ("In Progress", "Discovering"):
+    while history_row.status not in ("Success", "Fail"):
         logs = models.Log.objects.filter(fkhistory=uuid, sequence__gt=lastlog).order_by("sequence")
         for log in logs:
             lastlog = log.sequence

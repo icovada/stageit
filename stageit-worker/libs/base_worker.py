@@ -155,7 +155,7 @@ class BaseWorker():
         logging.info("Set task successful")
 
         requests.delete(
-            f'{self.endpoint}/api/templates/{self.fktask}/?format=json')
+            f'{self.endpoint}/api/task/{self.fktask}')
 
         historydata = requests.get(
             f'{self.endpoint}/api/history/{self.pkid}/?format=json').json()
@@ -163,8 +163,6 @@ class BaseWorker():
         historydata['dateend'] = datetime.utcnow()
         requests.put(
             f'{self.endpoint}/api/history/{self.pkid}/?format=json', data=historydata)
-        requests.delete(
-            f'{self.endpoint}/api/task/{self.fktask}')
 
         self.logbuffer.close()
 

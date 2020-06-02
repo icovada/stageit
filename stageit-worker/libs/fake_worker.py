@@ -4,6 +4,8 @@ import logging
 import random
 from time import sleep
 
+from datetime import datetime as dt
+
 import requests
 from libs.netio import NetIO
 
@@ -114,9 +116,9 @@ class FakeWorker():
                 "Task already being worked on by someone else")
 
         self.pkid = self.historydata['pkid']
-        fktask = self.historydata['fktask']
+        self.fktask = self.historydata['fktask']
 
-        self.task = requests.get(f'{self.endpoint}/api/task/{fktask}/?format=json', headers=self.headers)
+        self.task = requests.get(f'{self.endpoint}/api/task/{self.fktask}/?format=json', headers=self.headers)
         fktemplate = self.task.json().get('fktemplate')
         self.template = requests.get(f'{self.endpoint}/api/template/{fktemplate}/?format=json', headers=self.headers)
 
@@ -127,6 +129,7 @@ class FakeWorker():
         try:
             historydata = requests.get(f'{self.endpoint}/api/history/{self.pkid}/?format=json', headers=self.headers).json()
             historydata['status'] = 'In Progress'
+            historydata['datestart'] = str(dt.now())
             updatestate = requests.put(f'{self.endpoint}/api/history/{self.pkid}/?format=json',
                          data=historydata, headers=self.headers)
             self.stageit()
@@ -136,9 +139,11 @@ class FakeWorker():
 
 
     def on_success(self, fkhistory):
+        requests.delete(f'{self.endpoint}/api/task/{self.fktask}')
         historydata = requests.get(f'{self.endpoint}/api/history/{self.pkid}/?format=json', headers=self.headers).json()
         logging.info("Set task successful")
         historydata['status'] = 'Success'
+        historydata['dateend'] = str(dt.now())
         requests.put(f'{self.endpoint}/api/history/{fkhistory}/?format=json', data=historydata, headers=self.headers)
 
     def on_failure(self, fkhistory, exception):
@@ -161,7 +166,7 @@ class FakeWorker():
 
     def stageit(self):
         """Choose random status"""
-        for i in range(random.randint(30, 30)):
+        for i in range(random.randint(15, 20)):
             status = self.statuses[random.randint(0, len(self.statuses)-1)]
             self.log.write(status.encode('utf-8') + "\n".encode('utf-8'))
             if (i % 2) == 0:

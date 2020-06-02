@@ -20,20 +20,20 @@
                     <h2>Run data</h2>
                     <table class="table">
                         <tr>
-                            <td><strong>Status</strong>  {{instance.status}}</td>
-                            <td id="statusfield"></td>
+                            <td><strong>Status</strong></td>
+                            <td id="statusfield">{{instance.status}}</td>
                         </tr>
                         <tr>
-                            <td><strong>Task start time</strong>  {{instance.datestart}}</td>
-                            <td id="datestartfield"></td>
+                            <td><strong>Task start time</strong></td>
+                            <td id="datestartfield">{{instance.datestart}}</td>
                         </tr>
                         <tr>
-                            <td><strong>Task finish time</strong>  {{instance.dateend}}</td>
-                            <td id="dateendfield"></td>
+                            <td><strong>Task finish time</strong></td>
+                            <td id="dateendfield">{{instance.dateend}}</td>
                         </tr>
                         <tr>
-                            <td><strong>Task description</strong>  {{instance.description}}</td>
-                            <td id="descriptionfield"></td>
+                            <td><strong>Task description</strong></td>
+                            <td id="descriptionfield">{{instance.description}}</td>
                         </tr>
                     </table>
                 </div>
@@ -43,16 +43,16 @@
                     <h2>Hardware</h2>
                     <table class="table">
                         <tr>
-                            <td><strong>Vendor</strong>  {{instance.vendor}}</td>
-                            <td id="vendorfield"></td>
+                            <td><strong>Vendor</strong></td>
+                            <td id="vendorfield">{{instance.vendor}}</td>
                         </tr>
                         <tr>
-                            <td><strong>Model</strong>  {{instance.model}}</td>
-                            <td id="modelfield"></td>
+                            <td><strong>Model</strong></td>
+                            <td id="modelfield">{{instance.model}}</td>
                         </tr>
                         <tr>
-                            <td><strong>Serial</strong>  {{instance.serial}}</td>
-                            <td id="serialfield"></td>
+                            <td><strong>Serial</strong></td>
+                            <td id="serialfield">{{instance.serial}}</td>
                         </tr>
                     </table>
                 </div>
@@ -60,23 +60,21 @@
                     <h2>Software</h2>
                     <table class="table">
                         <tr>
-                            <td><strong>Install mode</strong>  {{instance.installmode}}</td>
-                            <td id="installmodefield"></td>
+                            <td><strong>Install mode</strong></td>
+                            <td id="installmodefield">{{instance.installmode}}</td>
                         </tr>
                         <tr>
-                            <td><strong>OS Version</strong>  {{instance.os_version}}</td>
-                            <td id="os_versionfield"></td>
+                            <td><strong>OS Version</strong></td>
+                            <td id="os_versionfield">{{instance.os_version}}</td>
                         </tr>
                     </table>
                 </div>
             </div>
 
-
-
             <div class="row">
                 <div class="col-xl-12">
                     <h2>Session log</h2>
-                    <textarea class="form-control font-monospace" id="runlog" rows="25" disabled></textarea>
+                    <pre><code id="runlog"></code></pre>
                 </div>
             </div>
             <hr class="mb-4">
@@ -101,7 +99,7 @@
     client.send();
     client.onprogress = function () {
         var textarea = $('#runlog')
-        textarea.val(this.responseText);
+        textarea.html(this.responseText);
         textarea.scrollTop(textarea[0].scrollHeight);
     }
 
@@ -115,7 +113,7 @@
                 $.ajax({
                     type: 'DELETE',
                     url: "/api/history/{{instance.pkid}}/",
-                    beforeSend: function(request) {
+                    beforeSend: function (request) {
                         request.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
                     },
                 });
@@ -125,5 +123,19 @@
                     });
             });
     });
+
+
+    // Live info refresh
+    var tableinfo = new ReconnectingEventSource('/events/history/{{instance.pkid}}');
+
+    tableinfo.addEventListener('table-refresh', function (e) {
+        console.log(e.data);
+        jsondata = JSON.parse(e.data);
+        for (let [key, value] of Object.entries(jsondata)) {
+            var currentfield = $('#' + key + 'field');
+            currentfield.html(value);
+        }
+    }, false);
+
 </script>
 {% endblock %}

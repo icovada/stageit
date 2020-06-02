@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'django_filters',
     'crispy_forms',
+    'channels',
+    'django_eventstream',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,6 +49,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'django_grip.GripMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -165,3 +168,9 @@ STATICFILES_DIRS = [
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 LOGIN_URL = '/login'
+
+ASGI_APPLICATION = 'routing.application'
+
+EVENTSTREAM_STORAGE_CLASS = 'django_eventstream.storage.DjangoModelStorage'
+
+EVENTSTREAM_CHANNELMANAGER_CLASS = 'web_interface.channelmanager.MyChannelManager'
