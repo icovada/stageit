@@ -108,6 +108,7 @@ class TerminalServer(models.Model):
 
 class SerialPort(models.Model):
     pkid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    description = models.CharField(max_length=20)
     fkterminalserver = models.ForeignKey(TerminalServer, on_delete=models.PROTECT)
     transport = models.TextField()
     port = models.IntegerField()
