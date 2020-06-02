@@ -34,7 +34,7 @@ class Template(models.Model):
         return '{} - {}'.format(str(self.pkid)[:5], self.name)
 
     def get_absolute_url(self):
-        return str(self.pkid)
+        return(str(self.pkid))
 
 
 class RemoteWorker(models.Model):
@@ -43,44 +43,10 @@ class RemoteWorker(models.Model):
     fkuser = models.OneToOneField(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return '{}'.format(self.name)
+        return('{}'.format(self.name))
 
     def get_absolute_url(self):
-        return str(self.pkid)
-
-class TerminalServer(models.Model):
-    pkid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
-    fkremoteworker = models.ForeignKey(RemoteWorker, on_delete=models.PROTECT)
-    name = models.TextField()
-    model = models.TextField()
-    hostname = models.TextField(unique=True)
-    transport = models.TextField()
-    username = models.TextField()
-    password = models.TextField()
-
-    def __str__(self):
-        return '{} - {}'.format(self.name, self.hostname)
-
-    def get_absolute_url(self):
-        return str(self.pkid)
-
-class SerialPort(models.Model):
-    pkid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
-    description = models.CharField(max_length=20)
-    fkterminalserver = models.ForeignKey(TerminalServer, on_delete=models.PROTECT)
-    transport = models.TextField()
-    port = models.IntegerField()
-    line = models.IntegerField()
-
-    class Meta:
-        unique_together = ('fkterminalserver', 'port',)
-
-    def __str__(self):
-        return '{} - {}'.format(self.fkterminalserver, self.line)
-
-    def get_absolute_url(self):
-        return str(self.pkid)
-
+        return(str(self.pkid))
 
 class History(models.Model):
     """Defines history table."""
@@ -99,11 +65,10 @@ class History(models.Model):
     status = models.TextField(null=True)
     workerid = models.TextField(null=True)
     fktask = models.TextField(null=False)
-    fkserialport = models.ForeignKey(SerialPort, on_delete=models.SET_NULL)
+    fkserialport = models.UUIDField()
 
     def get_absolute_url(self):
-        return str(self.pkid)
-
+        return(str(self.pkid))
 
 class Task(models.Model):
     """Defines tasks table."""
@@ -113,11 +78,10 @@ class Task(models.Model):
     taskvalues = JSONField(null=True)
 
     def __str__(self):
-        return '{} based on {}'.format(self.description, self.fktemplate)
-
+        return('{} based on {}'.format(self.description, self.fktemplate))
+    
     def get_absolute_url(self):
-        return str(self.pkid)
-
+        return(str(self.pkid))
 
 class Log(models.Model):
     """Define staging Log format"""
@@ -125,6 +89,39 @@ class Log(models.Model):
     sequence = models.PositiveIntegerField()
     log = models.TextField(null=True)
     logdate = models.DateTimeField(auto_now_add=True)
+
+class TerminalServer(models.Model):
+    pkid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    fkremoteworker = models.ForeignKey(RemoteWorker, on_delete=models.PROTECT)
+    name = models.TextField()
+    model = models.TextField()
+    hostname = models.TextField(unique=True)
+    transport = models.TextField()
+    username = models.TextField()
+    password = models.TextField()
+
+    def __str__(self):
+        return('{} - {}'.format(self.name, self.hostname))
+    
+    def get_absolute_url(self):
+        return(str(self.pkid))
+
+class SerialPort(models.Model):
+    pkid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    description = models.CharField(max_length=20)
+    fkterminalserver = models.ForeignKey(TerminalServer, on_delete=models.PROTECT)
+    transport = models.TextField()
+    port = models.IntegerField()
+    line = models.IntegerField()
+
+    class Meta:
+        unique_together = ('fkterminalserver', 'port',)
+
+    def __str__(self):
+        return('{} - {}'.format(self.fkterminalserver, self.line))
+    
+    def get_absolute_url(self):
+        return(str(self.pkid))
 
 class Firmware(models.Model):
     pkid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
