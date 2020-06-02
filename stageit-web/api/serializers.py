@@ -31,7 +31,6 @@ class HistorySerializer(serializers.ModelSerializer):
     os_version = serializers.CharField(max_length=300, required=False)
     rundata = serializers.JSONField(required=False)
     serial = serializers.CharField(max_length=20, required=False)
-    serial_number = serializers.CharField(max_length=50, required=False)
     template = serializers.CharField(max_length=20000, required=False)
     templatevalues = serializers.JSONField(required=False)
     vendor = serializers.CharField(max_length=30, required=False)
