@@ -123,5 +123,14 @@
                     });
             });
     });
+
+
+    // Live info refresh
+    var tableinfo = new ReconnectingEventSource('/events/history/{{instance.pkid}}');
+
+    tableinfo.addEventListener('table-refresh', function (e) {
+        console.log(e.data);
+    }, false);
+
 </script>
 {% endblock %}
