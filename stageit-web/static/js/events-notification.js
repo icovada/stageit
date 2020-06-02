@@ -7,7 +7,8 @@ basecoat.notificationLimit = 3;
 es.addEventListener('notification', function (e) {
     console.log(e.data);
     // create a notification
-    var $notification = basecoat.notification('Notification heading', 'Notification message', 'Notification footer');
+    var data = JSON.parse(e.data);
+    var $notification = basecoat.notification(data.title, data.link, data.footer);
     // show the notification
     $notification.trigger('show');
 }, false);
