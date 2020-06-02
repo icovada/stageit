@@ -168,3 +168,9 @@ STATICFILES_DIRS = [
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 LOGIN_URL = '/login'
+
+ASGI_APPLICATION = 'routing.application'
+
+EVENTSTREAM_STORAGE_CLASS = 'django_eventstream.storage.DjangoModelStorage'
+
+EVENTSTREAM_CHANNELMANAGER_CLASS = 'web_interface.channelmanager.MyChannelManager'

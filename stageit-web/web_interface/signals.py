@@ -5,9 +5,14 @@ from django.dispatch import receiver
 from web_interface.models import Template
 
 @receiver(post_save, sender=Template)
-def create_user_profile(sender, instance, created, **kwargs):
+def history_inprogress(sender, instance, created, **kwargs):
+    print(sender)
+    print(instance)
+    print(created)
+    print(kwargs['update_fields'])
+    print(kwargs['raw'])
     print("hello")
 
 @receiver(post_save, sender=Template)
-def save_user_profile(sender, instance, **kwargs):
+def history_completed(sender, instance, **kwargs):
     print("Hello")
