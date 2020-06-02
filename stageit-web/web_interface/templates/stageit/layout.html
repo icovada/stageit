@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html class="desktop-menu-open" lang="en">
 
@@ -123,9 +124,12 @@
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://basecoat.cdn.dimensiondata.com/3.2.2/js/dd.basecoat.min.js"></script>
     <!-- your own script here -->
+    <script src="{% static 'django_eventstream/eventsource.min.js' %}"></script>
+    <script src="{% static 'django_eventstream/reconnecting-eventsource.js' %}"></script>
+    <script src="https://basecoat.cdn.dimensiondata.com/3.2.2/js/dd.basecoat.datatables.min.js "></script>
     <script src="/static/js/app.js"></script>
     <script src="/static/js/js-yaml.min.js"></script>
-    <script src=" https://basecoat.cdn.dimensiondata.com/3.2.2/js/dd.basecoat.datatables.min.js "></script>
+    <script src="/static/js/events-test.js"></script>
     <script defer src="https://basecoat.cdn.dimensiondata.com/3.2.2/js/outdated-browser.min.js "></script>
     {% block script %}{% endblock %}
 </body>
