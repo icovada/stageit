@@ -148,9 +148,9 @@ class BaseWorker():
 
         self.on_success()
 
-    def on_success(self):
+    def on_success(self, *args, **kwargs):
         """
-        Celery runs this if the task runs successfully
+        Run this if the task runs successfully
         Update database, set history as successful and delete task.
         """
         logging.info("Set task successful")
@@ -169,7 +169,7 @@ class BaseWorker():
 
     def on_failure(self, exception):
         """
-        Celery runs this if the task fails
+        Run this if the task fails
         Update database, set history as failed.
         """
 
