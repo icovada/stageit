@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "a107b2a5449ca3b9952649ccf9219a688c89e65cf2b9529c51ce80d9a71088e2"
+            "sha256": "8ab4e5f3f1cd826f1c6174b00d34d0c69da4e4ce96ba83b9a29afff53e388deb"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -154,10 +154,10 @@
         },
         "junos-eznc": {
             "hashes": [
-                "sha256:8f3ecf06ab4d630f27e7ed7a7b605122ee5c5e5386b1f5186f6cb52810750b18",
-                "sha256:9d672e5934f47b2706f3540975eb42d46a8c453b0c03a424aa2f276b827a3223"
+                "sha256:0133a10ba3d46ddf70f0ba6620aa3b92e5533f08c57edd000dbffd8fe60d586d",
+                "sha256:0a5c650e819b12b44ae8c47f7dfa8944e5402ef4d58b05523984d397a79329b6"
             ],
-            "version": "==2.4.1"
+            "version": "==2.2.1"
         },
         "lxml": {
             "hashes": [
@@ -231,11 +231,11 @@
         },
         "napalm": {
             "hashes": [
-                "sha256:43c0d09411c26baddd6f9a20129ec463ba02e9f101263d96ae19bbe7ff46ac8c",
-                "sha256:8f8c9004bd1bc2d91acaf7a3b9070e4e456d16e740726a77ef8f57d26eb86574"
+                "sha256:c2b34f8ae287329e44960d4c3c8902f00fd43ae8b049aa89b8ded5ba10c46fd9",
+                "sha256:f49a38cf4fb712642b7644c272b18be0c5c6fe97c076ec26d3bb378d1768901b"
             ],
             "index": "pypi",
-            "version": "==3.0.1"
+            "version": "==2.5.0"
         },
         "ncclient": {
             "hashes": [
@@ -252,17 +252,16 @@
         },
         "netmiko": {
             "hashes": [
-                "sha256:c113b94affcfc8b80dff19ba7461bb99ba835242d749c1419c68ec9bb6adbe50",
-                "sha256:f9009b0b70b49422ee941db83c297155e5a0726dc58bef21f06b1fb38fb999b5"
+                "sha256:bc284272d76defd5af59a748478aae99af462793f0898f4ab43c28c9a2000e42",
+                "sha256:e6b0cb98afb51fd1fb1d04d024d7572a0b5297dfa0bd18405ee36580deea65a1"
             ],
-            "version": "==3.1.1"
+            "version": "==2.4.2"
         },
-        "ntc-templates": {
+        "nxapi-plumbing": {
             "hashes": [
-                "sha256:1d5c1701b09f47404532b5b980eee5368dc84e4b80089adc5e9f540e0bb1c371",
-                "sha256:8e87081325ae135c9189eb0074dc5fd4922e35912a23549f71d3934495e891a8"
+                "sha256:6f54f9983f023bd75b60acd907ff47f559541cc2b98f4fa638b8585ca0de0fb5"
             ],
-            "version": "==1.4.2"
+            "version": "==0.5.2"
         },
         "paramiko": {
             "hashes": [
@@ -291,6 +290,12 @@
             ],
             "version": "==0.8.3"
         },
+        "pyiosxr": {
+            "hashes": [
+                "sha256:0e25d6871b48db81511c03261924ef23169c66e80321801b9bb221a3b74e370e"
+            ],
+            "version": "==0.53"
+        },
         "pynacl": {
             "hashes": [
                 "sha256:06cbb4d9b2c4bd3c8dc0d267416aaed79906e7b33f114ddbf0911969794b1cc4",
@@ -311,13 +316,6 @@
                 "sha256:f8851ab9041756003119368c1e6cd0b9c631f46d686b3904b18c0139f4419f80"
             ],
             "version": "==1.4.0"
-        },
-        "pyparsing": {
-            "hashes": [
-                "sha256:c203ec8783bf771a155b207279b9bccb8dea02d8f0c9e5f8ead507bc3246ecc1",
-                "sha256:ef9d7589ef3c200abe66653d3f1ab1033c3c419ae9b9bdb1240a85b024efc88b"
-            ],
-            "version": "==2.4.7"
         },
         "pyserial": {
             "hashes": [
@@ -377,25 +375,12 @@
             ],
             "version": "==1.1.0"
         },
-        "transitions": {
-            "hashes": [
-                "sha256:2b8cf2078ed189ffbb0f29421798d7a63ff0d7823682a0d69c01bd8240363cac",
-                "sha256:bd8021f0a04e4d91189d90b88d5e9f0a0f5de0c6e5baad224959dbe4c46c3d91"
-            ],
-            "version": "==0.8.1"
-        },
         "urllib3": {
             "hashes": [
                 "sha256:3018294ebefce6572a474f0604c2021e33b3fd8006ecd11d62107a5d2a963527",
                 "sha256:88206b0eb87e6d677d424843ac5209e3fb9d0190d0ee169599165ec25e9d9115"
             ],
             "version": "==1.25.9"
-        },
-        "yamlordereddictloader": {
-            "hashes": [
-                "sha256:7f30f0b99ea3f877f7cb340c570921fa9d639b7f69cba18be051e27f8de2080e"
-            ],
-            "version": "==0.4.0"
         }
     },
     "develop": {}
