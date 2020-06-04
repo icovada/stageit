@@ -231,7 +231,7 @@ class BaseWorker():
         self.driver.checkavailable(1000)
 
         # Skip upgrade if file path not provided
-        if filepath != '':
+        if filepath != 'None':
             logging.debug('url not empty, starting upgrade')
             try:
                 self.driver.upgrade_software(uri=filepath,
