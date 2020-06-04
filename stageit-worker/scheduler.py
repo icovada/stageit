@@ -6,6 +6,9 @@ from requests import get
 from libs.base_worker import BaseWorker
 from libs.fake_worker import FakeWorker
 
+LOGLEVEL = os.environ.get('LOGLEVEL', 'INFO').upper()
+logging.basicConfig(level=LOGLEVEL)
+
 worker_name = os.environ['WORKER_ID']
 stageit_endpoint = os.environ['STAGEIT_ENDPOINT']
 token = os.environ['TOKEN']
