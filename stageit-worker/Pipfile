@@ -6,7 +6,7 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-napalm = "*"
+napalm = "<3"
 jinja2 = "*"
 schedule = "*"
 
