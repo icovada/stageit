@@ -14,7 +14,7 @@ URL_SUFFIX = "/?format=json"
 class BaseDevice():
     """BaseDevice to be expanded by subclasses."""
 
-    def __init__(self, tserver, endpoint, pkid, **kwargs):
+    def __init__(self, tserver, endpoint, pkid, headers, **kwargs):
         """Define all class data."""
         logging.info('Init')
         self._has_connectivity = False
@@ -31,6 +31,7 @@ class BaseDevice():
         self.session = None
         self.tserver = tserver
         self.endpoint = endpoint
+        self.headers = headers
 
         self._checksession()
 
@@ -78,7 +79,7 @@ class BaseDevice():
         # TODO: Manage network error
         url = self.endpoint + '/api/history/' + self.pkid + URL_SUFFIX
         logging.debug('PUT %s, data: %s', url, data)
-        requests.put(url, data=data)
+        requests.put(url, data=data, headers=self.headers)
         logging.debug('Successful history update')
         logging.info('Getting facts done')
 

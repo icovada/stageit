@@ -36,47 +36,48 @@ class BaseWorker():
         self.endpoint = kwargs.get('endpoint')
         self.worker_id = kwargs.get('worker_id')
         self.pkid = self.historydata['pkid']
+        self.headers = kwargs.get('headers')
 
         if self.historydata['workerid'] is not None:
             raise AssertionError(
                 "Task already being worked on by someone else")
 
-        self.logbuffer = NetIO(fkhistory=self.pkid, endpoint=self.endpoint)
+        self.logbuffer = NetIO(fkhistory=self.pkid, endpoint=self.endpoint, headers=self.headers)
         logging.info('Worker for %s ready', self.pkid)
 
         try:
             # Mark History row as being worked on by us
             historydata = requests.get(
-                f'{self.endpoint}/api/history/{self.pkid}/?format=json').json()
+                f'{self.endpoint}/api/history/{self.pkid}/?format=json', headers=self.headers).json()
             historydata['workerid'] = self.worker_id
             historydata['status'] = 'Discovering'
             logging.debug('Retrieving history data')
             requests.put(
-                f'{self.endpoint}/api/history/{self.pkid}/?format=json', data=historydata)
+                f'{self.endpoint}/api/history/{self.pkid}/?format=json', data=historydata, headers=self.headers)
 
             # Now we have checked the task is OK to work on and marked it as ours, fetch task data
             self.fktask = self.historydata['fktask']
             logging.debug('Retrieving task data')
             self.taskdata = requests.get(
-                f'{self.endpoint}/api/task/{self.fktask}/?format=json').json()
+                f'{self.endpoint}/api/task/{self.fktask}/?format=json', headers=self.headers).json()
 
             # From the task we find the template
             fktemplate = self.taskdata.get('fktemplate')
             logging.debug('Retrieving template data')
             self.templatedata = requests.get(
-                f'{self.endpoint}/api/template/{fktemplate}/?format=json').json()
+                f'{self.endpoint}/api/template/{fktemplate}/?format=json', headers=self.headers).json()
 
             # Find the port to connect to
             fkserialport = self.historydata.get('fkserialport')
             logging.debug('Retrieving serial port data')
             self.serialportdata = requests.get(
-                f'{self.endpoint}/api/serialport/{fkserialport}/?format=json').json()
+                f'{self.endpoint}/api/serialport/{fkserialport}/?format=json', headers=self.headers).json()
 
             # Find the terminal server to connect to
             fkterminalserver = self.serialportdata.get('fkterminalserver')
             logging.debug('Retrieving terminal server data')
             self.terminalserverdata = requests.get(
-                f'{self.endpoint}/api/terminalserver/{fkterminalserver}/?format=json').json()
+                f'{self.endpoint}/api/terminalserver/{fkterminalserver}/?format=json', headers=self.headers).json()
             logging.info('Successfully retrieved all data')
 
             hostname = self.terminalserverdata.get('hostname')
@@ -155,14 +156,14 @@ class BaseWorker():
         logging.info("Set task successful")
 
         requests.delete(
-            f'{self.endpoint}/api/task/{self.fktask}')
+            f'{self.endpoint}/api/task/{self.fktask}', headers=self.headers)
 
         historydata = requests.get(
-            f'{self.endpoint}/api/history/{self.pkid}/?format=json').json()
+            f'{self.endpoint}/api/history/{self.pkid}/?format=json', headers=self.headers).json()
         historydata['status'] = 'Completed'
         historydata['dateend'] = datetime.utcnow()
         requests.put(
-            f'{self.endpoint}/api/history/{self.pkid}/?format=json', data=historydata)
+            f'{self.endpoint}/api/history/{self.pkid}/?format=json', data=historydata, headers=self.headers)
 
         self.logbuffer.close()
 
@@ -174,11 +175,11 @@ class BaseWorker():
 
         logging.error("EPIC FAIL")
         historydata = requests.get(
-            f'{self.endpoint}/api/history/{self.pkid}/?format=json').json()
+            f'{self.endpoint}/api/history/{self.pkid}/?format=json', headers=self.headers).json()
         historydata['status'] = 'Fail'
         historydata['dateend'] = datetime.utcnow()
         requests.put(
-            f'{self.endpoint}/api/history/{self.pkid}/?format=json', data=historydata)
+            f'{self.endpoint}/api/history/{self.pkid}/?format=json', data=historydata, headers=self.headers)
         self.logbuffer.write(str(exception).encode('utf-8'))
         self.logbuffer.close()
 
@@ -186,8 +187,7 @@ class BaseWorker():
         """Find device type and return appropriate class to deal with
         upgrading, version checking and else."""
         logging.debug('Instantiating BaseDevice driver')
-        device = BaseDevice(tserver=self.tserver, endpoint=self.endpoint, **
-                            self.devicedata, pkid=self.pkid)
+        device = BaseDevice(tserver=self.tserver, endpoint=self.endpoint, pkid=self.pkid, headers=self.headers, **self.devicedata)
         logging.info('Discovering model')
         device.checkavailable(300)
 
@@ -216,14 +216,14 @@ class BaseWorker():
 
         # Update database row
         historydata = requests.get(
-            f'{self.endpoint}/api/history/{self.pkid}/?format=json').json()
+            f'{self.endpoint}/api/history/{self.pkid}/?format=json', headers=self.headers).json()
         historydata['status'] = 'In Progress'
         logging.debug('Updating history, status: In Progress')
         requests.put(
-            f'{url_base}/api/history/{self.pkid}/?format=json', data=historydata)
+            f'{url_base}/api/history/{self.pkid}/?format=json', data=historydata, headers=self.headers)
 
         device.close()
-        return specific_device(**self.devicedata, tserver=self.tserver, endpoint=self.endpoint, pkid=self.pkid)
+        return specific_device(**self.devicedata, tserver=self.tserver, endpoint=self.endpoint, pkid=self.pkid, headers=self.headers)
 
     def stageit(self, filepath, installmode, fkbootstrapconfig):
         """Do the job."""
@@ -246,7 +246,7 @@ class BaseWorker():
                 if fkbootstrapconfig != 'null':
                     logging.debug('Retrieving bootstrap config')
                     bootstrapconfig = requests.get(
-                        self.endpoint + '/api/bootstrapconfig/' + fkbootstrapconfig)
+                        self.endpoint + '/api/bootstrapconfig/' + fkbootstrapconfig, headers=self.headers)
                     self.driver.load_bootstrap_config(**bootstrapconfig.json())
                     self.driver.upgrade_software(uri=filepath,
                                                  mode=installmode)
