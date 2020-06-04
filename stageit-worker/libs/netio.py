@@ -17,7 +17,8 @@ class NetIO(BytesIO):
         super().__init__()
 
     def close(self):
-        self.flush()
+        # TODO: investigate why it causes a stack trace
+        # self.flush()
         return self.buffer.close()
 
     def closed(self):
