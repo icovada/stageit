@@ -58,7 +58,7 @@ class IOSSwitch(BaseDevice):
         if not self.session._check_file_exists(flashuri):
             logging.debug('File not found in flash, starting copy')
             self.copy_file(uri)
-        self._manage_stack(uri)
+        #self._manage_stack(uri)
         logging.info("Upgrading IOS")
         confset = ["no boot system", "boot system {}".format(flashuri)]
         logging.debug('Sending boot system commands')
