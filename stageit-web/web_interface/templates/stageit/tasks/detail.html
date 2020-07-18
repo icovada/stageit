@@ -41,10 +41,10 @@
                             empty.<br />Pure text or Jinja2 templates accepted</small>
                     </div>
                     <div class="form-group col-xl-6 form-right">
-                        <label for="taskvalues">Template values</label>
-                        <textarea class="form-control font-monospace" id="taskvalues" rows="20"
-                            aria-describedby="taskvaluesHelp">{{taskvalues}}</textarea>
-                        <small id="taskvaluesHelp" class="form-text text-muted">Insert variables required by
+                        <label for="templatevalues">Template values</label>
+                        <textarea class="form-control font-monospace" id="templatevalues" rows="20"
+                            aria-describedby="templatevaluesHelp">{{taskvalues}}</textarea>
+                        <small id="templatevaluesHelp" class="form-text text-muted">Insert variables required by
                             your template
                             in
                             yaml format</small>
@@ -155,7 +155,7 @@
             },
             data: {
                 description: $('#description').val(),
-                taskvalues: JSON.stringify(jsyaml.load($('#taskvalues').val())),
+                templatevalues: JSON.stringify(jsyaml.load($('#templatevalues').val())),
             }
         }).done(function (response) {
             var $toast = basecoat.toast('<span class="fa fa-check"></span>Task saved', 'success');
